@@ -1,0 +1,47 @@
+{
+    "IMAGE_EXTENSIONS": ["*.png", "*.jpg", "*.jpeg", "*.gif"],
+    
+    "NAV_VIEW_RATIO": [3,11],
+    "NAV_ROOT": "../assets/images/",
+
+    "NAV_FUNCS": {
+        "path_changed":"load_default_img",
+        "nav_clicked":"view_image_from_explorer"
+    },
+
+    "HOME_IMAGE": "../assets/images/home.png",
+
+        
+    "RBN_HEIGHT": 2.3,
+
+    "TBAR_ISIZE_REL": 0.1,
+    "TBAR_ISIZE_MARGIN": 1.25,
+
+    "TBAR_IMG_ASSETS": "../assets/images/",
+
+    "TBAR_ICON_IMG":"../assets/images/icon.png",
+    
+    "TBAR_FUNCS": {
+        "MANAGE": [
+            "open_dir",
+            "save_img",
+            "delete_img"
+        ],
+        "EDIT": [
+            "get_mask",
+            "delete_text",
+            "edit_mask"
+        ],
+        "VIEW": [
+            "compare_img",
+            "delete_text",
+            "edit_mask"
+        ]
+    },
+    "open_dir": {
+        "help_msg": "Open project directory",
+        "toggle": false,
+        "button_code": "aaaaaa69"
+    }
+
+}
