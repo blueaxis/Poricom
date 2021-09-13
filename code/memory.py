@@ -1,7 +1,6 @@
 from default import cfg
 from os import listdir
-from os.path import isfile, join, splitext,normpath
-import unicodedata
+from os.path import isfile, join, splitext, normpath
 
 img_index = 0
 img_paths = []

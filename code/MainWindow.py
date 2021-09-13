@@ -1,6 +1,4 @@
-import sys
-
-from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QGridLayout, 
+from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout,
                             QWidget, QFileDialog)
 
 from GUIElements import ImageNavigator, ImageViewer, Ribbon
@@ -50,30 +48,50 @@ class PMainWindow(QWidget):
             mem.set_img_path(path)
             self.explorer.set_proj_path(mem.get_img_path())
 
-    def save_img(self):
+    def save_image(self):
         print("Image saved to ", mem.get_img_path())
         pass
 
-    def delete_img(self):
+    def delete_cache(self):
         print("Image deleted in ", mem.get_img_path())
         pass
 
-    def get_mask(self):
+    def get_text_mask(self):
         print("Generating mask for ", mem.get_img_path())
         pass
 
-    def delete_text(self):
-        print("Text deleted from mask ", mem.get_img_path())
-        pass
-
-    def edit_mask_(self):
+    def edit_text_mask(self):
         #TODO
         pass
 
-    def edit_mask(self):
+    def save_current_mask(self):
         pass
-        
-    def compare_img(self):
-        #self.img_viewer.mask_viewer.setHidden(
-        #    not self.img_viewer.mask_viewer.isHidden())
+
+    def delete_text_mask(self):
+        print("Text deleted from mask ", mem.get_img_path())
+        pass
+
+    def load_prev_image(self):
+        # change gray to blue selection
+        idx_int = self.explorer.currentIndex().row() - 1
+        idx_model = self.explorer.model.index(idx_int, 0, self.explorer.rootIndex())
+        self.explorer.setCurrentIndex(idx_model)
+        #self.view_image_from_explorer(idx_model)
+
+    def load_next_image(self):
+        # change gray to blue selection
+        idx_int = self.explorer.currentIndex().row() + 1
+        idx_model = self.explorer.model.index(idx_int, 0, self.explorer.rootIndex())
+        self.explorer.setCurrentIndex(idx_model)
+        #self.view_image_from_explorer(idx_model)
+
+    def load_image_at_idx(self, idx_int):
+        idx_model = self.explorer.model.index(idx_int, 0, self.explorer.rootIndex())
+        self.explorer.setCurrentIndex(idx_model)
+        #self.view_image_from_explorer(idx_model)
+
+    def toggle_manual_ocr(self):
+        pass
+
+    def toggle_auto_ocr(self):
         pass

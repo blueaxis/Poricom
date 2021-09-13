@@ -10,38 +10,115 @@
     },
 
     "HOME_IMAGE": "../assets/images/home.png",
-
         
-    "RBN_HEIGHT": 2.3,
+    "RBN_HEIGHT": 2.4,
 
     "TBAR_ISIZE_REL": 0.1,
-    "TBAR_ISIZE_MARGIN": 1.25,
+    "TBAR_ISIZE_MARGIN": 1.3,
 
-    "TBAR_IMG_ASSETS": "../assets/images/",
+    "TBAR_IMG_ASSETS": "../assets/images/icons/",
 
-    "TBAR_ICON_IMG":"../assets/images/icon.png",
-    
+    "TBAR_ICON_IMG":"../assets/images/icons/default_icon.png",
+
     "TBAR_FUNCS": {
-        "MANAGE": [
-            "open_dir",
-            "save_img",
-            "delete_img"
-        ],
-        "EDIT": [
-            "get_mask",
-            "delete_text",
-            "edit_mask"
-        ],
-        "VIEW": [
-            "compare_img",
-            "delete_text",
-            "edit_mask"
-        ]
-    },
-    "open_dir": {
-        "help_msg": "Open project directory",
-        "toggle": false,
-        "button_code": "aaaaaa69"
-    }
+        "MANAGE": {
+            "open_dir": {
+                "help_msg": "Open project directory",
+                "path": "../assets/images/icons/open_dir.png",
+                "toggle": false,
+                "align": "AlignLeft"
+            },
 
+            "save_image": {
+                "help_msg": "Save edited image",
+                "path": "../assets/images/icons/save_image.png",
+                "toggle": false,
+                "align": "AlignLeft"
+            },
+
+            "delete_cache": {
+                "help_msg": "Delete cached masks",
+                "path": "../assets/images/icons/delete_cache.png",
+                "toggle": false,
+                "align": "AlignLeft"
+            }
+        },
+
+        "EDIT": {
+            "get_text_mask": {
+                "help_msg": "Determine areas with text",
+                "path": "../assets/images/icons/get_text_mask.png",
+                "toggle": false,
+                "align": "AlignLeft"
+            },
+
+            "edit_text_mask": {
+                "help_msg": "Edit shown mask",
+                "path": "../assets/images/icons/edit_text_mask.png",
+                "toggle": false,
+                "align": "AlignLeft"
+            },
+
+            "save_current_mask": {
+                "help_msg": "Save shown mask",
+                "path": "../assets/images/icons/save_current_mask.png",
+                "toggle": false,
+                "align": "AlignLeft"
+            },
+
+            "delete_text_mask": {
+                "help_msg": "Remove text from image",
+                "path": "../assets/images/icons/delete_text_mask.png",
+                "toggle": false,
+                "align": "AlignLeft"
+            }
+        },
+
+        "MODE": {
+            "toggle_manual_ocr": {
+                "help_msg": "Toggle manual OCR",
+                "path": "../assets/images/icons/toggle_manual_ocr.png",
+                "toggle": true,
+                "align": "AlignLeft"
+            },
+    
+            "toggle_auto_ocr": {
+                "help_msg": "Toggle automatic OCR",
+                "path": "../assets/images/icons/toggle_auto_ocr.png",
+                "toggle": true,
+                "align": "AlignLeft"
+            }
+        }
+
+
+    },
+
+    "MODE_FUNCS": {
+        "load_image_at_idx": {
+            "help_msg": "Jump to page",
+            "path": "../assets/images/icons/load_image_at_idx.png",
+            "toggle": false,
+            "align": "AlignRight",
+            "icon_h": 0.45,
+            "icon_w": 1.9
+        },
+
+        "load_prev_image": {
+            "help_msg": "Show previous image",
+            "path": "../assets/images/icons/load_prev_image.png",
+            "toggle": false,
+            "align": "AlignRight",
+            "icon_h": 0.45,
+            "icon_w": 0.9
+        },
+
+        "load_next_image": {
+            "help_msg": "Show next image",
+            "path": "../assets/images/icons/load_next_image.png",
+            "toggle": false,
+            "align": "AlignRight",
+            "icon_h": 0.45,
+            "icon_w": 0.9
+        }
+    }
 }
