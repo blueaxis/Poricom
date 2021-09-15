@@ -1,3 +1,11 @@
+# TODO: Rewrite this as a Tracker object that will
+# save image paths, pixmaps of original images and
+# masks, button states, and window state
+# Use decorators
+
+class Tracker:
+    pass
+
 from default import cfg
 from os import listdir
 from os.path import isfile, join, splitext, normpath

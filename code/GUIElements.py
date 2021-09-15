@@ -1,18 +1,18 @@
-from PyQt5.QtCore import Qt, QDir, QSize
+from PyQt5.QtCore import Qt, QDir, QSize, QRectF
 from PyQt5.QtGui import (QImage, QPixmap, QIcon)
-from PyQt5.QtWidgets import (QGridLayout, QWidget, QFileSystemModel, 
-                            QTreeView, QPushButton, QTabWidget, 
-                            QLabel, QScrollArea, QHBoxLayout)
+from PyQt5.QtWidgets import (QGraphicsPixmapItem, QGraphicsView, QGridLayout, QWidget, QFileSystemModel, 
+                            QTreeView, QPushButton, QTabWidget, QFrame,
+                            QLabel, QScrollArea, QHBoxLayout, QGraphicsScene)
 
-import memory as mem
 from default import cfg
 from os.path import exists
 
 class ImageNavigator(QTreeView):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, tracker=None):
         super(QTreeView, self).__init__()
         self.parent = parent
+        self.tracker = tracker
 
         self.model = QFileSystemModel()
         self.init_fs_model()
@@ -20,8 +20,9 @@ class ImageNavigator(QTreeView):
         self.setModel(self.model)
         self.init_treeview()
 
-        self.set_proj_path(mem.get_img_path())
-        self.selectionModel().selectionChanged.connect(self.jump_to_item)
+        self.set_proj_path(tracker.filepath)
+        self.selectionModel().selectionChanged.connect(
+            self.jump_to_item)
 
     def init_fs_model(self):
         self.model.setFilter(QDir.Files)
@@ -47,7 +48,8 @@ class ImageNavigator(QTreeView):
             pass
         if (path != cfg["NAV_ROOT"]):
             pass
-        mem.set_img_path(path)
+
+        self.tracker.filepath = path
         self.setRootIndex(self.model.setRootPath(path))
 
     def jump_to_item(self, selected, deselected):
@@ -55,8 +57,9 @@ class ImageNavigator(QTreeView):
         pass
 
 class ImageViewer(QScrollArea):
-    def __init__(self, parent = None):
+    def __init__(self, parent = None, tracker=None):
         super(QScrollArea, self).__init__(parent)
+        self.tracker = tracker
 
         self._img_label = QLabel()
         self.setWidget(self._img_label)
@@ -75,8 +78,9 @@ class ImageViewer(QScrollArea):
 
         w = self.frameGeometry().width()
         h = self.frameGeometry().height()
+        # rename to filename
 
-        filepath = mem.get_curr_img()
+        filepath = self.tracker.p_image
         image = q_image
         if filepath:
             image = QImage(filepath)
@@ -98,9 +102,10 @@ class ImageViewer(QScrollArea):
 
 class PageNavigator(QWidget):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, tracker=None):
         super(QWidget, self).__init__()
         self.parent = parent
+        self.tracker = tracker
         self.button_list = []
 
         self.layout = QGridLayout(self)
@@ -134,16 +139,17 @@ class PageNavigator(QWidget):
 
         self.button_list[-1].clicked.connect(getattr(self.parent, b_name))
 
-class Toolbar(QWidget):
+class RibbonTab(QWidget):
 
-    def __init__(self, parent=None, funcs=None, aob_exists=False):
+    def __init__(self, parent=None, funcs=None, tracker=None):
         super(QWidget, self).__init__()
         self.parent = parent
+        self.tracker = tracker
 
         self.layout = QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignLeft)
         self.button_list = []
-        self.aob_exists = aob_exists
+
 
         self.init_buttons(funcs)
     
@@ -180,12 +186,43 @@ class Toolbar(QWidget):
             alignment=getattr(Qt, b_config["align"]))
 
 class Ribbon(QTabWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, tracker=None):
         super(QTabWidget, self).__init__(parent) #remove parent?
         self.parent = parent
-        h = self.parent.frameGeometry().height() * cfg["TBAR_ISIZE_REL"] * cfg["RBN_HEIGHT"]
+        self.tracker = tracker
+
+        h = self.parent.frameGeometry().height() * \
+            cfg["TBAR_ISIZE_REL"] * cfg["RBN_HEIGHT"]
         self.setFixedHeight(h)
         #TODO: add keyboard shortcut using name scheme
         for tab_name, tools in cfg["TBAR_FUNCS"].items():
-            self.addTab(Toolbar(parent=self.parent, funcs=tools), tab_name)
+            self.addTab(RibbonTab(parent=self.parent, funcs=tools,
+                        tracker=self.tracker), tab_name)
+
+class Canvas(QGraphicsView):
+    def __init__(self, parent=None, tracker=None):
+        super(QGraphicsView, self).__init__(parent)
+        self.parent = parent #parent is None when this is deleted
+        self.tracker = tracker
+
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        self.scene = QGraphicsScene()
+        self.setScene(self.scene)
+
+        self.image = self.tracker.p_image
+        #self.mask = self.tracker.p_mask
+
+        self.pixmap = self.scene.addPixmap(self.image.scaledToWidth(
+            self.viewport().geometry().width(), Qt.SmoothTransformation))
+    def view_image(self):
+        self.image = self.tracker.p_image
+        self.pixmap.setPixmap(self.image.scaledToWidth(
+            self.viewport().geometry().width(), Qt.SmoothTransformation))
+        self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
+
+    def resizeEvent(self, event):
+        self.view_image()
+        QGraphicsView.resizeEvent(self, event)
 
