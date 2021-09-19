@@ -1,15 +1,17 @@
 from PyQt5.QtGui import QPixmap
-from default import cfg
-from os.path import isfile, join, splitext, normpath,abspath, split
+from os.path import isfile, join, splitext, normpath, abspath, exists, dirname
 from os import listdir
+
+from default import cfg
 
 class Tracker:
     
     def __init__(self, filename=cfg["HOME_IMAGE"]):
-        self._p_image = PImage(filename)
-        self._p_mask = PImage()
 
-        self._filepath = split(abspath(filename))[0]
+        self._p_image = PImage(filename)
+        self._p_mask = PImage(filename)
+
+        self._filepath = abspath(dirname(filename))
 
         self._image_list = []
 
@@ -23,8 +25,9 @@ class Tracker:
     def p_image(self, image):
         # TODO: use match case when 3.10 comes out
         if (type(image) is str):
-            self._p_image = QPixmap(image)
-            self._p_image.filename = image
+            self._p_image = PImage(image)
+            self._p_image.filename = abspath(image)
+            self._filepath = abspath(dirname(image))
 
     @property
     def p_mask(self):
@@ -47,12 +50,8 @@ class Tracker:
                         filter((lambda f: ('*'+splitext(f)[1]) 
                             in cfg["IMAGE_EXTENSIONS"]), filelist)))
 
-    def is_valid_image_idx(self, idx):
-        return idx >= 0 and idx < len(self._image_list)
-
-
 class PImage(QPixmap):
-    
+
     def __init__(self, filename=None):
         super(QPixmap, self).__init__(filename)
 
@@ -68,4 +67,7 @@ class PImage(QPixmap):
     @filename.setter
     def filename(self, filename):
         self._filename = filename
+
+    def is_valid(self):
+        return exists(self._filename) and isfile(self._filename)
     

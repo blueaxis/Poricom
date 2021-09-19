@@ -1,11 +1,15 @@
-from PyQt5.QtCore import Qt, QDir, QSize, QRectF
-from PyQt5.QtGui import (QImage, QPixmap, QIcon)
-from PyQt5.QtWidgets import (QGraphicsPixmapItem, QGraphicsView, QGridLayout, QWidget, QFileSystemModel, 
-                            QTreeView, QPushButton, QTabWidget, QFrame,
-                            QLabel, QScrollArea, QHBoxLayout, QGraphicsScene)
+from PyQt5.QtCore import Qt, QDir, QSize, QRectF, QPoint, QRect, QTimer
+from PyQt5.QtGui import (QIcon)
+from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QRubberBand, QWidget,
+                            QPushButton, QTabWidget,
+                            QTreeView, QFileSystemModel,
+                            QGraphicsView, QGraphicsScene)
 
-from default import cfg
 from os.path import exists
+import image_io as io_
+from default import cfg
+
+# TODO: Decorate slots using pyqtSlot
 
 class ImageNavigator(QTreeView):
 
@@ -21,8 +25,6 @@ class ImageNavigator(QTreeView):
         self.init_treeview()
 
         self.set_proj_path(tracker.filepath)
-        self.selectionModel().selectionChanged.connect(
-            self.jump_to_item)
 
     def init_fs_model(self):
         self.model.setFilter(QDir.Files)
@@ -48,57 +50,76 @@ class ImageNavigator(QTreeView):
             pass
         if (path != cfg["NAV_ROOT"]):
             pass
-
         self.tracker.filepath = path
+
         self.setRootIndex(self.model.setRootPath(path))
 
-    def jump_to_item(self, selected, deselected):
-        #print("Jump")
-        pass
+# TODO: Create an BaseCanvas class where 
+# OCRCanvas and EditCanvas will inherit from.
 
-class ImageViewer(QScrollArea):
-    def __init__(self, parent = None, tracker=None):
-        super(QScrollArea, self).__init__(parent)
+class OCRCanvas(QGraphicsView):
+
+    def __init__(self, parent=None, tracker=None):
+        super(QGraphicsView, self).__init__(parent)
+        self.parent = parent
         self.tracker = tracker
 
-        self._img_label = QLabel()
-        self.setWidget(self._img_label)
-        self.init_img_label()
-
-        self.setWidgetResizable(True)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        #self.verticalScrollBar().valueChanged.connect(lambda idx: self.scrolling_temp(idx))
+        self.scene = QGraphicsScene()
+        self.setScene(self.scene)
 
-    def init_img_label(self):
-        self._img_label.setContentsMargins(10,10,10,0)
+        self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
+            self.viewport().geometry().width()-100, Qt.SmoothTransformation))
 
-    def view_image(self, filepath=None, q_image=None, mode=0):
-
-        w = self.frameGeometry().width()
-        h = self.frameGeometry().height()
-        # rename to filename
-
-        filepath = self.tracker.p_image
-        image = q_image
-        if filepath:
-            image = QImage(filepath)
-            if image is None:
-                #TODO: Error Handling
-                return
-        pixmap_img = QPixmap.fromImage(image)
-        self._img_label.setPixmap(pixmap_img.scaledToWidth(
-                        w-20, Qt.SmoothTransformation))
-        self._img_label.adjustSize()
+        self.last_point = QPoint()
+        self.r_band = QRubberBand(QRubberBand.Rectangle, self)
+        
+        self.timer_ = QTimer()
+        self.timer_.setInterval(300);
+        self.timer_.setSingleShot(True);
+        self.timer_.timeout.connect(self.movement_end)
     
+    def view_image(self):       
+
+        self.verticalScrollBar().setSliderPosition(0)
+        self.pixmap.setPixmap(self.tracker.p_image.scaledToWidth(
+            self.viewport().geometry().width()-100, Qt.SmoothTransformation))
+
     def resizeEvent(self, event):
         self.view_image()
-        QScrollArea.resizeEvent(self, event)
+        self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
+        QGraphicsView.resizeEvent(self, event)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.last_point = event.pos()
+            self.r_band.setGeometry(QRect(self.last_point, QSize()))
+            self.r_band.show()
+        QGraphicsView.mousePressEvent(self, event)
+
+    def mouseReleaseEvent(self, event):
+        if (event.button() == Qt.LeftButton):
+            self.r_band.setGeometry(QRect(self.last_point, event.pos()).normalized())
+            self.r_band.hide()
+
+            # use threading either here or on image_io
+            io_.pixmap_to_text(self.grab(self.r_band.geometry()))
+            # self.r_band.close()
+        
+        QGraphicsView.mouseReleaseEvent(self, event)
     
-    def scrolling_temp(self,idx):
-        pass
-        #print(idx)
+    def mouseMoveEvent(self, event):
+        if ((event.buttons() & Qt.LeftButton)):
+            self.timer_.start()
+            self.r_band.setGeometry(QRect(self.last_point, event.pos()).normalized())
+            # allow dynamic OCR while rectangle is being created
+        QGraphicsView.mouseMoveEvent(self, event)
+
+    def movement_end(self):
+        print("Movement ended")
+        # self.timer_.stop()
 
 class PageNavigator(QWidget):
 
@@ -150,7 +171,6 @@ class RibbonTab(QWidget):
         self.layout.setAlignment(Qt.AlignLeft)
         self.button_list = []
 
-
         self.init_buttons(funcs)
     
     def init_buttons(self, funcs):
@@ -198,31 +218,4 @@ class Ribbon(QTabWidget):
         for tab_name, tools in cfg["TBAR_FUNCS"].items():
             self.addTab(RibbonTab(parent=self.parent, funcs=tools,
                         tracker=self.tracker), tab_name)
-
-class Canvas(QGraphicsView):
-    def __init__(self, parent=None, tracker=None):
-        super(QGraphicsView, self).__init__(parent)
-        self.parent = parent #parent is None when this is deleted
-        self.tracker = tracker
-
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-        self.scene = QGraphicsScene()
-        self.setScene(self.scene)
-
-        self.image = self.tracker.p_image
-        #self.mask = self.tracker.p_mask
-
-        self.pixmap = self.scene.addPixmap(self.image.scaledToWidth(
-            self.viewport().geometry().width(), Qt.SmoothTransformation))
-    def view_image(self):
-        self.image = self.tracker.p_image
-        self.pixmap.setPixmap(self.image.scaledToWidth(
-            self.viewport().geometry().width(), Qt.SmoothTransformation))
-        self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
-
-    def resizeEvent(self, event):
-        self.view_image()
-        QGraphicsView.resizeEvent(self, event)
 

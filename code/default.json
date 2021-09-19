@@ -1,12 +1,13 @@
 {
-    "IMAGE_EXTENSIONS": ["*.png", "*.jpg", "*.jpeg", "*.gif"],
-    
+    "IMAGE_EXTENSIONS": ["*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png", 
+                         "*.pbm", "*.pgm", "*.ppm", "*.xbm", "*.xpm"],
+
     "NAV_VIEW_RATIO": [3,11],
     "NAV_ROOT": "../assets/images/",
 
     "NAV_FUNCS": {
-        "path_changed":"load_default_img",
-        "nav_clicked":"view_image_from_explorer"
+        "path_changed": "view_image_from_fdialog",
+        "nav_clicked": "view_image_from_explorer"
     },
 
     "HOME_IMAGE": "../assets/images/home.png",
@@ -18,7 +19,7 @@
 
     "TBAR_IMG_ASSETS": "../assets/images/icons/",
 
-    "TBAR_ICON_IMG":"../assets/images/icons/default_icon.png",
+    "TBAR_ICON_IMG": "../assets/images/icons/default_icon.png",
 
     "TBAR_FUNCS": {
         "MANAGE": {
