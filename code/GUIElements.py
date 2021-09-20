@@ -1,3 +1,5 @@
+from os.path import exists
+
 from PyQt5.QtCore import Qt, QDir, QSize, QRectF, QPoint, QRect, QTimer
 from PyQt5.QtGui import (QIcon)
 from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QRubberBand, QWidget,
@@ -5,54 +7,52 @@ from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QRubberBand, QWidget,
                             QTreeView, QFileSystemModel,
                             QGraphicsView, QGraphicsScene)
 
-from os.path import exists
 import image_io as io_
 from default import cfg
 
 # TODO: Decorate slots using pyqtSlot
 
 class ImageNavigator(QTreeView):
-
+    layoutCheck = False
     def __init__(self, parent=None, tracker=None):
         super(QTreeView, self).__init__()
         self.parent = parent
         self.tracker = tracker
 
         self.model = QFileSystemModel()
-        self.init_fs_model()
-
-        self.setModel(self.model)
-        self.init_treeview()
-
-        self.set_proj_path(tracker.filepath)
-
-    def init_fs_model(self):
         self.model.setFilter(QDir.Files)
         self.model.setNameFilterDisables(False)
         self.model.setNameFilters(cfg["IMAGE_EXTENSIONS"])
+        self.setModel(self.model)
 
-        self.model.directoryLoaded.connect(
-            getattr(self.parent, cfg["NAV_FUNCS"]["path_changed"]))
-
-    def init_treeview(self):
         for i in range(1,4):
             self.hideColumn(i)
-        self.setIndentation(5)
-        #self.setSortingEnabled(True)
+        self.setIndentation(0)
 
-        # add entered signal maybe?
-        self.clicked.connect(
-            getattr(self.parent, cfg["NAV_FUNCS"]["nav_clicked"]))
+        self.set_directory(tracker.filepath)
 
-    def set_proj_path(self, path):
-        if path is None:
-            #TODO: Error Handling
-            pass
-        if (path != cfg["NAV_ROOT"]):
-            pass
-        self.tracker.filepath = path
+    def currentChanged(self, current, previous):
+        if not current.isValid():
+            current = self.model.index(0, 0, self.rootIndex())
+        filename = self.model.fileInfo(current).absoluteFilePath()
+        self.parent.view_image_from_explorer(filename)
+        QTreeView.currentChanged(self, current, previous)
+    
+    def setTopIndex(self):
+        topIndex = self.model.index(0, 0, self.rootIndex())
+        if topIndex.isValid():
+            self.setCurrentIndex(topIndex)
+            if self.layoutCheck:
+                self.model.layoutChanged.disconnect(self.setTopIndex)
+                self.layoutCheck = False
+        else:
+            if not self.layoutCheck:
+                self.model.layoutChanged.connect(self.setTopIndex)
+                self.layoutCheck = True
 
+    def set_directory(self, path):
         self.setRootIndex(self.model.setRootPath(path))
+        self.setTopIndex()
 
 # TODO: Create an BaseCanvas class where 
 # OCRCanvas and EditCanvas will inherit from.
@@ -86,10 +86,10 @@ class OCRCanvas(QGraphicsView):
         self.verticalScrollBar().setSliderPosition(0)
         self.pixmap.setPixmap(self.tracker.p_image.scaledToWidth(
             self.viewport().geometry().width()-100, Qt.SmoothTransformation))
+        self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
     def resizeEvent(self, event):
         self.view_image()
-        self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
         QGraphicsView.resizeEvent(self, event)
 
     def mousePressEvent(self, event):

@@ -24,7 +24,7 @@ class Tracker:
     @p_image.setter
     def p_image(self, image):
         # TODO: use match case when 3.10 comes out
-        if (type(image) is str):
+        if (type(image) is str and PImage(image).is_valid()):
             self._p_image = PImage(image)
             self._p_image.filename = abspath(image)
             self._filepath = abspath(dirname(image))
