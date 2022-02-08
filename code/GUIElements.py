@@ -2,8 +2,8 @@ from os.path import exists
 
 from PyQt5.QtCore import Qt, QDir, QSize, QRectF, QPoint, QRect, QTimer
 from PyQt5.QtGui import (QIcon)
-from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QRubberBand, QWidget,
-                            QPushButton, QTabWidget,
+from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QRubberBand, QWidget,
+                            QPushButton, QTabWidget, QComboBox,
                             QTreeView, QFileSystemModel,
                             QGraphicsView, QGraphicsScene)
 
@@ -77,15 +77,19 @@ class OCRCanvas(QGraphicsView):
         self.r_band = QRubberBand(QRubberBand.Rectangle, self)
         
         self.timer_ = QTimer()
-        self.timer_.setInterval(300);
-        self.timer_.setSingleShot(True);
-        self.timer_.timeout.connect(self.movement_end)
-    
+        self.timer_.setInterval(300)
+        self.timer_.setSingleShot(True)
+        self.timer_.timeout.connect(self.rubberBandStopped)
+
+        self.canvasText = QLabel("", self, Qt.WindowStaysOnTopHint)
+        self.canvasText.hide()
+        self.canvasText.setObjectName("canvasText")
+
     def view_image(self):       
 
         self.verticalScrollBar().setSliderPosition(0)
         self.pixmap.setPixmap(self.tracker.p_image.scaledToWidth(
-            self.viewport().geometry().width()-100, Qt.SmoothTransformation))
+            0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
     def resizeEvent(self, event):
@@ -104,8 +108,7 @@ class OCRCanvas(QGraphicsView):
             self.r_band.setGeometry(QRect(self.last_point, event.pos()).normalized())
             self.r_band.hide()
 
-            # use threading either here or on image_io
-            io_.pixmap_to_text(self.grab(self.r_band.geometry()))
+            self.canvasText.hide()
             # self.r_band.close()
         
         QGraphicsView.mouseReleaseEvent(self, event)
@@ -114,14 +117,67 @@ class OCRCanvas(QGraphicsView):
         if ((event.buttons() & Qt.LeftButton)):
             self.timer_.start()
             self.r_band.setGeometry(QRect(self.last_point, event.pos()).normalized())
-            # allow dynamic OCR while rectangle is being created
         QGraphicsView.mouseMoveEvent(self, event)
 
-    def movement_end(self):
-        print("Movement ended")
-        # self.timer_.stop()
+    def rubberBandStopped(self):
 
-class PageNavigator(QWidget):
+        # use threading either here or on image_io
+        if (self.canvasText.isHidden()):
+            self.canvasText.show()
+        lang = self.tracker.language + self.tracker.orientation
+        text = io_.pixbox_to_text(self.grab(self.r_band.geometry()), lang)
+        self.canvasText.setText(text)
+        self.canvasText.adjustSize()
+
+class RibbonTab(QWidget):
+
+    def __init__(self, parent=None, funcs=None, tracker=None):
+        super(QWidget, self).__init__()
+        self.parent = parent
+        self.tracker = tracker
+
+        self.button_list = []
+        self.layout = QHBoxLayout(self)
+        self.layout.setAlignment(Qt.AlignLeft)
+        
+        self.init_buttons(funcs)
+    
+    def init_buttons(self, funcs):
+
+        for func_name, func_cfg in funcs.items():
+            self.load_button_config(func_name, func_cfg)
+            self.layout.addWidget(self.button_list[-1],
+                alignment=getattr(Qt, func_cfg["align"]))
+
+        self.layout.addWidget(LanguagePicker(self.parent, self.tracker))
+        self.layout.addStretch()
+        self.layout.addWidget(PageNavigator(self.parent))
+    
+    def load_button_config(self, b_name, b_config):
+
+        w = self.parent.frameGeometry().height()*cfg["TBAR_ISIZE_REL"]*b_config["icon_w"]
+        h = self.parent.frameGeometry().height()*cfg["TBAR_ISIZE_REL"]*b_config["icon_h"]
+        m = cfg["TBAR_ISIZE_MARGIN"]
+
+        icon = QIcon()
+        path = b_config["path"]
+        if (exists(path)):
+            icon = QIcon(path)
+        else: icon = QIcon(cfg["TBAR_ICON_IMG"])
+
+        #TODO: add keyboard shortcut using name scheme
+
+        self.button_list.append(QPushButton(self))
+        self.button_list[-1].setIcon(icon)
+        self.button_list[-1].setIconSize(QSize(w,h))
+        self.button_list[-1].setFixedSize(QSize(w*m,h*m))
+
+        self.button_list[-1].setToolTip(b_config["help_msg"])
+        self.button_list[-1].setCheckable(b_config["toggle"])
+
+        self.button_list[-1].clicked.connect(getattr(self.parent, b_name))
+
+class PageNavigator(RibbonTab):
 
     def __init__(self, parent=None, tracker=None):
         super(QWidget, self).__init__()
@@ -135,75 +191,46 @@ class PageNavigator(QWidget):
             self.load_button_config(func_name, func_cfg)
 
         self.layout.addWidget(self.button_list[0], 0, 0, 1, 2)
-        self.layout.addWidget(self.button_list[1], 1, 0) 
-        self.layout.addWidget(self.button_list[2], 1, 1, alignment=Qt.AlignRight)
+        self.layout.addWidget(self.button_list[1], 1, 0, 1, 1)
+        self.layout.addWidget(self.button_list[2], 1, 1, 1, 1)
 
-    def load_button_config(self, b_name, b_config):
-    
-        w = self.parent.frameGeometry().height()*cfg["TBAR_ISIZE_REL"]*b_config["icon_w"]
-        h = self.parent.frameGeometry().height()*cfg["TBAR_ISIZE_REL"]*b_config["icon_h"]
-        m = cfg["TBAR_ISIZE_MARGIN"]
+class LanguagePicker(QWidget):
 
-        icon = QIcon()
-        path = b_config["path"]
-        if (exists(path)):
-            icon = QIcon(path)
-        else: icon = QIcon(cfg["TBAR_ICON_IMG"])
-
-        self.button_list.append(QPushButton(self))
-        self.button_list[-1].setIcon(icon)
-        self.button_list[-1].setIconSize(QSize(w,h))
-        self.button_list[-1].setFixedSize(QSize(w*m,h*m))
-
-        self.button_list[-1].setToolTip(b_config["help_msg"])
-        self.button_list[-1].setCheckable(b_config["toggle"])
-
-        self.button_list[-1].clicked.connect(getattr(self.parent, b_name))
-
-class RibbonTab(QWidget):
-
-    def __init__(self, parent=None, funcs=None, tracker=None):
+    def __init__(self, parent=None, tracker=None):
         super(QWidget, self).__init__()
         self.parent = parent
         self.tracker = tracker
 
-        self.layout = QHBoxLayout(self)
-        self.layout.setAlignment(Qt.AlignLeft)
-        self.button_list = []
+        self.layout = QGridLayout(self)
+        self.layout.setContentsMargins(0,0,0,0)
 
-        self.init_buttons(funcs)
+        self.language = QComboBox()
+        self.language.addItems(cfg["LANGUAGE"])
+        self.layout.addWidget(self.language, 0, 0)
+        self.language.currentIndexChanged.connect(self.change_language)
+
+        self.orientation = QComboBox()
+        self.orientation.addItems(cfg["ORIENTATION"])
+        self.layout.addWidget(self.orientation, 1, 0)
+        self.orientation.currentIndexChanged.connect(self.change_orientation)
     
-    def init_buttons(self, funcs):
+    def change_language(self, i):
+        if self.language.currentText().strip() == "Japanese":
+            self.tracker.language = "jpn"
+        if self.language.currentText().strip() == "Korean":
+            self.tracker.language = "kor"
+        if self.language.currentText().strip() == "Chinese SIM":
+            self.tracker.language = "chi_sim"
+        if self.language.currentText().strip() == "Chinese TRA":
+            self.tracker.language = "chi_tra"
+        if self.language.currentText().strip() == "English":
+            self.tracker.language = "eng"
 
-        for func_name, func_cfg in funcs.items():
-            self.load_button_config(func_name, func_cfg)
-        self.layout.addStretch()
-        aob = PageNavigator(self.parent)
-        self.layout.addWidget(aob)
-    
-    def load_button_config(self, b_name, b_config):
-
-        s = self.parent.frameGeometry().height()*cfg["TBAR_ISIZE_REL"]#*b_config["is_half"]
-        m = s * cfg["TBAR_ISIZE_MARGIN"]
-
-        icon = QIcon()
-        path = b_config["path"]
-        if (exists(path)):
-            icon = QIcon(path)
-        else: icon = QIcon(cfg["TBAR_ICON_IMG"])
-
-        #TODO: add keyboard shortcut using name scheme
-        self.button_list.append(QPushButton(self))
-        self.button_list[-1].setIcon(icon)
-        self.button_list[-1].setIconSize(QSize(s,s))
-        self.button_list[-1].setFixedSize(QSize(m,m))
-
-        self.button_list[-1].setToolTip(b_config["help_msg"])
-        self.button_list[-1].setCheckable(b_config["toggle"])
-
-        self.button_list[-1].clicked.connect(getattr(self.parent, b_name))
-        self.layout.addWidget(self.button_list[-1], 
-            alignment=getattr(Qt, b_config["align"]))
+    def change_orientation(self, i):
+        if self.orientation.currentText().strip() == "Vertical":
+            self.tracker.orientation = "_vert"
+        if self.orientation.currentText().strip() == "Horizontal":
+            self.tracker.orientation = ""
 
 class Ribbon(QTabWidget):
     def __init__(self, parent=None, tracker=None):

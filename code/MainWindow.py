@@ -49,27 +49,7 @@ class PMainWindow(QWidget):
             self.tracker.filepath = filepath
             self.explorer.set_directory(filepath)
 
-    def save_image(self):
-        print("Image saved to ", self.tracker.filepath)
-        pass
-
-    def delete_cache(self):
-        print("Image deleted in ", self.tracker.filepath)
-        pass
-
-    def get_text_mask(self):
-        print("Generating mask for ", self.tracker.filepath)
-        pass
-
-    def edit_text_mask(self):
-        #TODO
-        pass
-
-    def save_current_mask(self):
-        pass
-
-    def delete_text_mask(self):
-        print("Text deleted from mask ", self.tracker.filepath)
+    def toggle_logging(self):
         pass
 
     def load_prev_image(self):
@@ -100,10 +80,3 @@ class PMainWindow(QWidget):
 
         index = self.explorer.model.index(i-1, 0, self.explorer.rootIndex())
         self.explorer.setCurrentIndex(index)
-
-    def toggle_manual_ocr(self):
-        # should be on by default
-        pass
-
-    def toggle_auto_ocr(self):
-        pass

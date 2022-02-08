@@ -15,7 +15,8 @@ class Tracker:
 
         self._image_list = []
 
-        self._mode = 0
+        self._language = "jpn"
+        self._orientation = "_vert"
     
     @property
     def p_image(self): 
@@ -49,6 +50,22 @@ class Tracker:
         self._image_list = list(map(lambda p: normpath(join(self.filepath, p)),
                         filter((lambda f: ('*'+splitext(f)[1]) 
                             in cfg["IMAGE_EXTENSIONS"]), filelist)))
+
+    @property
+    def language(self):
+        return self._language
+
+    @language.setter
+    def language(self, language):
+        self._language = language
+    
+    @property
+    def orientation(self):
+        return self._orientation
+
+    @orientation.setter
+    def orientation(self, orientation):
+        self._orientation = orientation
 
 class PImage(QPixmap):
 
