@@ -37,51 +37,51 @@
 
 QLabel#canvasText {
   font-size: 16pt;
-  background-color: rgba(72, 75, 106, 0.9); 
+  background-color: rgba(5, 80, 120, 0.9); 
   color: #eff0f1;
-  margin-top: 0.02em;
-  margin-left: 0.02em;
+  margin-top: 0.06em;
+  margin-left: 0.06em;
 }
 
 QLabel {
   font-size: 9pt;
-  color: #333333;
+  color: #eff0f1;
 }
 
 QWidget { 
   /*color: #eff0f1;*/
-  background-color: #f5f5f5;
+  background-color: #35363a;
   font-family: "Poppins";
 }
 
 /* Buttons */
 
 QPushButton {
-  background-color: #9394a5;
+  background-color: #31363b;
   border: 0.1em solid #76797c;
   min-height: 1.5em;
 }
 
 QPushButton:hover {
-  background-color: #9394a5; /* #62626e */
-  border: 0.1em solid #3b3b42;
+  background-color: #31363b;
+  border: 0.1em solid #0579b5;
   color: #eff0f1;
 }
 
 QPushButton:checked {
-  background-color: #484b6a;
+  background-color: #626568;
   border: 0.1em solid #76797c;
   color: #eff0f1;
 }
 
 QPushButton:checked:hover {
-  background-color: #484b6a;
-  border: 0.1em solid #3b3b42;
+  background-color: #626568;
+  border: 0.1em solid #0579b5;
   color: #eff0f1;
 }
 
 QPushButton:pressed {
-  background-color: #6e6f7d;
+  background-color: #454a4f;
   padding-bottom: -0.16em;
   color: #eff0f1;
 }
@@ -104,7 +104,6 @@ QComboBox {
   min-width: 2.5em;
   color: #eff0f1;
   font-size: 10pt;
-  background-color: #9394a5;
 }
 
 QComboBox:open {
@@ -121,7 +120,7 @@ QComboBox:closed {
 
 QComboBox:hover,
 QComboBox:focus {
-  border: 0.1em solid #3b3b42;
+  border: 0.1em solid #0579b5;
   color: #eff0f1;
 }
 
@@ -153,7 +152,7 @@ QComboBox::down-arrow:on {
 QAbstractSpinBox {
   padding: 0.2em;
   border: 0.1em solid #76797c;
-  background-color: #9394a5;
+  background-color: #1d2023;
   color: #eff0f1;
   border-radius: 0.1em;
   min-width: 3em;
@@ -162,7 +161,7 @@ QAbstractSpinBox {
 }
 
 QAbstractSpinBox:hover {
-  border: 0.1em solid #3b3b42;
+  border: 0.1em solid #0579b5;
 }
 
 QAbstractSpinBox:up-button{
@@ -176,40 +175,40 @@ QAbstractSpinBox:down-button {
 }
 
 QComboBox QAbstractItemView {
-  background-color: #9394a5;
-  selection-background-color: #8087c2;
+  background-color: #1d2023;
+  selection-background-color: #2a79a3;
   outline-color: 0em;
   border-radius: 0.09em;
 }
-
-/* Explorer */
 
 QAbstractItemView {
   color: #eff0f1;
 }
 
 QAbstractItemView::item:pressed {
-  background: #7b80bd;
+  background: #2a79a3;
   color: #eff0f1;
 }
 
 QAbstractItemView::item:selected:!active {
-  background: rgba(135, 143, 230, 0.1);
+  background: rgba(61, 173, 232, 0.1);
 }
 
+/* Explorer */
+
 QTreeView::item {
-  color: #333333;
+  color: #eff0f1;
 }
 
 QTreeView::item:!selected:hover
 {
-  background-color: rgba(135, 143, 230, 0.1);
+  background-color: rgba(61, 173, 232, 0.1);
   outline: 0;
-  color: #333333;
+  color: #eff0f1;
 }
 
 QHeaderView::section {
-  background-color: #9394a5;
+  background-color: #31363b;
   border: 0.04em solid #76797c;
   color: #eff0f1;
   padding-top: 0.3em;
@@ -247,8 +246,8 @@ QTabWidget::tab-bar {
 
 QTabBar::tab {
   color: #eff0f1;
-  background-color: #9394a5;
-  border: 0.1em solid #76797c;
+  background-color: #31363b;
+  border: 0.1em solid #C4C4C3;
   border-bottom-color: #76797c;
   border-top-left-radius: 0.5em;
   border-top-right-radius: 0.5em;
@@ -258,35 +257,38 @@ QTabBar::tab {
 }
 
 QTabBar::tab:selected, QTabBar::tab:hover {
-  border-color: #3b3b42;
-  border-bottom-color: #76797c;
+  background-color: #2c3034;
 }
 
 QTabBar::tab:selected {
-  border-color: #3b3b42;
-  background-color: #6e6f7d;
+  border-color: #0579b5;
+  border-bottom-color: #76797c;
 }
 
 /* Scroll Bar */
 
 QScrollBar:vertical {
-  background-color: #d2d3db;
+  background-color: #1d2023;
   width: 1em;
   margin: 0.65em 0.13em 0.65em 0.13em;
-  border: 0.04em #d2d3db;
+  border: 0.04em transparent #1d2023;
   border-radius: 0.4em;
 }
 
-QScrollBar::handle:vertical {
+QScrollBar:vertical:hover {
   background-color: #76797c;
-  border: 0.04em solid #76797c;
+}
+
+QScrollBar::handle:vertical {
+  background-color: #0579b5;
+  border: 0.04em solid #0579b5;
   min-height: 0.5em;
   border-radius: 0.4em;
 }
 
 QScrollBar::handle:vertical:hover {
-  background-color: #5c5e61;
-  border: 0.04em solid #5c5e61;
+  background-color: #0579b5;
+  border: 0.04em solid #0579b5;
 }
 
 QScrollBar::sub-line:vertical {

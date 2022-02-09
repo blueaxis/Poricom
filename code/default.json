@@ -22,14 +22,13 @@
 
     "TBAR_ICONS": "../assets/images/icons/",
     "TBAR_ICONS_LIGHT": "../assets/images/icons/",
-    "TBAR_ICONS_DARK": "../assets/images/icons/",
-    "TBAR_ICON_IMG": "../assets/images/icons/default_icon.png",
+    "TBAR_ICON_DEFAULT": "../assets/images/icons/default_icon.png",
 
     "TBAR_FUNCS": {
         "HOME": {
             "open_dir": {
                 "help_msg": "Open project directory",
-                "path": "../assets/images/icons/open_dir.png",
+                "path": "open_dir.png",
                 "toggle": false,
                 "align": "AlignLeft",
                 "icon_h": 1.0,
@@ -37,7 +36,7 @@
             },
             "load_model": {
                 "help_msg": "Load the machine learning model for more accurate text detection",
-                "path": "../assets/images/icons/load_model.png",
+                "path": "load_model.png",
                 "toggle": true,
                 "align": "AlignLeft",
                 "icon_h": 1.0,
@@ -45,7 +44,7 @@
             },
             "toggle_logging": {
                 "help_msg": "Log detected text to external file",
-                "path": "../assets/images/icons/toggle_logging.png",
+                "path": "toggle_logging.png",
                 "toggle": true,
                 "align": "AlignLeft",
                 "icon_h": 1.0,
@@ -57,7 +56,7 @@
     "MODE_FUNCS": {
         "load_image_at_idx": {
             "help_msg": "Jump to page",
-            "path": "../assets/images/icons/load_image_at_idx.png",
+            "path": "load_image_at_idx.png",
             "toggle": false,
             "align": "AlignRight",
             "icon_h": 0.45,
@@ -66,7 +65,7 @@
 
         "load_prev_image": {
             "help_msg": "Show previous image",
-            "path": "../assets/images/icons/load_prev_image.png",
+            "path": "load_prev_image.png",
             "toggle": false,
             "align": "AlignRight",
             "icon_h": 0.45,
@@ -75,7 +74,7 @@
 
         "load_next_image": {
             "help_msg": "Show next image",
-            "path": "../assets/images/icons/load_next_image.png",
+            "path": "load_next_image.png",
             "toggle": false,
             "align": "AlignRight",
             "icon_h": 0.45,

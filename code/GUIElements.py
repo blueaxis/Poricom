@@ -161,10 +161,10 @@ class RibbonTab(QWidget):
         m = cfg["TBAR_ISIZE_MARGIN"]
 
         icon = QIcon()
-        path = b_config["path"]
+        path = cfg["TBAR_ICONS"] + b_config["path"]
         if (exists(path)):
             icon = QIcon(path)
-        else: icon = QIcon(cfg["TBAR_ICON_IMG"])
+        else: icon = QIcon(cfg["TBAR_ICON_DEFAULT"])
 
         #TODO: add keyboard shortcut using name scheme
 
