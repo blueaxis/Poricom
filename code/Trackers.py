@@ -12,6 +12,7 @@ class Tracker:
         self._p_mask = PImage(filename)
 
         self._filepath = abspath(dirname(filename))
+        self._write_mode = False
 
         self._image_list = []
 
@@ -77,6 +78,18 @@ class Tracker:
     @ocr_model.setter
     def ocr_model(self, ocr_model):
         self._ocr_model = ocr_model
+
+    @property
+    def write_mode(self):
+        return self._write_mode
+
+    @write_mode.setter
+    def write_mode(self, write_mode):
+        self._write_mode = write_mode
+    
+    def switch_write_mode(self):
+        self._write_mode = not self._write_mode
+        return self._write_mode
 
     def switch_ocr_mode(self):
         self._better_ocr = not self._better_ocr

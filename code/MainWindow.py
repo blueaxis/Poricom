@@ -72,7 +72,7 @@ class PMainWindow(QWidget):
             self.explorer.set_directory(filepath)
 
     def toggle_logging(self):
-        pass
+        self.tracker.switch_write_mode()
 
     def load_model(self):
 

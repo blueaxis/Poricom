@@ -125,9 +125,15 @@ class OCRCanvas(QGraphicsView):
         # use threading either here or on image_io
         if (self.canvasText.isHidden()):
             self.canvasText.show()
+
         lang = self.tracker.language + self.tracker.orientation
+        log_path = self.tracker.filepath + "/log.txt"
+        log_to_file = self.tracker.write_mode
+
         text = io_.pixbox_to_text(self.grab(self.r_band.geometry()), lang, 
             self.tracker.ocr_model)
+        io_.log_text(text, mode=log_to_file, path=log_path)
+
         self.canvasText.setText(text)
         self.canvasText.adjustSize()
 

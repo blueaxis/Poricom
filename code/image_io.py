@@ -1,3 +1,4 @@
+from asyncore import write
 from io import BytesIO
 
 from PyQt5.QtCore import QBuffer
@@ -23,11 +24,13 @@ def pixbox_to_text(pixmap, lang="jpn_vert", model=None):
         with PyTessBaseAPI(path="../assets/languages/", lang=lang, oem = 1, psm=1) as api:
             api.SetImage(pil_im)
             text = api.GetUTF8Text()
-    #text = text.replace("\n", " ")
 
+    return text.strip()
+
+def log_text(text, mode=False, path="."):
     clipboard = QGuiApplication.clipboard()
     clipboard.setText(text)
 
-    # allow writing to a log file
-
-    return text
+    if mode:
+        with open(path, 'a', encoding="utf-8") as fh:
+            fh.write(text + "\n")
