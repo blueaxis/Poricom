@@ -1,0 +1,308 @@
+/*
+ *  BreezeDark stylesheet.
+ *
+ *  :author: Colin Duquesnoy
+ *  :editor: Alex Huszagh
+ *  :license: MIT, see LICENSE.md
+ *
+ *  This is originally a fork of QDarkStyleSheet, and is based on Breeze/
+ *  BreezeDark color scheme, but is in no way affiliated with KDE.
+ *
+ * ---------------------------------------------------------------------
+ *  The MIT License (MIT)
+ *
+ * Copyright (c) <2013-2014> <Colin Duquesnoy>
+ * Copyright (c) <2015-2021> <Alex Huszagh>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * ---------------------------------------------------------------------
+ */
+
+QLabel#canvasText {
+  font-size: 16pt;
+  background-color: rgba(5, 80, 120, 0.9); 
+  color: #eff0f1;
+  margin-top: 0.06em;
+  margin-left: 0.06em;
+}
+
+QLabel {
+  font-size: 9pt;
+  color: #eff0f1;
+}
+
+QWidget { 
+  /*color: #eff0f1;*/
+  background-color: #35363a;
+  font-family: "Poppins";
+}
+
+/* Buttons */
+
+QPushButton {
+  background-color: #31363b;
+  border: 0.1em solid #76797c;
+  min-height: 1.5em;
+}
+
+/* 3daee9 to 0579b5 */
+QPushButton:hover {
+  background-color: #31363b;
+  border: 0.1em solid #0579b5;
+  color: #eff0f1;
+}
+
+QPushButton:checked {
+  background-color: #626568;
+  border: 0.1em solid #76797c;
+  color: #eff0f1;
+}
+
+QPushButton:checked:hover {
+  background-color: #626568;
+  border: 0.1em solid #0579b5;
+  color: #eff0f1;
+}
+
+QPushButton:pressed {
+  background-color: #454a4f;
+  padding-bottom: -0.16em;
+  color: #eff0f1;
+}
+
+/* Dialog */
+
+QDialogButtonBox QPushButton,
+QMessageBox QPushButton {
+  color: #eff0f1;
+  min-height: 1.5em;
+  min-width: 6em;
+  font-size: 9pt;
+}
+
+/* Combo box */
+
+QComboBox {
+  border: 0.1em solid #76797c;
+  padding: 0.23em;
+  min-width: 2.5em;
+  color: #eff0f1;
+  font-size: 10pt;
+}
+
+QComboBox:open {
+  border-width: 0.1em;
+  border-color: #76797c;
+  color: #eff0f1;
+}
+
+QComboBox:closed {
+  border-width: 0.1em;
+  border-color: #76797c;
+  color: #eff0f1;
+}
+
+QComboBox:hover,
+QComboBox:focus {
+  border: 0.1em solid #0579b5;
+  color: #eff0f1;
+}
+
+QComboBox::drop-down {
+  subcontrol-origin: padding;
+  subcontrol-position: top right;
+  width: 0.65em;
+
+  border-left-width: 0em;
+  border-left-style: solid;
+  border-top-right-radius: 0.13em;
+  border-bottom-right-radius: 0.13em;
+}
+
+QComboBox::down-arrow {
+  border-image: url(../assets/images/icons/cb_expand.png);
+  width: 1em;
+  height: 1em;
+  margin-right: 0.4em;
+}
+
+QComboBox::down-arrow:on {
+  border-image: url(../assets/images/icons/cb_contract.png);
+  width: 1em;
+  height: 1em;
+  margin-right: 0.4em;
+}
+
+QAbstractSpinBox {
+  padding: 0.2em;
+  border: 0.1em solid #76797c;
+  background-color: #1d2023;
+  color: #eff0f1;
+  border-radius: 0.1em;
+  min-width: 3em;
+  min-height: 1.5em;
+  font-size: 9pt;
+}
+
+QAbstractSpinBox:hover {
+  border: 0.1em solid #0579b5;
+}
+
+QAbstractSpinBox:up-button{
+  width: 0em;
+  height: 0em;
+}
+
+QAbstractSpinBox:down-button {
+  width: 0em;
+  height: 0em;
+}
+
+QComboBox QAbstractItemView {
+  background-color: #1d2023;
+  selection-background-color: #2a79a3;
+  outline-color: 0em;
+  border-radius: 0.09em;
+}
+
+QAbstractItemView {
+  color: #eff0f1;
+}
+
+QAbstractItemView::item:pressed {
+  background: #2a79a3;
+  color: #eff0f1;
+}
+
+QAbstractItemView::item:selected:!active {
+  background: rgba(61, 173, 232, 0.1);
+}
+
+/* Explorer */
+
+QTreeView::item {
+  color: #eff0f1;
+}
+
+QTreeView::item:!selected:hover
+{
+  background-color: rgba(61, 173, 232, 0.1);
+  outline: 0;
+  color: #eff0f1;
+}
+
+QHeaderView::section {
+  background-color: #31363b;
+  border: 0.04em solid #76797c;
+  color: #eff0f1;
+  padding-top: 0.3em;
+  padding-bottom: -0.3em;
+  border-radius: 0em;
+  text-align: center;
+}
+
+/* Ribbon */
+
+QTabWidget::pane:top {
+  border: 0.04em solid #76797c;
+  top: -0.04em;
+}
+
+QTabWidget::pane:bottom {
+  border: 0.04em solid #76797c;
+  bottom: -0.04em;
+}
+
+QTabWidget::pane:left {
+  border: 0.04em solid #76797c;
+  left: -0.04em;
+}
+
+QTabWidget::pane:right {
+  border: 0.04em solid #76797c;
+  right: -0.04em;
+}
+
+QTabWidget::tab-bar {
+  left: 0.6em;
+  bottom: 0.06em;
+}
+
+QTabBar::tab {
+  color: #eff0f1;
+  background-color: #31363b;
+  border: 0.1em solid #C4C4C3;
+  border-bottom-color: #76797c;
+  border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;
+  margin-right: 0.3em;
+  min-width: 4em;
+  padding: 0.1em;
+}
+
+QTabBar::tab:selected, QTabBar::tab:hover {
+  background-color: #2c3034;
+}
+
+QTabBar::tab:selected {
+  border-color: #0579b5;
+  border-bottom-color: #76797c;
+}
+
+/* Scroll Bar */
+
+QScrollBar:vertical {
+  background-color: #1d2023;
+  width: 0.65em;
+  margin: 0.65em 0.13em 0.65em 0.13em;
+  border: 0.04em transparent #1d2023;
+  border-radius: 0.17em;
+}
+
+QScrollBar:vertical:hover {
+  background-color: #76797c;
+}
+
+QScrollBar::handle:vertical {
+  background-color: #0579b5;
+  border: 0.04em solid #0579b5;
+  min-height: 0.5em;
+  border-radius: 0.17em;
+}
+
+QScrollBar::handle:vertical:hover {
+  background-color: #0579b5;
+  border: 0.04em solid #0579b5;
+}
+
+QScrollBar::sub-line:vertical {
+  height: 0em;
+  width: 0em
+}
+
+QScrollBar::add-line:vertical {
+  height: 0em;
+  width: 0em;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+  background: none;
+}

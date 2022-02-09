@@ -30,6 +30,7 @@ class ImageNavigator(QTreeView):
         self.setIndentation(0)
 
         self.set_directory(tracker.filepath)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
     def currentChanged(self, current, previous):
         if not current.isValid():
@@ -148,9 +149,9 @@ class RibbonTab(QWidget):
             self.load_button_config(func_name, func_cfg)
             self.layout.addWidget(self.button_list[-1],
                 alignment=getattr(Qt, func_cfg["align"]))
+        self.layout.addStretch()
 
         self.layout.addWidget(LanguagePicker(self.parent, self.tracker))
-        self.layout.addStretch()
         self.layout.addWidget(PageNavigator(self.parent))
     
     def load_button_config(self, b_name, b_config):

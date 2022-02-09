@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout,
                             QWidget, QFileDialog, QInputDialog)
+from PyQt5.QtCore import Qt 
 from GUIElements import ImageNavigator, Ribbon, OCRCanvas
 from default import cfg
 
@@ -52,6 +53,9 @@ class PMainWindow(QWidget):
     def toggle_logging(self):
         pass
 
+    def load_model(self):
+        pass
+
     def load_prev_image(self):
         # change gray to blue selection
         index = self.explorer.indexAbove(self.explorer.currentIndex())
@@ -74,7 +78,8 @@ class PMainWindow(QWidget):
             f'Enter page number: (max is {row_count})',
             value = -1,
             min = 1,
-            max = row_count)
+            max = row_count,
+            flags = Qt.CustomizeWindowHint| Qt.WindowTitleHint)
         if (i == -1):
             return
 
