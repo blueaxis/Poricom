@@ -5,7 +5,7 @@ from PIL import Image
 from PyQt5.QtGui import QGuiApplication
 from tesserocr import PyTessBaseAPI
 
-def pixbox_to_text(pixmap, lang="jpn_vert"):
+def pixbox_to_text(pixmap, lang="jpn_vert", model=None):
 
     buffer = QBuffer()
     buffer.open(QBuffer.ReadWrite)
@@ -13,14 +13,17 @@ def pixbox_to_text(pixmap, lang="jpn_vert"):
     pil_im = Image.open(BytesIO(buffer.data()))
     text = ""
 
+    if model is not None:
+        text = model(pil_im)
+
     # PSM = 1 works most of the time except on smaller bounding boxes.
     # By smaller, we mean textboxes with less text. Usually these
     # boxes have at most one vertical line of text.
-    with PyTessBaseAPI(path="../assets/languages/", lang=lang, oem = 1, psm=1) as api:
-        api.SetImage(pil_im)
-        text = api.GetUTF8Text()
-
-    text = text.replace("\n", " ")
+    else:
+        with PyTessBaseAPI(path="../assets/languages/", lang=lang, oem = 1, psm=1) as api:
+            api.SetImage(pil_im)
+            text = api.GetUTF8Text()
+    #text = text.replace("\n", " ")
 
     clipboard = QGuiApplication.clipboard()
     clipboard.setText(text)

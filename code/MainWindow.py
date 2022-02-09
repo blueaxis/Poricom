@@ -1,12 +1,29 @@
-from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout,
-                            QWidget, QFileDialog, QInputDialog)
-from PyQt5.QtCore import Qt 
+from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget,
+                            QPushButton, QFileDialog, QInputDialog)
+from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal, pyqtSlot
+from manga_ocr import MangaOcr
+from Trackers import Tracker
+
 from GUIElements import ImageNavigator, Ribbon, OCRCanvas
 from default import cfg
+
+class Worker(QObject):
+    finished = pyqtSignal()
+
+    @pyqtSlot(Tracker)
+    def run(self, tracker):
+        better_ocr = tracker.switch_ocr_mode()
+        if better_ocr:
+            tracker.ocr_model = MangaOcr()
+        else:
+            tracker.ocr_model = None
+        self.finished.emit()
 
 class PMainWindow(QWidget):
     # TODO: add pyqtSlot decorator that will update
     # all GUI elements on the window
+
+    runLoadModel = pyqtSignal(Tracker)
 
     def __init__(self, parent=None, tracker=None):
         super(QWidget, self).__init__(parent)
@@ -31,6 +48,10 @@ class PMainWindow(QWidget):
 
         vlayout.addWidget(main_widget)        
 
+    @pyqtSlot()
+    def loadModelHelper(self):
+        self.runLoadModel.emit(self.tracker)
+
     def view_image_from_explorer(self, filename): 
         self.tracker.p_image = filename
         if not self.tracker.p_image.is_valid():
@@ -54,7 +75,22 @@ class PMainWindow(QWidget):
         pass
 
     def load_model(self):
-        pass
+
+        self.thread = QThread()
+        self.worker = Worker()
+        self.worker.moveToThread(self.thread)
+
+        self.thread.started.connect(self.loadModelHelper)
+        self.runLoadModel.connect(self.worker.run)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+        
+        self.thread.start()
+
+        load_model_btn = self.ribbon.findChild(QPushButton, "load_model")
+        load_model_btn.setEnabled(False)
+        self.thread.finished.connect(lambda: load_model_btn.setEnabled(True))
 
     def load_prev_image(self):
         # change gray to blue selection

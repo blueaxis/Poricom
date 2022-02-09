@@ -17,6 +17,9 @@ class Tracker:
 
         self._language = "jpn"
         self._orientation = "_vert"
+
+        self._better_ocr = False
+        self._ocr_model = None
     
     @property
     def p_image(self): 
@@ -66,6 +69,18 @@ class Tracker:
     @orientation.setter
     def orientation(self, orientation):
         self._orientation = orientation
+
+    @property
+    def ocr_model(self):
+        return self._ocr_model
+
+    @ocr_model.setter
+    def ocr_model(self, ocr_model):
+        self._ocr_model = ocr_model
+
+    def switch_ocr_mode(self):
+        self._better_ocr = not self._better_ocr
+        return self._better_ocr
 
 class PImage(QPixmap):
 

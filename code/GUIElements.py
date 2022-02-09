@@ -126,7 +126,8 @@ class OCRCanvas(QGraphicsView):
         if (self.canvasText.isHidden()):
             self.canvasText.show()
         lang = self.tracker.language + self.tracker.orientation
-        text = io_.pixbox_to_text(self.grab(self.r_band.geometry()), lang)
+        text = io_.pixbox_to_text(self.grab(self.r_band.geometry()), lang, 
+            self.tracker.ocr_model)
         self.canvasText.setText(text)
         self.canvasText.adjustSize()
 
@@ -169,6 +170,8 @@ class RibbonTab(QWidget):
         #TODO: add keyboard shortcut using name scheme
 
         self.button_list.append(QPushButton(self))
+        self.button_list[-1].setObjectName(b_name)
+
         self.button_list[-1].setIcon(icon)
         self.button_list[-1].setIconSize(QSize(w,h))
         self.button_list[-1].setFixedSize(QSize(w*m,h*m))
