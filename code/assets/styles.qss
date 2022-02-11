@@ -137,14 +137,14 @@ QComboBox::drop-down {
 }
 
 QComboBox::down-arrow {
-  border-image: url(../assets/images/icons/cb_expand.png);
+  border-image: url(./assets/images/icons/cb_expand.png);
   width: 1em;
   height: 1em;
   margin-right: 0.4em;
 }
 
 QComboBox::down-arrow:on {
-  border-image: url(../assets/images/icons/cb_contract.png);
+  border-image: url(./assets/images/icons/cb_contract.png);
   width: 1em;
   height: 1em;
   margin-right: 0.4em;

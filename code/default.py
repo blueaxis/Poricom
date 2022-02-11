@@ -22,25 +22,30 @@ cfg = {
 
     "LANGUAGE": [" Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"],
     "ORIENTATION": [" Vertical", " Horizontal"],
+    "LANG_PATH": "./assets/languages/",
+
+    "STYLES_PATH": "./assets/",
+    "STYLES_DEFAULT": "./assets/styles.qss",
     
     "NAV_VIEW_RATIO": [3,11],
-    "NAV_ROOT": "../assets/images/",
+    "NAV_ROOT": "./assets/images/",
 
     "NAV_FUNCS": {
         "path_changed": "view_image_from_fdialog",
         "nav_clicked": "view_image_from_explorer"
     },
 
-    "HOME_IMAGE": "../assets/images/home.png",
+    "LOGO": "./assets/images/icons/logo.ico",
+    "HOME_IMAGE": "./assets/images/home.png",
 
     "RBN_HEIGHT": 2.4,
 
     "TBAR_ISIZE_REL": 0.1,
     "TBAR_ISIZE_MARGIN": 1.3,
 
-    "TBAR_ICONS": "../assets/images/icons/",
-    "TBAR_ICONS_LIGHT": "../assets/images/icons/",
-    "TBAR_ICON_DEFAULT": "../assets/images/icons/default_icon.png",
+    "TBAR_ICONS": "./assets/images/icons/",
+    "TBAR_ICONS_LIGHT": "./assets/images/icons/",
+    "TBAR_ICON_DEFAULT": "./assets/images/icons/default_icon.png",
 
     "TBAR_FUNCS": {
         "HOME": {

@@ -23,17 +23,18 @@ from PyQt5.QtGui import QIcon
 
 from MainWindow import PMainWindow
 from Trackers import Tracker
+from default import cfg
 
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     app.setApplicationName("Poricom")
-    app.setWindowIcon(QIcon("../assets/images/icons/logo.ico"))
+    app.setWindowIcon(QIcon(cfg["LOGO"]))
 
     tracker = Tracker()
     widget = PMainWindow(parent=None, tracker=tracker)
 
-    styles = "../assets/styles.qss"
+    styles = cfg["STYLES_DEFAULT"]
     with open(styles, 'r') as fh:
         app.setStyleSheet(fh.read())
 

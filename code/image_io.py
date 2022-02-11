@@ -22,6 +22,7 @@ from PyQt5.QtCore import QBuffer
 from PIL import Image
 from PyQt5.QtGui import QGuiApplication
 from tesserocr import PyTessBaseAPI
+from default import cfg
 
 def pixbox_to_text(pixmap, lang="jpn_vert", model=None):
 
@@ -38,7 +39,7 @@ def pixbox_to_text(pixmap, lang="jpn_vert", model=None):
     # By smaller, we mean textboxes with less text. Usually these
     # boxes have at most one vertical line of text.
     else:
-        with PyTessBaseAPI(path="../assets/languages/", lang=lang, oem = 1, psm=1) as api:
+        with PyTessBaseAPI(path=cfg["LANG_PATH"], lang=lang, oem = 1, psm=1) as api:
             api.SetImage(pil_im)
             text = api.GetUTF8Text()
 
