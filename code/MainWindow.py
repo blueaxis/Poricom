@@ -16,8 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget,
-                            QPushButton, QFileDialog, QInputDialog)
+from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton, 
+                            QMessageBox, QFileDialog, QInputDialog)
 from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal, pyqtSlot
 from manga_ocr import MangaOcr
 from Trackers import Tracker
@@ -94,6 +94,23 @@ class PMainWindow(QWidget):
 
     def load_model(self):
 
+        load_model_btn = self.ribbon.findChild(QPushButton, "load_model")
+
+        confirmation = QMessageBox(QMessageBox.NoIcon, 
+            "Load the MangaOCR model?", 
+            "If you are running this for the first time, this will " + 
+            "download the MangaOcr model which is about 400 MB in size. " + 
+            "This will improve the accuracy of Japanese text detection " + 
+            "in Poricom. If it is already in your cache, it will take a " +
+            "few seconds to load the model.",
+            QMessageBox.Ok | QMessageBox.Cancel)
+        ret = confirmation.exec()
+        if (ret == QMessageBox.Ok):
+            pass
+        else: 
+            load_model_btn.setChecked(False)
+            return
+
         self.thread = QThread()
         self.worker = Worker()
         self.worker.moveToThread(self.thread)
@@ -103,10 +120,10 @@ class PMainWindow(QWidget):
         self.worker.finished.connect(self.thread.quit)
         self.worker.finished.connect(self.worker.deleteLater)
         self.thread.finished.connect(self.thread.deleteLater)
+        self.thread.finished.connect(self.confirm_load_model)
         
         self.thread.start()
 
-        load_model_btn = self.ribbon.findChild(QPushButton, "load_model")
         load_model_btn.setEnabled(False)
         self.thread.finished.connect(lambda: load_model_btn.setEnabled(True))
 
@@ -139,3 +156,9 @@ class PMainWindow(QWidget):
 
         index = self.explorer.model.index(i-1, 0, self.explorer.rootIndex())
         self.explorer.setCurrentIndex(index)
+    
+    def confirm_load_model(self):
+        QMessageBox(QMessageBox.NoIcon, 
+            "MangaOCR model loaded", 
+            "You may now use the MangaOCR model for Japanese text detection",
+            QMessageBox.Ok).exec()

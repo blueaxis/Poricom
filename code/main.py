@@ -28,14 +28,15 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     app.setApplicationName("Poricom")
-    app.setWindowIcon(QIcon("../assets/images/icons/logo.png"))
+    app.setWindowIcon(QIcon("../assets/images/icons/logo.ico"))
 
     tracker = Tracker()
     widget = PMainWindow(parent=None, tracker=tracker)
-    
+
     styles = "../assets/styles.qss"
     with open(styles, 'r') as fh:
         app.setStyleSheet(fh.read())
 
     widget.showMaximized()
+    widget.load_model()
     sys.exit(app.exec_())

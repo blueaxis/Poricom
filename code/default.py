@@ -16,11 +16,85 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from json import load
+cfg = {
+    "IMAGE_EXTENSIONS": ["*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png", 
+                         "*.pbm", "*.pgm", "*.ppm", "*.xbm", "*.xpm"],
 
-cfg = {}
+    "LANGUAGE": [" Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"],
+    "ORIENTATION": [" Vertical", " Horizontal"],
+    
+    "NAV_VIEW_RATIO": [3,11],
+    "NAV_ROOT": "../assets/images/",
 
-# Convert default.json to a dictionary instead
+    "NAV_FUNCS": {
+        "path_changed": "view_image_from_fdialog",
+        "nav_clicked": "view_image_from_explorer"
+    },
 
-with open("default.json") as f:
-    cfg = load(f)
+    "HOME_IMAGE": "../assets/images/home.png",
+
+    "RBN_HEIGHT": 2.4,
+
+    "TBAR_ISIZE_REL": 0.1,
+    "TBAR_ISIZE_MARGIN": 1.3,
+
+    "TBAR_ICONS": "../assets/images/icons/",
+    "TBAR_ICONS_LIGHT": "../assets/images/icons/",
+    "TBAR_ICON_DEFAULT": "../assets/images/icons/default_icon.png",
+
+    "TBAR_FUNCS": {
+        "HOME": {
+            "open_dir": {
+                "help_msg": "Open project directory",
+                "path": "open_dir.png",
+                "toggle": False,
+                "align": "AlignLeft",
+                "icon_h": 1.0,
+                "icon_w": 1.0
+            },
+            "load_model": {
+                "help_msg": "Load the machine learning model for more accurate text detection",
+                "path": "load_model.png",
+                "toggle": True,
+                "align": "AlignLeft",
+                "icon_h": 1.0,
+                "icon_w": 1.0
+            },
+            "toggle_logging": {
+                "help_msg": "Log detected text to external file",
+                "path": "toggle_logging.png",
+                "toggle": True,
+                "align": "AlignLeft",
+                "icon_h": 1.0,
+                "icon_w": 1.0
+            }
+        }
+    },
+
+    "MODE_FUNCS": {
+        "load_image_at_idx": {
+            "help_msg": "Jump to page",
+            "path": "load_image_at_idx.png",
+            "toggle": False,
+            "align": "AlignRight",
+            "icon_h": 0.45,
+            "icon_w": 1.3
+        },
+        "load_prev_image": {
+            "help_msg": "Show previous image",
+            "path": "load_prev_image.png",
+            "toggle": False,
+            "align": "AlignRight",
+            "icon_h": 0.45,
+            "icon_w": 0.6
+        },
+        "load_next_image": {
+            "help_msg": "Show next image",
+            "path": "load_next_image.png",
+            "toggle": False,
+            "align": "AlignRight",
+            "icon_h": 0.45,
+            "icon_w": 0.6
+        }
+    }
+}

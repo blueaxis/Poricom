@@ -44,7 +44,7 @@ QLabel#canvasText {
 }
 
 QLabel {
-  font-size: 9pt;
+  font-size: 10pt;
   color: #333333;
 }
 
