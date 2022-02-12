@@ -57,14 +57,14 @@ Listed below are some of the features of Poricom. Click the arrow to see how eac
 </details>
 
 ## Installation <a name = "installation"></a>
-Installer will be released soon.
+Download the latest zip file [here](https://github.com/bluaxees/Poricom/releases). Decompress the file in the desired directory. Make sure that the `assets` folder is in the same folder as the executable `Poricom.exe`.
 
-For developers, clone this repo and install requirements: `pip install -r requirements.txt`. Run the app in the command line using `python main.py`.
+For developers, clone this repo and install requirements: `pip install -r requirements.txt`. Run the app in the command line using `python main.py`. 
 
 ### System Requirements
 
 Recommended:
-- Hard drive: 750 MB HD space
+- Hard drive: at least 800 MB HD space
 - RAM: at least 2 GB
 
 Approximately 250 MB of free space and 200 MB of memory is needed to run the application using the Tesseract API. If using the Manga OCR model, an additional 450 MB of free space and 800 MB of memory is required.
