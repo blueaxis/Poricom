@@ -23,7 +23,8 @@ from PyQt5.QtGui import (QIcon)
 from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QRubberBand, QWidget,
                             QPushButton, QTabWidget, QComboBox,
                             QTreeView, QFileSystemModel,
-                            QGraphicsView, QGraphicsScene)
+                            QGraphicsView, QGraphicsScene,
+                            QApplication)
 
 import image_io as io_
 from default import cfg
@@ -73,24 +74,15 @@ class ImageNavigator(QTreeView):
         self.setRootIndex(self.model.setRootPath(path))
         self.setTopIndex()
 
-# TODO: Create an BaseCanvas class where 
-# OCRCanvas and EditCanvas will inherit from.
-
-class OCRCanvas(QGraphicsView):
+class BaseCanvas(QGraphicsView):
 
     def __init__(self, parent=None, tracker=None):
         super(QGraphicsView, self).__init__(parent)
         self.parent = parent
         self.tracker = tracker
 
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-        self.scene = QGraphicsScene()
-        self.setScene(self.scene)
-
-        self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
-            self.viewport().geometry().width()-100, Qt.SmoothTransformation))
 
         self.last_point = QPoint()
         self.r_band = QRubberBand(QRubberBand.Rectangle, self)
@@ -104,16 +96,11 @@ class OCRCanvas(QGraphicsView):
         self.canvasText.hide()
         self.canvasText.setObjectName("canvasText")
 
-    def view_image(self):       
+        self.scene = QGraphicsScene()
+        self.setScene(self.scene)
 
-        self.verticalScrollBar().setSliderPosition(0)
-        self.pixmap.setPixmap(self.tracker.p_image.scaledToWidth(
+        self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
             0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
-        self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
-
-    def resizeEvent(self, event):
-        self.view_image()
-        QGraphicsView.resizeEvent(self, event)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -154,6 +141,32 @@ class OCRCanvas(QGraphicsView):
 
         self.canvasText.setText(text)
         self.canvasText.adjustSize()
+
+class OCRCanvas(BaseCanvas):
+
+    def __init__(self, parent=None, tracker=None):
+        super().__init__(parent, tracker)
+        self.parent = parent
+        self.tracker = tracker
+
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+
+        self.scene = QGraphicsScene()
+        self.setScene(self.scene)
+
+        self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
+            0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
+
+    def view_image(self):
+
+        self.verticalScrollBar().setSliderPosition(0)
+        self.pixmap.setPixmap(self.tracker.p_image.scaledToWidth(
+            0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
+        self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
+
+    def resizeEvent(self, event):
+        self.view_image()
+        QGraphicsView.resizeEvent(self, event)
 
 class RibbonTab(QWidget):
 
