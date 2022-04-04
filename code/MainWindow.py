@@ -17,16 +17,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton, 
-                            QMessageBox, QFileDialog, QInputDialog)
-from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal, pyqtSlot
+                            QMessageBox, QFileDialog, QInputDialog, QMainWindow)
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 from manga_ocr import MangaOcr
-from Trackers import Tracker
 
-from GUIElements import ImageNavigator, Ribbon, OCRCanvas
+from Trackers import Tracker
+from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, 
+                        BaseWorker, BaseThread)
 from default import cfg
 
-class Worker(QObject):
-    finished = pyqtSignal()
+class LoadModelWorker(BaseWorker):
 
     @pyqtSlot(Tracker)
     def run(self, tracker):
@@ -37,7 +37,7 @@ class Worker(QObject):
             tracker.ocr_model = None
         self.finished.emit()
 
-class PMainWindow(QWidget):
+class PMainWindow(QMainWindow):
     # TODO: add pyqtSlot decorator that will update
     # all GUI elements on the window
 
@@ -46,25 +46,23 @@ class PMainWindow(QWidget):
     def __init__(self, parent=None, tracker=None):
         super(QWidget, self).__init__(parent)
         self.tracker = tracker
-
-        vlayout = QVBoxLayout(self)
+        self.vlayout = QVBoxLayout()
 
         self.ribbon = Ribbon(self, self.tracker)
-        vlayout.addWidget(self.ribbon)
-
+        self.vlayout.addWidget(self.ribbon)
         self.canvas = OCRCanvas(self, self.tracker)
         self.explorer = ImageNavigator(self, self.tracker)
 
-        main_widget = QWidget()
-        self.hlayout = QHBoxLayout(main_widget)
-        self.hlayout.addWidget(self.explorer, cfg["NAV_VIEW_RATIO"][0])
-        self.hlayout.addWidget(self.canvas, cfg["NAV_VIEW_RATIO"][1])
+        self._view_widget = QWidget()
+        hlayout = QHBoxLayout(self._view_widget)
+        hlayout.addWidget(self.explorer, cfg["NAV_VIEW_RATIO"][0])
+        hlayout.addWidget(self.canvas, cfg["NAV_VIEW_RATIO"][1])
+        hlayout.setContentsMargins(0,0,0,0)
 
-        # Ribbon is off by 2 pixels on my machine
-        # Might need to check this on another pc
-        self.hlayout.setContentsMargins(0,0,2,0)
-
-        vlayout.addWidget(main_widget)        
+        self.vlayout.addWidget(self._view_widget)
+        _main_widget = QWidget()
+        _main_widget.setLayout(self.vlayout)
+        self.setCentralWidget(_main_widget)
 
     @pyqtSlot()
     def loadModelHelper(self):
@@ -93,7 +91,6 @@ class PMainWindow(QWidget):
         self.tracker.switch_write_mode()
 
     def load_model(self):
-
         load_model_btn = self.ribbon.findChild(QPushButton, "load_model")
         load_model_btn.setChecked(not self.tracker.ocr_model)
 
@@ -113,31 +110,22 @@ class PMainWindow(QWidget):
                 load_model_btn.setChecked(False)
                 return
 
-        self.thread = QThread()
-        self.worker = Worker()
+        self.worker = LoadModelWorker()
+        self.thread = BaseThread(self.worker, self.loadModelHelper,
+                              self.confirm_load_model, self.runLoadModel)
         self.worker.moveToThread(self.thread)
-
-        self.thread.started.connect(self.loadModelHelper)
-        self.runLoadModel.connect(self.worker.run)
-        self.worker.finished.connect(self.thread.quit)
-        self.worker.finished.connect(self.worker.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
-        self.thread.finished.connect(self.confirm_load_model)
-        
         self.thread.start()
 
         load_model_btn.setEnabled(False)
         self.thread.finished.connect(lambda: load_model_btn.setEnabled(True))
 
     def load_prev_image(self):
-        # change gray to blue selection
         index = self.explorer.indexAbove(self.explorer.currentIndex())
         if (not index.isValid()):
             return
         self.explorer.setCurrentIndex(index)
 
     def load_next_image(self):
-        # change gray to blue selection
         index = self.explorer.indexBelow(self.explorer.currentIndex())
         if (not index.isValid()):
             return
@@ -158,9 +146,8 @@ class PMainWindow(QWidget):
 
         index = self.explorer.model.index(i-1, 0, self.explorer.rootIndex())
         self.explorer.setCurrentIndex(index)
-    
+
     def confirm_load_model(self):
-        
         model_name = "MangaOCR" if self.tracker.ocr_model else "Tesseract"
         QMessageBox(QMessageBox.NoIcon, 
             f"{model_name} model loaded", 

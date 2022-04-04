@@ -18,18 +18,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os.path import exists
 
-from PyQt5.QtCore import Qt, QDir, QSize, QRectF, QPoint, QRect, QTimer
 from PyQt5.QtGui import (QIcon)
-from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QRubberBand, QWidget,
-                            QPushButton, QTabWidget, QComboBox,
+from PyQt5.QtCore import (Qt, QDir, QSize, QRectF, QPoint, QRect, 
+                         QThread, QTimer, QObject, pyqtSignal, pyqtSlot)
+from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QRubberBand,
+                            QWidget, QTabWidget, QPushButton, QComboBox,
                             QTreeView, QFileSystemModel,
-                            QGraphicsView, QGraphicsScene,
-                            QApplication)
+                            QGraphicsView, QGraphicsScene, QLabel)
 
 import image_io as io_
 from default import cfg
 
 # TODO: Decorate slots using pyqtSlot
+
+class BaseWorker(QObject):
+    finished = pyqtSignal()
+
+    @pyqtSlot()
+    def run(self):
+        self.finished.emit()
+
+class BaseThread(QThread):
+
+    def __init__(self, worker, start_func, end_func, threadSignal):
+        super().__init__()
+        self.worker = worker
+        self.worker.moveToThread(self)
+
+        self.started.connect(start_func)
+        threadSignal.connect(self.worker.run)
+        self.worker.finished.connect(self.quit)
+        self.worker.finished.connect(self.deleteLater)
+        self.finished.connect(self.deleteLater)
+        self.finished.connect(end_func)
 
 class ImageNavigator(QTreeView):
     layoutCheck = False
@@ -86,7 +107,7 @@ class BaseCanvas(QGraphicsView):
 
         self.last_point = QPoint()
         self.r_band = QRubberBand(QRubberBand.Rectangle, self)
-        
+
         self.timer_ = QTimer()
         self.timer_.setInterval(300)
         self.timer_.setSingleShot(True)
@@ -98,9 +119,8 @@ class BaseCanvas(QGraphicsView):
 
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
-
         self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
-            0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
+            self.viewport().geometry().width(), Qt.SmoothTransformation))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -110,12 +130,14 @@ class BaseCanvas(QGraphicsView):
         QGraphicsView.mousePressEvent(self, event)
 
     def mouseReleaseEvent(self, event):
+        # TODO: There is rare bug where if the rubber band is moved too 
+        # fast and is released near the point where the mouse is pressed,
+        # PIL.UnidentifiedImageError occurs because the size of the image
+        # is 0 bytes.
         if (event.button() == Qt.LeftButton):
             self.r_band.setGeometry(QRect(self.last_point, event.pos()).normalized())
             self.r_band.hide()
-
             self.canvasText.hide()
-            # self.r_band.close()
         
         QGraphicsView.mouseReleaseEvent(self, event)
     
@@ -146,14 +168,11 @@ class OCRCanvas(BaseCanvas):
 
     def __init__(self, parent=None, tracker=None):
         super().__init__(parent, tracker)
-        self.parent = parent
-        self.tracker = tracker
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
-
         self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
             0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
 
