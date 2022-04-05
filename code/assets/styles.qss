@@ -303,3 +303,38 @@ QScrollBar::add-page:vertical,
 QScrollBar::sub-page:vertical {
   background: none;
 }
+
+QScrollBar:horizontal {
+  background-color: #d2d3db;
+  height: 1em;
+  margin: 0.13em 0.65em 0.13em 0.65em;
+  border: 0.04em #d2d3db;
+  border-radius: 0.4em;
+}
+
+QScrollBar::handle:horizontal {
+  background-color: #76797c;
+  border: 0.04em solid #76797c;
+  min-width: 0.5em;
+  border-radius: 0.4em;
+}
+
+QScrollBar::handle:horizontal:hover {
+  background-color: #5c5e61;
+  border: 0.04em solid #5c5e61;
+}
+
+QScrollBar::add-line:horizontal {
+  width: 0em;
+  height: 0em;
+}
+
+QScrollBar::sub-line:horizontal {
+  width: 0em;
+  height: 0em;
+}
+
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal {
+  background: none;
+}

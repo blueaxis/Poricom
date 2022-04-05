@@ -103,10 +103,7 @@ class BaseCanvas(QGraphicsView):
         self.tracker = tracker
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-        self.last_point = QPoint()
-        self.r_band = QRubberBand(QRubberBand.Rectangle, self)
+        #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.timer_ = QTimer()
         self.timer_.setInterval(300)
@@ -121,32 +118,29 @@ class BaseCanvas(QGraphicsView):
         self.setScene(self.scene)
         self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
             self.viewport().geometry().width(), Qt.SmoothTransformation))
+        
+        self.setDragMode(QGraphicsView.RubberBandDrag)
 
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.last_point = event.pos()
-            self.r_band.setGeometry(QRect(self.last_point, QSize()))
-            self.r_band.show()
-        QGraphicsView.mousePressEvent(self, event)
-
-    def mouseReleaseEvent(self, event):
+    def mouseMoveEvent(self, event):
         # TODO: There is rare bug where if the rubber band is moved too 
         # fast and is released near the point where the mouse is pressed,
         # PIL.UnidentifiedImageError occurs because the size of the image
         # is 0 bytes.
-        if (event.button() == Qt.LeftButton):
-            self.r_band.setGeometry(QRect(self.last_point, event.pos()).normalized())
-            self.r_band.hide()
-            self.canvasText.hide()
 
-        QGraphicsView.mouseReleaseEvent(self, event)
+        pressedKey = QApplication.keyboardModifiers()
+        panMode = pressedKey == Qt.ControlModifier or self._zoomPanMode
 
-    def mouseMoveEvent(self, event):
-        if ((event.buttons() & Qt.LeftButton)):
+        if panMode:
+            self.setDragMode(QGraphicsView.ScrollHandDrag)
+        else:
+            self.setDragMode(QGraphicsView.RubberBandDrag)
+
+        rubberBandVisible = not self.rubberBandRect().isNull()
+        if (event.buttons() & Qt.LeftButton) and rubberBandVisible:
             self.timer_.start()
-            self.r_band.setGeometry(QRect(self.last_point, event.pos()).normalized())
         QGraphicsView.mouseMoveEvent(self, event)
 
+    @pyqtSlot()
     def rubberBandStopped(self):
 
         # use threading either here or on image_io
@@ -157,7 +151,8 @@ class BaseCanvas(QGraphicsView):
         log_path = self.tracker.filepath + "/log.txt"
         log_to_file = self.tracker.write_mode
 
-        text = io_.pixbox_to_text(self.grab(self.r_band.geometry()), lang, 
+        pixbox = self.grab(self.rubberBandRect())
+        text = io_.pixbox_to_text(pixbox, lang, 
             self.tracker.ocr_model)
         io_.log_text(text, mode=log_to_file, path=log_path)
 
