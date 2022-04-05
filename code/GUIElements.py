@@ -199,18 +199,25 @@ class OCRCanvas(BaseCanvas):
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         if zoomMode:
             if event.angleDelta().y() > 0:
-                factor = 1.1
-                if self.currentScale < 15:
-                    self.currentScale *= factor
+                isZoomIn = True
             elif event.angleDelta().y() < 0:
-                factor = 0.9
-                if self.currentScale > 0.5:
-                    self.currentScale *= factor
-            if (self.currentScale > 0.5 and self.currentScale < 15):
-                self.scale(factor, factor)
+                isZoomIn = False
+            self.zoomView(isZoomIn)
 
         if not zoomMode:
             QGraphicsView.wheelEvent(self, event)
+
+    def zoomView(self, isZoomIn, usingButton=False):
+        factor = 1.1
+        if usingButton:
+            factor = 1.4
+
+        if isZoomIn and self.currentScale < 15:
+            self.scale(factor, factor)
+            self.currentScale *= factor
+        elif not isZoomIn and self.currentScale > 0.5:
+            self.scale(1/factor, 1/factor)
+            self.currentScale /= factor
 
 class RibbonTab(QWidget):
 

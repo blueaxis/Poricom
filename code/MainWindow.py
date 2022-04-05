@@ -154,10 +154,10 @@ class PMainWindow(QMainWindow):
         self.explorer.setCurrentIndex(index)
 
     def zoom_in(self):
-        return
+        self.canvas.zoomView(True, usingButton=True)
 
     def zoom_out(self):
-        return
+        self.canvas.zoomView(False, usingButton=True)
 
     def confirm_load_model(self):
         model_name = "MangaOCR" if self.tracker.ocr_model else "Tesseract"
