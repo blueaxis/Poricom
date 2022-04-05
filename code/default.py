@@ -48,7 +48,7 @@ cfg = {
     "TBAR_ICON_DEFAULT": "./assets/images/icons/default_icon.png",
 
     "TBAR_FUNCS": {
-        "HOME": {
+        "FILE": {
             "open_dir": {
                 "help_msg": "Open project directory",
                 "path": "open_dir.png",
@@ -57,6 +57,16 @@ cfg = {
                 "icon_h": 1.0,
                 "icon_w": 1.0
             },
+            "open_manga": {
+                "help_msg": "Open manga file",
+                "path": "open_manga.png",
+                "toggle": False,
+                "align": "AlignLeft",
+                "icon_h": 1.0,
+                "icon_w": 1.0
+            }
+        },
+        "SETTINGS": {
             "load_model": {
                 "help_msg": "Load the machine learning model for more accurate text detection",
                 "path": "load_model.png",
@@ -72,11 +82,35 @@ cfg = {
                 "align": "AlignLeft",
                 "icon_h": 1.0,
                 "icon_w": 1.0
+            },
+            "toggle_mouse_mode": {
+                "help_msg": "Toggle mouse behavior",
+                "path": "toggle_mouse_mode.png",
+                "toggle": True,
+                "align": "AlignLeft",
+                "icon_h": 1.0,
+                "icon_w": 1.0
             }
         }
     },
 
     "MODE_FUNCS": {
+        "zoom_out": {
+            "help_msg": "Zoom out",
+            "path": "zoom_out.png",
+            "toggle": False,
+            "align": "AlignRight",
+            "icon_h": 0.45,
+            "icon_w": 0.45
+        },
+        "zoom_in": {
+            "help_msg": "Zoom in",
+            "path": "zoom_in.png",
+            "toggle": False,
+            "align": "AlignRight",
+            "icon_h": 0.45,
+            "icon_w": 0.45
+        },
         "load_image_at_idx": {
             "help_msg": "Jump to page",
             "path": "load_image_at_idx.png",

@@ -72,7 +72,7 @@ class PMainWindow(QMainWindow):
         self.tracker.p_image = filename
         if not self.tracker.p_image.is_valid():
             return False
-        self.canvas.view_image()
+        self.canvas.viewImage()
         return True
 
     def open_dir(self):
@@ -85,10 +85,16 @@ class PMainWindow(QMainWindow):
         if filepath:
             # self.tracker.p_image = filename
             self.tracker.filepath = filepath
-            self.explorer.set_directory(filepath)
+            self.explorer.setDirectory(filepath)
+
+    def open_manga(self):
+        return
 
     def toggle_logging(self):
         self.tracker.switch_write_mode()
+
+    def toggle_mouse_mode(self):
+        self.canvas.toggleZoomPanMode()
 
     def load_model(self):
         load_model_btn = self.ribbon.findChild(QPushButton, "load_model")
@@ -146,6 +152,12 @@ class PMainWindow(QMainWindow):
 
         index = self.explorer.model.index(i-1, 0, self.explorer.rootIndex())
         self.explorer.setCurrentIndex(index)
+
+    def zoom_in(self):
+        return
+
+    def zoom_out(self):
+        return
 
     def confirm_load_model(self):
         model_name = "MangaOCR" if self.tracker.ocr_model else "Tesseract"

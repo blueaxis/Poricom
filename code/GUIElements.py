@@ -18,12 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os.path import exists
 
-from PyQt5.QtGui import (QIcon)
+from PyQt5.QtGui import (QIcon, QTransform)
 from PyQt5.QtCore import (Qt, QDir, QSize, QRectF, QPoint, QRect, 
                          QThread, QTimer, QObject, pyqtSignal, pyqtSlot)
 from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QRubberBand,
                             QWidget, QTabWidget, QPushButton, QComboBox,
-                            QTreeView, QFileSystemModel,
+                            QTreeView, QFileSystemModel, QApplication,
                             QGraphicsView, QGraphicsScene, QLabel)
 
 import image_io as io_
@@ -69,7 +69,7 @@ class ImageNavigator(QTreeView):
             self.hideColumn(i)
         self.setIndentation(0)
 
-        self.set_directory(tracker.filepath)
+        self.setDirectory(tracker.filepath)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
     def currentChanged(self, current, previous):
@@ -91,7 +91,7 @@ class ImageNavigator(QTreeView):
                 self.model.layoutChanged.connect(self.setTopIndex)
                 self.layoutCheck = True
 
-    def set_directory(self, path):
+    def setDirectory(self, path):
         self.setRootIndex(self.model.setRootPath(path))
         self.setTopIndex()
 
@@ -138,9 +138,9 @@ class BaseCanvas(QGraphicsView):
             self.r_band.setGeometry(QRect(self.last_point, event.pos()).normalized())
             self.r_band.hide()
             self.canvasText.hide()
-        
+
         QGraphicsView.mouseReleaseEvent(self, event)
-    
+
     def mouseMoveEvent(self, event):
         if ((event.buttons() & Qt.LeftButton)):
             self.timer_.start()
@@ -170,48 +170,76 @@ class OCRCanvas(BaseCanvas):
         super().__init__(parent, tracker)
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self._zoomPanMode = False
+        self.currentScale = 1
 
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
         self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
             0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
 
-    def view_image(self):
+    def viewImage(self):
 
         self.verticalScrollBar().setSliderPosition(0)
         self.pixmap.setPixmap(self.tracker.p_image.scaledToWidth(
             0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
+    def toggleZoomPanMode(self):
+        self._zoomPanMode = not self._zoomPanMode
+
     def resizeEvent(self, event):
-        self.view_image()
+        self.viewImage()
         QGraphicsView.resizeEvent(self, event)
+
+    def wheelEvent(self, event):
+        pressedKey = QApplication.keyboardModifiers()
+        zoomMode = pressedKey == Qt.ControlModifier or self._zoomPanMode
+
+        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        if zoomMode:
+            if event.angleDelta().y() > 0:
+                factor = 1.1
+                if self.currentScale < 15:
+                    self.currentScale *= factor
+            elif event.angleDelta().y() < 0:
+                factor = 0.9
+                if self.currentScale > 0.5:
+                    self.currentScale *= factor
+            if (self.currentScale > 0.5 and self.currentScale < 15):
+                self.scale(factor, factor)
+
+        if not zoomMode:
+            QGraphicsView.wheelEvent(self, event)
 
 class RibbonTab(QWidget):
 
-    def __init__(self, parent=None, funcs=None, tracker=None):
+    def __init__(self, parent=None, funcs=None, 
+        tracker=None, tab_name=""):
         super(QWidget, self).__init__()
         self.parent = parent
         self.tracker = tracker
+        self.isSettingsTab = tab_name == "SETTINGS"
 
         self.button_list = []
         self.layout = QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignLeft)
-        
-        self.init_buttons(funcs)
-    
-    def init_buttons(self, funcs):
+
+        self.initButtons(funcs)
+
+    def initButtons(self, funcs):
 
         for func_name, func_cfg in funcs.items():
-            self.load_button_config(func_name, func_cfg)
+            self.loadButtonConfig(func_name, func_cfg)
             self.layout.addWidget(self.button_list[-1],
                 alignment=getattr(Qt, func_cfg["align"]))
         self.layout.addStretch()
 
-        self.layout.addWidget(LanguagePicker(self.parent, self.tracker))
+        if self.isSettingsTab:
+            self.layout.addWidget(LanguagePicker(self.parent, self.tracker))
         self.layout.addWidget(PageNavigator(self.parent))
-    
-    def load_button_config(self, b_name, b_config):
+
+    def loadButtonConfig(self, b_name, b_config):
 
         w = self.parent.frameGeometry().height()*cfg["TBAR_ISIZE_REL"]*b_config["icon_w"]
         h = self.parent.frameGeometry().height()*cfg["TBAR_ISIZE_REL"]*b_config["icon_h"]
@@ -248,11 +276,13 @@ class PageNavigator(RibbonTab):
         self.layout = QGridLayout(self)
         self.layout.setContentsMargins(0,0,0,0)
         for func_name, func_cfg in cfg["MODE_FUNCS"].items():
-            self.load_button_config(func_name, func_cfg)
+            self.loadButtonConfig(func_name, func_cfg)
 
-        self.layout.addWidget(self.button_list[0], 0, 0, 1, 2)
+        self.layout.addWidget(self.button_list[0], 0, 0, 1, 1)
         self.layout.addWidget(self.button_list[1], 1, 0, 1, 1)
-        self.layout.addWidget(self.button_list[2], 1, 1, 1, 1)
+        self.layout.addWidget(self.button_list[2], 0, 1, 1, 2)
+        self.layout.addWidget(self.button_list[3], 1, 1, 1, 1)
+        self.layout.addWidget(self.button_list[4], 1, 2, 1, 1)
 
 class LanguagePicker(QWidget):
 
@@ -267,14 +297,14 @@ class LanguagePicker(QWidget):
         self.language = QComboBox()
         self.language.addItems(cfg["LANGUAGE"])
         self.layout.addWidget(self.language, 0, 0)
-        self.language.currentIndexChanged.connect(self.change_language)
+        self.language.currentIndexChanged.connect(self.changeLanguage)
 
         self.orientation = QComboBox()
         self.orientation.addItems(cfg["ORIENTATION"])
         self.layout.addWidget(self.orientation, 1, 0)
-        self.orientation.currentIndexChanged.connect(self.change_orientation)
-    
-    def change_language(self, i):
+        self.orientation.currentIndexChanged.connect(self.changeOrientation)
+
+    def changeLanguage(self, i):
         if self.language.currentText().strip() == "Japanese":
             self.tracker.language = "jpn"
         if self.language.currentText().strip() == "Korean":
@@ -286,7 +316,7 @@ class LanguagePicker(QWidget):
         if self.language.currentText().strip() == "English":
             self.tracker.language = "eng"
 
-    def change_orientation(self, i):
+    def changeOrientation(self, i):
         if self.orientation.currentText().strip() == "Vertical":
             self.tracker.orientation = "_vert"
         if self.orientation.currentText().strip() == "Horizontal":
@@ -304,5 +334,5 @@ class Ribbon(QTabWidget):
         #TODO: add keyboard shortcut using name scheme
         for tab_name, tools in cfg["TBAR_FUNCS"].items():
             self.addTab(RibbonTab(parent=self.parent, funcs=tools,
-                        tracker=self.tracker), tab_name)
+                    tracker=self.tracker, tab_name=tab_name), tab_name)
 
