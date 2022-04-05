@@ -16,6 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from shutil import rmtree
+
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton, 
                             QMessageBox, QFileDialog, QInputDialog, QMainWindow)
 from PyQt5.QtCore import Qt, QAbstractNativeEventFilter, pyqtSignal, pyqtSlot
@@ -24,6 +26,7 @@ from manga_ocr import MangaOcr
 from Trackers import Tracker
 from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, 
                         FullScreen, BaseWorker, BaseThread)
+from image_io import mangaFileToImageDir
 from default import cfg
 
 class WinEventFilter(QAbstractNativeEventFilter):
@@ -44,13 +47,21 @@ class LoadModelWorker(BaseWorker):
             tracker.ocr_model = MangaOcr()
         else:
             tracker.ocr_model = None
-        self.finished.emit()
+        self.finished.emit("")
+
+class OpenMangaWorker(BaseWorker):
+
+    @pyqtSlot(str)
+    def run(self, filename):
+        filepath = mangaFileToImageDir(filename)
+        self.finished.emit(filepath)
 
 class PMainWindow(QMainWindow):
     # TODO: add pyqtSlot decorator that will update
     # all GUI elements on the window
 
     runLoadModel = pyqtSignal(Tracker)
+    runOpenManga = pyqtSignal(str)
 
     def __init__(self, parent=None, tracker=None):
         super(QWidget, self).__init__(parent)
@@ -73,9 +84,15 @@ class PMainWindow(QMainWindow):
         _main_widget.setLayout(self.vlayout)
         self.setCentralWidget(_main_widget)
 
+        self._temp_fn = ""
+
     @pyqtSlot()
     def loadModelHelper(self):
         self.runLoadModel.emit(self.tracker)
+    
+    @pyqtSlot()
+    def openMangaHelper(self):
+        self.runOpenManga.emit(self._temp_fn)
 
     def view_image_from_explorer(self, filename): 
         self.tracker.p_image = filename
@@ -96,6 +113,35 @@ class PMainWindow(QMainWindow):
             self.tracker.filepath = filepath
             self.explorer.setDirectory(filepath)
 
+    def open_manga(self):
+        filename, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Manga File",
+            ".",
+            "Manga (*.cbz *.cbr *.zip *.rar *.pdf)"
+        )
+
+        if filename:
+            
+            def setDirectory(filepath):
+                self.tracker.filepath = filepath
+                self.explorer.setDirectory(filepath)
+            
+            open_manga_btn = self.ribbon.findChild(
+                QPushButton, "open_manga")
+            self._temp_fn = filename
+
+            # FIXME: App crashes when loading model and opening a manga
+            # at the same time. Might need to use QThreadpool instead
+            self.worker = OpenMangaWorker()
+            self.thread = BaseThread(self.worker, self.openMangaHelper, 
+                lambda: open_manga_btn.setEnabled(True), self.runOpenManga)
+            self.worker.finished.connect(setDirectory)
+            self.worker.moveToThread(self.thread)
+            self.thread.start()
+
+            open_manga_btn.setEnabled(False)
+
     def capture_external(self):
         ext_window = QMainWindow()
         ext_window.layout().setContentsMargins(0, 0, 0, 0)
@@ -105,21 +151,12 @@ class PMainWindow(QMainWindow):
         ext_window.centralWidget().takeScreenshot()
         ext_window.showFullScreen()
 
-    def open_manga(self):
-        return
-
-    def toggle_logging(self):
-        self.tracker.switch_write_mode()
-
-    def toggle_mouse_mode(self):
-        self.canvas.toggleZoomPanMode()
-
     def load_model(self):
         load_model_btn = self.ribbon.findChild(QPushButton, "load_model")
         load_model_btn.setChecked(not self.tracker.ocr_model)
 
         if load_model_btn.isChecked():
-            confirmation = QMessageBox(QMessageBox.NoIcon, 
+            confirmation = QMessageBox(QMessageBox.NoIcon,
                 "Load the MangaOCR model?", 
                 "If you are running this for the first time, this will " + 
                 "download the MangaOcr model which is about 400 MB in size. " + 
@@ -142,6 +179,12 @@ class PMainWindow(QMainWindow):
 
         load_model_btn.setEnabled(False)
         self.thread.finished.connect(lambda: load_model_btn.setEnabled(True))
+
+    def toggle_logging(self):
+        self.tracker.switch_write_mode()
+
+    def toggle_mouse_mode(self):
+        self.canvas.toggleZoomPanMode()
 
     def load_prev_image(self):
         index = self.explorer.indexAbove(self.explorer.currentIndex())
@@ -183,3 +226,7 @@ class PMainWindow(QMainWindow):
             f"{model_name} model loaded", 
             f"You are now using the {model_name} model for Japanese text detection.",
             QMessageBox.Ok).exec()
+
+    def closeEvent(self, event):
+        rmtree("./poricom_cache")
+        return QMainWindow.closeEvent(self, event)

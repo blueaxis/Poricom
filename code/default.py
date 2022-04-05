@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 cfg = {
     "IMAGE_EXTENSIONS": ["*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png", 
-                         "*.pbm", "*.pgm", "*.ppm", "*.xbm", "*.xpm"],
+                         "*.pbm", "*.pgm", "*.ppm", "*.webp", "*.xbm", "*.xpm"],
 
     "LANGUAGE": [" Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"],
     "ORIENTATION": [" Vertical", " Horizontal"],
@@ -95,17 +95,17 @@ cfg = {
     },
 
     "MODE_FUNCS": {
-        "zoom_out": {
-            "help_msg": "Zoom out",
-            "path": "zoom_out.png",
+        "zoom_in": {
+            "help_msg": "Zoom in",
+            "path": "zoom_in.png",
             "toggle": False,
             "align": "AlignRight",
             "icon_h": 0.45,
             "icon_w": 0.45
         },
-        "zoom_in": {
-            "help_msg": "Zoom in",
-            "path": "zoom_in.png",
+        "zoom_out": {
+            "help_msg": "Zoom out",
+            "path": "zoom_out.png",
             "toggle": False,
             "align": "AlignRight",
             "icon_h": 0.45,

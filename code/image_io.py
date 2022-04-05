@@ -17,19 +17,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from io import BytesIO
+from os.path import splitext, basename
+from pathlib import Path
 
 from PyQt5.QtCore import QBuffer
-from PIL import Image
 from PyQt5.QtGui import QGuiApplication
 from tesserocr import PyTessBaseAPI
+from PIL import Image
+import zipfile
+import rarfile
+import pdf2image
+
 from default import cfg
 
-def pixbox_to_text(pixmap, lang="jpn_vert", model=None):
+def mangaFileToImageDir(filepath):
+    extract_path, extension = splitext(filepath)
+    cache_path = f"./poricom_cache/{basename(extract_path)}"
+
+    if extension in [".cbz", ".zip"]:
+        with zipfile.ZipFile(filepath, 'r') as zip_ref:
+            zip_ref.extractall(cache_path)
+
+    rarfile.UNRAR_TOOL = "utils/unrar.exe"
+    if extension in [".cbr", ".rar"]:
+        with rarfile.RarFile(filepath) as zip_ref:
+            zip_ref.extractall(cache_path)
+
+    if extension in [".pdf"]:
+        images = pdf2image.convert_from_path(filepath)
+        for i in range(len(images)):
+            filename = basename(extract_path)
+            Path(cache_path).mkdir(parents=True, exist_ok=True)
+            images[i].save(
+                f"{cache_path}/{i+1}_{filename}.png", 'PNG')
+    
+    return cache_path
+
+def pixboxToText(pixmap, lang="jpn_vert", model=None):
 
     buffer = QBuffer()
     buffer.open(QBuffer.ReadWrite)
     pixmap.save(buffer, "PNG")
-    pil_im = Image.open(BytesIO(buffer.data()))
+    bytes = BytesIO(buffer.data())
+
+    if bytes.getbuffer().nbytes == 0:
+        return
+
+    pil_im = Image.open(bytes)
     text = ""
 
     if model is not None:
@@ -45,7 +79,7 @@ def pixbox_to_text(pixmap, lang="jpn_vert", model=None):
 
     return text.strip()
 
-def log_text(text, mode=False, path="."):
+def logText(text, mode=False, path="."):
     clipboard = QGuiApplication.clipboard()
     clipboard.setText(text)
 

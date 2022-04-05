@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os.path import exists
 
-from PyQt5.QtGui import (QIcon)
+from PyQt5.QtGui import (QIcon, QTransform)
 from PyQt5.QtCore import (Qt, QDir, QSize, QRectF, QTimer,
                          QThread, QObject, pyqtSignal, pyqtSlot)
 from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QApplication,
@@ -31,22 +31,24 @@ from default import cfg
 
 # TODO: Decorate slots using pyqtSlot
 
+# See this link for a much better implementation of multi-threading
+# https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/
 class BaseWorker(QObject):
-    finished = pyqtSignal()
+    finished = pyqtSignal(str)
 
     @pyqtSlot()
     def run(self):
-        self.finished.emit()
+        self.finished.emit("")
 
 class BaseThread(QThread):
 
-    def __init__(self, worker, start_func, end_func, threadSignal):
+    def __init__(self, worker, helper_slot, end_func, thread_signal):
         super().__init__()
         self.worker = worker
         self.worker.moveToThread(self)
 
-        self.started.connect(start_func)
-        threadSignal.connect(self.worker.run)
+        self.started.connect(helper_slot)
+        thread_signal.connect(self.worker.run)
         self.worker.finished.connect(self.quit)
         self.worker.finished.connect(self.deleteLater)
         self.finished.connect(self.deleteLater)
@@ -144,9 +146,9 @@ class BaseCanvas(QGraphicsView):
         log_to_file = self.tracker.write_mode
 
         pixbox = self.grab(self.rubberBandRect())
-        text = io_.pixbox_to_text(pixbox, lang, 
+        text = io_.pixboxToText(pixbox, lang, 
             self.tracker.ocr_model)
-        io_.log_text(text, mode=log_to_file, path=log_path)
+        io_.logText(text, mode=log_to_file, path=log_path)
 
         self.canvasText.setText(text)
         self.canvasText.adjustSize()
@@ -190,6 +192,18 @@ class OCRCanvas(BaseCanvas):
             0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
+    def zoomView(self, isZoomIn, usingButton=False):
+        factor = 1.1
+        if usingButton:
+            factor = 1.4
+
+        if isZoomIn and self.currentScale < 15:
+            self.scale(factor, factor)
+            self.currentScale *= factor
+        elif not isZoomIn and self.currentScale > 0.5:
+            self.scale(1/factor, 1/factor)
+            self.currentScale /= factor
+
     def toggleZoomPanMode(self):
         self._zoomPanMode = not self._zoomPanMode
 
@@ -223,17 +237,10 @@ class OCRCanvas(BaseCanvas):
 
         BaseCanvas.mouseMoveEvent(self, event)
 
-    def zoomView(self, isZoomIn, usingButton=False):
-        factor = 1.1
-        if usingButton:
-            factor = 1.4
-
-        if isZoomIn and self.currentScale < 15:
-            self.scale(factor, factor)
-            self.currentScale *= factor
-        elif not isZoomIn and self.currentScale > 0.5:
-            self.scale(1/factor, 1/factor)
-            self.currentScale /= factor
+    def mouseDoubleClickEvent(self, event):
+        self.setTransform(QTransform())
+        self.currentScale = 1
+        QGraphicsView.mouseDoubleClickEvent(self, event)
 
 class RibbonTab(QWidget):
 
