@@ -18,13 +18,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton, 
                             QMessageBox, QFileDialog, QInputDialog, QMainWindow)
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import Qt, QAbstractNativeEventFilter, pyqtSignal, pyqtSlot
 from manga_ocr import MangaOcr
 
 from Trackers import Tracker
 from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, 
-                        BaseWorker, BaseThread)
+                        FullScreen, BaseWorker, BaseThread)
 from default import cfg
+
+class WinEventFilter(QAbstractNativeEventFilter):
+    def __init__(self, keybinder):
+        self.keybinder = keybinder
+        super().__init__()
+
+    def nativeEventFilter(self, eventType, message):
+        ret = self.keybinder.handler(eventType, message)
+        return ret, 0
 
 class LoadModelWorker(BaseWorker):
 
@@ -86,6 +95,15 @@ class PMainWindow(QMainWindow):
             # self.tracker.p_image = filename
             self.tracker.filepath = filepath
             self.explorer.setDirectory(filepath)
+
+    def capture_external(self):
+        ext_window = QMainWindow()
+        ext_window.layout().setContentsMargins(0, 0, 0, 0)
+        ext_window.setStyleSheet("border:0px; margin:0px")
+
+        ext_window.setCentralWidget(FullScreen(ext_window, self.tracker))
+        ext_window.centralWidget().takeScreenshot()
+        ext_window.showFullScreen()
 
     def open_manga(self):
         return

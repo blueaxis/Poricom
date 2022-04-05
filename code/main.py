@@ -20,8 +20,10 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QAbstractEventDispatcher
+from pyqtkeybind import keybinder
 
-from MainWindow import PMainWindow
+from MainWindow import PMainWindow, WinEventFilter
 from Trackers import Tracker
 from default import cfg
 
@@ -37,6 +39,12 @@ if __name__ == '__main__':
     styles = cfg["STYLES_DEFAULT"]
     with open(styles, 'r') as fh:
         app.setStyleSheet(fh.read())
+    
+    keybinder.init()
+    keybinder.register_hotkey(widget.winId(), "Alt+Q", widget.capture_external)
+    win_event_filter = WinEventFilter(keybinder)
+    event_dispatcher = QAbstractEventDispatcher.instance()
+    event_dispatcher.installNativeEventFilter(win_event_filter)
 
     widget.showMaximized()
     widget.load_model()

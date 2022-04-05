@@ -18,13 +18,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os.path import exists
 
-from PyQt5.QtGui import (QIcon, QTransform)
-from PyQt5.QtCore import (Qt, QDir, QSize, QRectF, QPoint, QRect, 
-                         QThread, QTimer, QObject, pyqtSignal, pyqtSlot)
-from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QRubberBand,
+from PyQt5.QtGui import (QIcon)
+from PyQt5.QtCore import (Qt, QDir, QSize, QRectF, QTimer,
+                         QThread, QObject, pyqtSignal, pyqtSlot)
+from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QApplication,
                             QWidget, QTabWidget, QPushButton, QComboBox,
-                            QTreeView, QFileSystemModel, QApplication,
-                            QGraphicsView, QGraphicsScene, QLabel)
+                            QLabel, QTreeView, QFileSystemModel,
+                            QGraphicsView, QGraphicsScene)
 
 import image_io as io_
 from default import cfg
@@ -102,9 +102,6 @@ class BaseCanvas(QGraphicsView):
         self.parent = parent
         self.tracker = tracker
 
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
         self.timer_ = QTimer()
         self.timer_.setInterval(300)
         self.timer_.setSingleShot(True)
@@ -126,19 +123,14 @@ class BaseCanvas(QGraphicsView):
         # fast and is released near the point where the mouse is pressed,
         # PIL.UnidentifiedImageError occurs because the size of the image
         # is 0 bytes.
-
-        pressedKey = QApplication.keyboardModifiers()
-        panMode = pressedKey == Qt.ControlModifier or self._zoomPanMode
-
-        if panMode:
-            self.setDragMode(QGraphicsView.ScrollHandDrag)
-        else:
-            self.setDragMode(QGraphicsView.RubberBandDrag)
-
         rubberBandVisible = not self.rubberBandRect().isNull()
         if (event.buttons() & Qt.LeftButton) and rubberBandVisible:
             self.timer_.start()
         QGraphicsView.mouseMoveEvent(self, event)
+    
+    def mouseReleaseEvent(self, event):
+        self.canvasText.hide()
+        super().mouseReleaseEvent(event)
 
     @pyqtSlot()
     def rubberBandStopped(self):
@@ -159,12 +151,30 @@ class BaseCanvas(QGraphicsView):
         self.canvasText.setText(text)
         self.canvasText.adjustSize()
 
+class FullScreen(BaseCanvas):
+
+    def __init__(self, parent=None, tracker=None):
+        super().__init__(parent, tracker)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+    def takeScreenshot(self):
+        screen = QApplication.primaryScreen()
+        s = screen.size()
+        self.pixmap.setPixmap(
+            screen.grabWindow(0).scaled(s.width(), s.height()))
+        self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
+
+    def mouseReleaseEvent(self, event):
+        self.parent.close()
+
 class OCRCanvas(BaseCanvas):
 
     def __init__(self, parent=None, tracker=None):
         super().__init__(parent, tracker)
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self._zoomPanMode = False
         self.currentScale = 1
 
@@ -201,6 +211,17 @@ class OCRCanvas(BaseCanvas):
 
         if not zoomMode:
             QGraphicsView.wheelEvent(self, event)
+
+    def mouseMoveEvent(self, event):
+        pressedKey = QApplication.keyboardModifiers()
+        panMode = pressedKey == Qt.ControlModifier or self._zoomPanMode
+
+        if panMode:
+            self.setDragMode(QGraphicsView.ScrollHandDrag)
+        else:
+            self.setDragMode(QGraphicsView.RubberBandDrag)
+
+        BaseCanvas.mouseMoveEvent(self, event)
 
     def zoomView(self, isZoomIn, usingButton=False):
         factor = 1.1
