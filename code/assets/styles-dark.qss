@@ -37,20 +37,20 @@
 
 QLabel#canvasText {
   font-size: 16pt;
-  background-color: rgba(5, 80, 120, 0.9); 
+  background-color: rgba(72, 75, 106, 0.9); 
   color: #eff0f1;
-  margin-top: 0.06em;
-  margin-left: 0.06em;
+  margin-top: 0.02em;
+  margin-left: 0.02em;
 }
 
 QLabel {
-  font-size: 9pt;
-  color: #eff0f1;
+  font-size: 10pt;
+  color: #B5BDBD;
 }
 
 QWidget { 
   /*color: #eff0f1;*/
-  background-color: #35363a;
+  background-color: #454C4E;
   font-family: "Poppins";
 }
 
@@ -58,25 +58,25 @@ QWidget {
 
 QPushButton {
   background-color: #31363b;
-  border: 0.1em solid #76797c;
+  border: 0.1em solid #76797C;
   min-height: 1.5em;
 }
 
 QPushButton:hover {
-  background-color: #31363b;
-  border: 0.1em solid #0579b5;
+  background-color: #31363b; /* #62626e */
+  border: 0.1em solid #6A88CB;
   color: #eff0f1;
 }
 
 QPushButton:checked {
   background-color: #626568;
-  border: 0.1em solid #76797c;
+  border: 0.1em solid #76797C;
   color: #eff0f1;
 }
 
 QPushButton:checked:hover {
   background-color: #626568;
-  border: 0.1em solid #0579b5;
+  border: 0.1em solid #6A88CB;
   color: #eff0f1;
 }
 
@@ -99,28 +99,29 @@ QMessageBox QPushButton {
 /* Combo box */
 
 QComboBox {
-  border: 0.1em solid #76797c;
+  border: 0.1em solid #76797C;
   padding: 0.23em;
   min-width: 2.5em;
   color: #eff0f1;
   font-size: 10pt;
+  background-color: #31363b;
 }
 
 QComboBox:open {
   border-width: 0.1em;
-  border-color: #76797c;
+  border-color: #76797C;
   color: #eff0f1;
 }
 
 QComboBox:closed {
   border-width: 0.1em;
-  border-color: #76797c;
+  border-color: #76797C;
   color: #eff0f1;
 }
 
 QComboBox:hover,
 QComboBox:focus {
-  border: 0.1em solid #0579b5;
+  border: 0.1em solid #6A88CB;
   color: #eff0f1;
 }
 
@@ -136,14 +137,14 @@ QComboBox::drop-down {
 }
 
 QComboBox::down-arrow {
-  border-image: url(../assets/images/icons/cb_expand.png);
+  border-image: url(./assets/images/icons/cb_expand.png);
   width: 1em;
   height: 1em;
   margin-right: 0.4em;
 }
 
 QComboBox::down-arrow:on {
-  border-image: url(../assets/images/icons/cb_contract.png);
+  border-image: url(./assets/images/icons/cb_contract.png);
   width: 1em;
   height: 1em;
   margin-right: 0.4em;
@@ -151,8 +152,8 @@ QComboBox::down-arrow:on {
 
 QAbstractSpinBox {
   padding: 0.2em;
-  border: 0.1em solid #76797c;
-  background-color: #1d2023;
+  border: 0.1em solid #76797C;
+  background-color: #31363b;
   color: #eff0f1;
   border-radius: 0.1em;
   min-width: 3em;
@@ -161,7 +162,7 @@ QAbstractSpinBox {
 }
 
 QAbstractSpinBox:hover {
-  border: 0.1em solid #0579b5;
+  border: 0.1em solid #6A88CB;
 }
 
 QAbstractSpinBox:up-button{
@@ -175,41 +176,41 @@ QAbstractSpinBox:down-button {
 }
 
 QComboBox QAbstractItemView {
-  background-color: #1d2023;
-  selection-background-color: #2a79a3;
+  background-color: #31363b;
+  selection-background-color: #5870A5;
   outline-color: 0em;
   border-radius: 0.09em;
 }
+
+/* Explorer */
 
 QAbstractItemView {
   color: #eff0f1;
 }
 
 QAbstractItemView::item:pressed {
-  background: #2a79a3;
+  background: #666A9F;
   color: #eff0f1;
 }
 
 QAbstractItemView::item:selected:!active {
-  background: rgba(61, 173, 232, 0.1);
+  background: rgba(135, 143, 230, 0.1);
 }
 
-/* Explorer */
-
 QTreeView::item {
-  color: #eff0f1;
+  color: #B5BDBD;
 }
 
 QTreeView::item:!selected:hover
 {
-  background-color: rgba(61, 173, 232, 0.1);
+  background-color: rgba(135, 143, 230, 0.1);
   outline: 0;
-  color: #eff0f1;
+  color: #B5BDBD;
 }
 
 QHeaderView::section {
   background-color: #31363b;
-  border: 0.04em solid #76797c;
+  border: 0.04em solid #76797C;
   color: #eff0f1;
   padding-top: 0.3em;
   padding-bottom: -0.3em;
@@ -220,22 +221,22 @@ QHeaderView::section {
 /* Ribbon */
 
 QTabWidget::pane:top {
-  border: 0.04em solid #76797c;
+  border: 0.04em solid #76797C;
   top: -0.04em;
 }
 
 QTabWidget::pane:bottom {
-  border: 0.04em solid #76797c;
+  border: 0.04em solid #76797C;
   bottom: -0.04em;
 }
 
 QTabWidget::pane:left {
-  border: 0.04em solid #76797c;
+  border: 0.04em solid #76797C;
   left: -0.04em;
 }
 
 QTabWidget::pane:right {
-  border: 0.04em solid #76797c;
+  border: 0.04em solid #76797C;
   right: -0.04em;
 }
 
@@ -247,8 +248,8 @@ QTabWidget::tab-bar {
 QTabBar::tab {
   color: #eff0f1;
   background-color: #31363b;
-  border: 0.1em solid #C4C4C3;
-  border-bottom-color: #76797c;
+  border: 0.1em solid #76797C;
+  border-bottom-color: #76797C;
   border-top-left-radius: 0.5em;
   border-top-right-radius: 0.5em;
   margin-right: 0.3em;
@@ -257,38 +258,35 @@ QTabBar::tab {
 }
 
 QTabBar::tab:selected, QTabBar::tab:hover {
-  background-color: #2c3034;
+  border-color: #6A88CB;
+  border-bottom-color: #76797C;
 }
 
 QTabBar::tab:selected {
-  border-color: #0579b5;
-  border-bottom-color: #76797c;
+  border-color: #6A88CB;
+  background-color: #454a4f;
 }
 
 /* Scroll Bar */
 
 QScrollBar:vertical {
-  background-color: #1d2023;
+  background-color: #2E2E37;
   width: 1em;
   margin: 0.65em 0.13em 0.65em 0.13em;
-  border: 0.04em transparent #1d2023;
+  border: 0.04em #2E2E37;
   border-radius: 0.4em;
 }
 
-QScrollBar:vertical:hover {
-  background-color: #76797c;
-}
-
 QScrollBar::handle:vertical {
-  background-color: #0579b5;
-  border: 0.04em solid #0579b5;
+  background-color: #798086;
+  border: 0.04em solid #798086;
   min-height: 0.5em;
   border-radius: 0.4em;
 }
 
 QScrollBar::handle:vertical:hover {
-  background-color: #0579b5;
-  border: 0.04em solid #0579b5;
+  background-color: #798086;
+  border: 0.04em solid #798086;
 }
 
 QScrollBar::sub-line:vertical {
@@ -303,5 +301,40 @@ QScrollBar::add-line:vertical {
 
 QScrollBar::add-page:vertical,
 QScrollBar::sub-page:vertical {
+  background: none;
+}
+
+QScrollBar:horizontal {
+  background-color: #2E2E37;
+  height: 1em;
+  margin: 0.13em 0.65em 0.13em 0.65em;
+  border: 0.04em #2E2E37;
+  border-radius: 0.4em;
+}
+
+QScrollBar::handle:horizontal {
+  background-color: #798086;
+  border: 0.04em solid #798086;
+  min-width: 0.5em;
+  border-radius: 0.4em;
+}
+
+QScrollBar::handle:horizontal:hover {
+  background-color: #798086;
+  border: 0.04em solid #798086;
+}
+
+QScrollBar::add-line:horizontal {
+  width: 0em;
+  height: 0em;
+}
+
+QScrollBar::sub-line:horizontal {
+  width: 0em;
+  height: 0em;
+}
+
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal {
   background: none;
 }
