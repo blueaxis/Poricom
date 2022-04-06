@@ -19,8 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from os.path import exists
 
 from PyQt5.QtGui import (QIcon, QTransform)
-from PyQt5.QtCore import (Qt, QDir, QSize, QRectF, QTimer,
-                         QThread, QObject, pyqtSignal, pyqtSlot)
+from PyQt5.QtCore import (Qt, QDir, QSize, QRectF, QTimer, pyqtSlot)
 from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QApplication,
                             QWidget, QTabWidget, QPushButton, QComboBox,
                             QLabel, QTreeView, QFileSystemModel,
@@ -30,29 +29,6 @@ import image_io as io_
 from default import cfg
 
 # TODO: Decorate slots using pyqtSlot
-
-# See this link for a much better implementation of multi-threading
-# https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/
-class BaseWorker(QObject):
-    finished = pyqtSignal(str)
-
-    @pyqtSlot()
-    def run(self):
-        self.finished.emit("")
-
-class BaseThread(QThread):
-
-    def __init__(self, worker, helper_slot, end_func, thread_signal):
-        super().__init__()
-        self.worker = worker
-        self.worker.moveToThread(self)
-
-        self.started.connect(helper_slot)
-        thread_signal.connect(self.worker.run)
-        self.worker.finished.connect(self.quit)
-        self.worker.finished.connect(self.deleteLater)
-        self.finished.connect(self.deleteLater)
-        self.finished.connect(end_func)
 
 class ImageNavigator(QTreeView):
     layoutCheck = False

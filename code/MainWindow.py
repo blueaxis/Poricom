@@ -20,12 +20,13 @@ from shutil import rmtree
 
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton, 
                             QMessageBox, QFileDialog, QInputDialog, QMainWindow)
-from PyQt5.QtCore import Qt, QAbstractNativeEventFilter, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
 from manga_ocr import MangaOcr
 
 from Trackers import Tracker
-from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, 
-                        FullScreen, BaseWorker, BaseThread)
+from Workers import BaseWorker
+from GUIElements import (ImageNavigator, Ribbon, 
+                        OCRCanvas, FullScreen)
 from image_io import mangaFileToImageDir
 from default import cfg
 
@@ -38,36 +39,15 @@ class WinEventFilter(QAbstractNativeEventFilter):
         ret = self.keybinder.handler(eventType, message)
         return ret, 0
 
-class LoadModelWorker(BaseWorker):
-
-    @pyqtSlot(Tracker)
-    def run(self, tracker):
-        better_ocr = tracker.switch_ocr_mode()
-        if better_ocr:
-            tracker.ocr_model = MangaOcr()
-        else:
-            tracker.ocr_model = None
-        self.finished.emit("")
-
-class OpenMangaWorker(BaseWorker):
-
-    @pyqtSlot(str)
-    def run(self, filename):
-        filepath = mangaFileToImageDir(filename)
-        self.finished.emit(filepath)
-
 class PMainWindow(QMainWindow):
     # TODO: add pyqtSlot decorator that will update
     # all GUI elements on the window
 
-    runLoadModel = pyqtSignal(Tracker)
-    runOpenManga = pyqtSignal(str)
-
     def __init__(self, parent=None, tracker=None):
         super(QWidget, self).__init__(parent)
         self.tracker = tracker
-        self.vlayout = QVBoxLayout()
 
+        self.vlayout = QVBoxLayout()
         self.ribbon = Ribbon(self, self.tracker)
         self.vlayout.addWidget(self.ribbon)
         self.canvas = OCRCanvas(self, self.tracker)
@@ -84,15 +64,7 @@ class PMainWindow(QMainWindow):
         _main_widget.setLayout(self.vlayout)
         self.setCentralWidget(_main_widget)
 
-        self._temp_fn = ""
-
-    @pyqtSlot()
-    def loadModelHelper(self):
-        self.runLoadModel.emit(self.tracker)
-    
-    @pyqtSlot()
-    def openMangaHelper(self):
-        self.runOpenManga.emit(self._temp_fn)
+        self.threadpool = QThreadPool()
 
     def view_image_from_explorer(self, filename): 
         self.tracker.p_image = filename
@@ -122,24 +94,19 @@ class PMainWindow(QMainWindow):
         )
 
         if filename:
-            
             def setDirectory(filepath):
                 self.tracker.filepath = filepath
                 self.explorer.setDirectory(filepath)
-            
+
             open_manga_btn = self.ribbon.findChild(
                 QPushButton, "open_manga")
-            self._temp_fn = filename
 
-            # FIXME: App crashes when loading model and opening a manga
-            # at the same time. Might need to use QThreadpool instead
-            self.worker = OpenMangaWorker()
-            self.thread = BaseThread(self.worker, self.openMangaHelper, 
-                lambda: open_manga_btn.setEnabled(True), self.runOpenManga)
-            self.worker.finished.connect(setDirectory)
-            self.worker.moveToThread(self.thread)
-            self.thread.start()
+            worker = BaseWorker(mangaFileToImageDir, filename)
+            worker.signals.result.connect(setDirectory)
+            worker.signals.finished.connect(lambda: 
+                open_manga_btn.setEnabled(True))
 
+            self.threadpool.start(worker)
             open_manga_btn.setEnabled(False)
 
     def capture_external(self):
@@ -171,14 +138,26 @@ class PMainWindow(QMainWindow):
                 load_model_btn.setChecked(False)
                 return
 
-        self.worker = LoadModelWorker()
-        self.thread = BaseThread(self.worker, self.loadModelHelper,
-                              self.confirm_load_model, self.runLoadModel)
-        self.worker.moveToThread(self.thread)
-        self.thread.start()
+        def loadModelHelper(tracker):
+            better_ocr = tracker.switch_ocr_mode()
+            if better_ocr:
+                tracker.ocr_model = MangaOcr()
+            else:
+                tracker.ocr_model = None
+        def modelLoadedConfirmation():
+            model_name = "MangaOCR" if self.tracker.ocr_model else "Tesseract"
+            QMessageBox(QMessageBox.NoIcon, 
+                f"{model_name} model loaded", 
+                f"You are now using the {model_name} model for Japanese text detection.",
+                QMessageBox.Ok).exec()
 
+        worker = BaseWorker(loadModelHelper, self.tracker)
+        worker.signals.finished.connect(modelLoadedConfirmation)
+        worker.signals.finished.connect(lambda: 
+            load_model_btn.setEnabled(True))
+
+        self.threadpool.start(worker)
         load_model_btn.setEnabled(False)
-        self.thread.finished.connect(lambda: load_model_btn.setEnabled(True))
 
     def toggle_logging(self):
         self.tracker.switch_write_mode()
@@ -220,13 +199,9 @@ class PMainWindow(QMainWindow):
     def zoom_out(self):
         self.canvas.zoomView(False, usingButton=True)
 
-    def confirm_load_model(self):
-        model_name = "MangaOCR" if self.tracker.ocr_model else "Tesseract"
-        QMessageBox(QMessageBox.NoIcon, 
-            f"{model_name} model loaded", 
-            f"You are now using the {model_name} model for Japanese text detection.",
-            QMessageBox.Ok).exec()
-
     def closeEvent(self, event):
-        rmtree("./poricom_cache")
+        try:
+            rmtree("./poricom_cache")
+        except FileNotFoundError:
+            pass
         return QMainWindow.closeEvent(self, event)
