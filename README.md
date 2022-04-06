@@ -17,7 +17,13 @@
 ## About <a name = "about"></a>
 Poricom is a desktop program for optical character recognition in manga images. Although it is a manga OCR application, it can recognize text on other type of images as well. The project is a GUI implementation of the [Manga OCR library](https://pypi.org/project/manga-ocr/0.1.5/) (supports Japanese only) and the Tesseract-API python wrapper [tesserocr](https://github.com/sirfz/tesserocr) (supports other languages). See demo below to see how it works.
 
-https://user-images.githubusercontent.com/45705751/153531200-336e8db9-3e66-419e-9755-db2b434a762f.mp4
+Detect text on locally stored manga images:
+
+https://user-images.githubusercontent.com/45705751/161960776-da608849-c80d-4bb9-be9f-11e40b4c3160.mp4
+
+Perform OCR on the current screen by pressing `Alt+Q`:
+
+https://user-images.githubusercontent.com/45705751/161961152-29070fde-03f6-42a7-8569-0ff22ae9b014.mp4
 
 ## User Guide  <a name="user_guide"></a>
 Follow the installation instructions [here](#installation). Load a directory with manga images and select text boxes with Japanese text. If you are not getting good results using the default settings, [use the MangaOcr model](#load_model) to improve text detection.
@@ -27,9 +33,16 @@ Follow the installation instructions [here](#installation). Load a directory wit
 Listed below are some of the features of Poricom. Click the arrow to see how each implemented feature works.
 
 <details>
-  <summary>Open a directory with manga images and start scanning text bubbles.</summary>
+  <summary>Open a directory with manga images or a supported manga file (cbz, cbr, pdf) and start scanning text bubbles.</summary>
 
   https://user-images.githubusercontent.com/45705751/153531522-fc592533-bd97-41b7-a1e5-84c80cf2cc40.mp4
+  
+</details>
+
+<details>
+  <summary> Capture images outside the application using the shortcut `Alt+Q`.</summary>
+
+  https://user-images.githubusercontent.com/45705751/161961152-29070fde-03f6-42a7-8569-0ff22ae9b014.mp4
   
 </details>
 
@@ -57,7 +70,7 @@ Listed below are some of the features of Poricom. Click the arrow to see how eac
 </details>
 
 ## Installation <a name = "installation"></a>
-Download the latest zip file [here](https://github.com/bluaxees/Poricom/releases). Decompress the file in the desired directory. Make sure that the `assets` folder is in the same folder as the executable `Poricom.exe`.
+Download the latest zip file [here](https://github.com/bluaxees/Poricom/releases). Decompress the file in the desired directory. Make sure that the `assets` and `utils` folder is in the same folder as the executable `Poricom.exe`.
 
 For developers, clone this repo and install requirements: `pip install -r requirements.txt`. Run the app in the command line using `python main.py`. 
 
