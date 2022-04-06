@@ -18,12 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from shutil import rmtree
 
-from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton, 
-                            QMessageBox, QFileDialog, QInputDialog, QMainWindow)
+from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, 
+                            QPushButton, QMessageBox, QFileDialog, 
+                            QInputDialog, QMainWindow, QApplication)
 from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
 from manga_ocr import MangaOcr
 
-from Trackers import Tracker
 from Workers import BaseWorker
 from GUIElements import (ImageNavigator, Ribbon, 
                         OCRCanvas, FullScreen)
@@ -164,6 +164,33 @@ class PMainWindow(QMainWindow):
 
     def toggle_mouse_mode(self):
         self.canvas.toggleZoomPanMode()
+
+    def toggle_stylesheet(self):
+        config = "./utils/config.py"
+        light_mode = "./assets/styles.qss"
+        dark_mode = "./assets/styles-dark.qss"
+        light_text = f"stylesheet_path = '{light_mode}'\n"
+        dark_text = f"stylesheet_path = '{dark_mode}'\n"
+        with open(config, 'r') as fh:
+            lines = fh.readlines()
+            mode_text = ""
+            if lines[18] == light_text:
+                mode_text = dark_text
+                mode_ = dark_mode
+            elif lines[18] == dark_text:
+                mode_text = light_text
+                mode_ = light_mode
+            lines[18] = mode_text
+        with open(config, 'w') as fh:
+            fh.writelines(lines)
+
+        app = QApplication.instance()
+        if app is None:
+            raise RuntimeError("No Qt Application found.")
+
+        styles = mode_
+        with open(styles, 'r') as fh:
+            app.setStyleSheet(fh.read())
 
     def load_prev_image(self):
         index = self.explorer.indexAbove(self.explorer.currentIndex())

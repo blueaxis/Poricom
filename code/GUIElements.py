@@ -266,7 +266,9 @@ class RibbonTab(QWidget):
         self.button_list[-1].setIconSize(QSize(w,h))
         self.button_list[-1].setFixedSize(QSize(w*m,h*m))
 
-        self.button_list[-1].setToolTip(b_config["help_msg"])
+        tooltip = f"<h3 style='margin-bottom: 4px;'>{b_config['help_title']}\
+            </h3><p style='margin-top: 0;'>{b_config['help_msg']}</p>"
+        self.button_list[-1].setToolTip(tooltip)
         self.button_list[-1].setCheckable(b_config["toggle"])
 
         self.button_list[-1].clicked.connect(getattr(self.parent, b_name))
