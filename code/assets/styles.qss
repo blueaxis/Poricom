@@ -1,18 +1,21 @@
 /*
- *  BreezeDark stylesheet.
+ *  Stylesheet for Poricom light mode
  *
  *  :author: Colin Duquesnoy
  *  :editor: Alex Huszagh
+ *  :editor: Alarcon Ace Belen
  *  :license: MIT, see LICENSE.md
  *
- *  This is originally a fork of QDarkStyleSheet, and is based on Breeze/
- *  BreezeDark color scheme, but is in no way affiliated with KDE.
+ * 
+ *  This is a fork of BreezeDark stylesheet, primarily tweaking the
+ *  color palette.
  *
  * ---------------------------------------------------------------------
  *  The MIT License (MIT)
  *
  * Copyright (c) <2013-2014> <Colin Duquesnoy>
  * Copyright (c) <2015-2021> <Alex Huszagh>
+ * Copyright (c) <2021-2022> <Alarcon Ace Belen>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -201,8 +204,7 @@ QTreeView::item {
   color: #333333;
 }
 
-QTreeView::item:!selected:hover
-{
+QTreeView::item:!selected:hover {
   background-color: rgba(135, 143, 230, 0.1);
   outline: 0;
   color: #333333;

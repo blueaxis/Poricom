@@ -30,7 +30,7 @@ Follow the installation instructions [here](#installation). Load a directory wit
 
 ### Features
 
-Listed below are some of the features of Poricom. Click the arrow to see how each implemented feature works.
+Listed below are some of the features of Poricom. Smaller features that are not covered in this section are mentioned in the [changelog](https://github.com/bluaxees/Poricom/blob/main/CHANGELOG.md). Click the arrow to see how each implemented feature works.
 
 <details>
   <summary>Open a directory with manga images or a supported manga file (cbz, cbr, pdf) and start scanning text bubbles.</summary>
@@ -70,7 +70,7 @@ Listed below are some of the features of Poricom. Click the arrow to see how eac
 </details>
 
 ## Installation <a name = "installation"></a>
-Download the latest zip file [here](https://github.com/bluaxees/Poricom/releases). Decompress the file in the desired directory. Make sure that the `assets` and `utils` folder is in the same folder as the executable `Poricom.exe`.
+Download the latest zip file [here](https://github.com/bluaxees/Poricom/releases/latest/). Decompress the file in the desired directory. Make sure that the `app` folder is in the same folder as the shortcut `Poricom`.
 
 For developers, clone this repo and install requirements: `pip install -r requirements.txt`. Run the app in the command line using `python main.py`. 
 
