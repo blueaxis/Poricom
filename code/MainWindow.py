@@ -141,18 +141,42 @@ class PMainWindow(QMainWindow):
         def loadModelHelper(tracker):
             better_ocr = tracker.switch_ocr_mode()
             if better_ocr:
-                tracker.ocr_model = MangaOcr()
+                import http.client as httplib
+                def isConnected(url="8.8.8.8"):
+                    connection = httplib.HTTPSConnection(url, timeout=2)
+                    try:
+                        connection.request("HEAD", "/")
+                        return True
+                    except Exception:
+                        return False
+                    finally:
+                        connection.close()
+
+                connected = isConnected()
+                if connected:
+                    tracker.ocr_model = MangaOcr()
+                return (better_ocr, connected)
             else:
                 tracker.ocr_model = None
-        def modelLoadedConfirmation():
-            model_name = "MangaOCR" if self.tracker.ocr_model else "Tesseract"
-            QMessageBox(QMessageBox.NoIcon, 
-                f"{model_name} model loaded", 
-                f"You are now using the {model_name} model for Japanese text detection.",
-                QMessageBox.Ok).exec()
+                return (better_ocr, True)
+
+        def modelLoadedConfirmation(type_connection_tuple):
+            using_manga_ocr, connected = type_connection_tuple
+            model_name = "MangaOCR" if using_manga_ocr else "Tesseract"
+            if connected:
+                QMessageBox(QMessageBox.NoIcon, 
+                    f"{model_name} model loaded", 
+                    f"You are now using the {model_name} model for Japanese text detection.",
+                    QMessageBox.Ok).exec()
+            elif not connected:
+                QMessageBox(QMessageBox.NoIcon, 
+                    "Connection Error", 
+                    "Please try again or make sure your Internet connection is on.",
+                    QMessageBox.Ok).exec()
+                load_model_btn.setChecked(False)
 
         worker = BaseWorker(loadModelHelper, self.tracker)
-        worker.signals.finished.connect(modelLoadedConfirmation)
+        worker.signals.result.connect(modelLoadedConfirmation)
         worker.signals.finished.connect(lambda: 
             load_model_btn.setEnabled(True))
 
