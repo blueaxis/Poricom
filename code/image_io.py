@@ -44,7 +44,10 @@ def mangaFileToImageDir(filepath):
             zip_ref.extractall(cache_path)
 
     if extension in [".pdf"]:
-        images = pdf2image.convert_from_path(filepath)
+        try:
+            images = pdf2image.convert_from_path(filepath)
+        except pdf2image.exceptions.PDFInfoNotInstalledError:
+            images = pdf2image.convert_from_path(filepath, poppler_path="poppler/Library/bin")
         for i in range(len(images)):
             filename = basename(extract_path)
             Path(cache_path).mkdir(parents=True, exist_ok=True)
