@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QApplication,
                             QGraphicsView, QGraphicsScene)
 
 import image_io as io_
-from default import cfg
+from utils.config import cfg
 
 # TODO: Decorate slots using pyqtSlot
 

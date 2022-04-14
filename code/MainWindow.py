@@ -28,7 +28,7 @@ from Workers import BaseWorker
 from GUIElements import (ImageNavigator, Ribbon, 
                         OCRCanvas, FullScreen)
 from image_io import mangaFileToImageDir
-from default import cfg
+from utils.config import cfg
 
 class WinEventFilter(QAbstractNativeEventFilter):
     def __init__(self, keybinder):

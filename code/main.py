@@ -25,7 +25,7 @@ from pyqtkeybind import keybinder
 
 from MainWindow import PMainWindow, WinEventFilter
 from Trackers import Tracker
-from default import cfg
+from utils.config import cfg
 
 if __name__ == '__main__':
 

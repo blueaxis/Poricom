@@ -28,7 +28,7 @@ import zipfile
 import rarfile
 import pdf2image
 
-from default import cfg
+from utils.config import cfg
 
 def mangaFileToImageDir(filepath):
     extract_path, extension = splitext(filepath)

@@ -20,7 +20,7 @@ from PyQt5.QtGui import QPixmap
 from os.path import isfile, join, splitext, normpath, abspath, exists, dirname
 from os import listdir
 
-from default import cfg
+from utils.config import cfg
 
 class Tracker:
     
