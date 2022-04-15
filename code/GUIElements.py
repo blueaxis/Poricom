@@ -158,6 +158,8 @@ class OCRCanvas(BaseCanvas):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self._zoomPanMode = False
         self.currentScale = 1
+        self._scrollAtMin = 0
+        self._scrollAtMax = 0
 
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
@@ -203,6 +205,23 @@ class OCRCanvas(BaseCanvas):
             self.zoomView(isZoomIn)
 
         if not zoomMode:
+            if (event.angleDelta().y() < 0 and
+                self.verticalScrollBar().value() == self.verticalScrollBar().maximum()):
+                if (self._scrollAtMax == 3):
+                    self.parent.load_next_image()
+                    self._scrollAtMax = 0
+                    return
+                else:
+                    self._scrollAtMax += 1
+
+            if (event.angleDelta().y() > 0 and
+                self.verticalScrollBar().value() == self.verticalScrollBar().minimum()):
+                if (self._scrollAtMin == 3):
+                    self.parent.load_prev_image()
+                    self._scrollAtMin = 0
+                    return
+                else:
+                    self._scrollAtMin += 1
             QGraphicsView.wheelEvent(self, event)
 
     def mouseMoveEvent(self, event):

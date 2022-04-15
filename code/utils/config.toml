@@ -143,7 +143,7 @@ icon_w = 1.0
 
 [TBAR_FUNCS.SETTINGS.modify_tesseract]
 help_title = "Tesseract settings"
-help_msg = "Set the language and orientation for the                     Tesseract model."
+help_msg = "Set the language and orientation for the Tesseract model."
 path = "modify_tesseract.png"
 toggle = false
 align = "AlignLeft"
@@ -152,7 +152,7 @@ icon_w = 1.0
 
 [TBAR_FUNCS.SETTINGS.toggle_logging]
 help_title = "Enable text logging"
-help_msg = "Save detected text to a text file located in the                     current project directory."
+help_msg = "Save detected text to a text file located in the current project directory."
 path = "toggle_logging.png"
 toggle = true
 align = "AlignLeft"
@@ -161,7 +161,7 @@ icon_w = 1.0
 
 [TBAR_FUNCS.SETTINGS.toggle_mouse_mode]
 help_title = "Change mouse behavior"
-help_msg = "This will disable text detection. Turn this on                     only if do not want to hold CTRL key to zoom and pan                     on an image."
+help_msg = "This will disable text detection. Turn this on only if do not want to hold CTRL key to zoom and pan on an image."
 path = "toggle_mouse_mode.png"
 toggle = true
 align = "AlignLeft"
