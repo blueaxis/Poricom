@@ -16,17 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from dataclasses import replace
 from os.path import exists
 
 from PyQt5.QtGui import (QIcon, QTransform)
 from PyQt5.QtCore import (Qt, QDir, QSize, QRectF, QTimer, pyqtSlot)
-from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QApplication,
-                            QWidget, QTabWidget, QPushButton, QComboBox,
-                            QLabel, QTreeView, QFileSystemModel,
-                            QGraphicsView, QGraphicsScene)
+from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QVBoxLayout,
+                            QApplication, QTreeView, QFileSystemModel,
+                            QWidget, QTabWidget, QPushButton,
+                            QComboBox, QDialog, QDialogButtonBox,
+                            QGraphicsView, QGraphicsScene, QLabel)
 
 import image_io as io_
 from utils.config import cfg
+from utils.editor import editCBoxConfig, editPreviewStyle
 
 # TODO: Decorate slots using pyqtSlot
 
@@ -225,7 +228,7 @@ class RibbonTab(QWidget):
         super(QWidget, self).__init__()
         self.parent = parent
         self.tracker = tracker
-        self.isSettingsTab = tab_name == "SETTINGS"
+        self.tab_name = tab_name
 
         self.button_list = []
         self.layout = QHBoxLayout(self)
@@ -240,9 +243,6 @@ class RibbonTab(QWidget):
             self.layout.addWidget(self.button_list[-1],
                 alignment=getattr(Qt, func_cfg["align"]))
         self.layout.addStretch()
-
-        if self.isSettingsTab:
-            self.layout.addWidget(LanguagePicker(self.parent, self.tracker))
         self.layout.addWidget(PageNavigator(self.parent))
 
     def loadButtonConfig(self, b_name, b_config):
@@ -271,7 +271,10 @@ class RibbonTab(QWidget):
         self.button_list[-1].setToolTip(tooltip)
         self.button_list[-1].setCheckable(b_config["toggle"])
 
-        self.button_list[-1].clicked.connect(getattr(self.parent, b_name))
+        if hasattr(self.parent, b_name):
+            self.button_list[-1].clicked.connect(getattr(self.parent, b_name))
+        else:
+            self.button_list[-1].clicked.connect(getattr(self.parent, 'poricomNoop'))
 
 class PageNavigator(RibbonTab):
 
@@ -292,43 +295,125 @@ class PageNavigator(RibbonTab):
         self.layout.addWidget(self.button_list[3], 1, 1, 1, 1)
         self.layout.addWidget(self.button_list[4], 1, 2, 1, 1)
 
-class LanguagePicker(QWidget):
-
-    def __init__(self, parent=None, tracker=None):
+class BasePicker(QWidget):
+    def __init__(self, parent, tracker, list_top, list_bot):
         super(QWidget, self).__init__()
         self.parent = parent
         self.tracker = tracker
 
         self.layout = QGridLayout(self)
         self.layout.setContentsMargins(0,0,0,0)
+        self.picktop = QComboBox()
+        self.picktop.addItems(list_top)
+        self.layout.addWidget(self.picktop, 0, 1)
+        self.nametop = QLabel("")
+        self.layout.addWidget(self.nametop, 0, 0)
+        self.pickbot = QComboBox()
+        self.pickbot.addItems(list_bot)
+        self.layout.addWidget(self.pickbot, 1, 1)
+        self.namebot = QLabel("")
+        self.layout.addWidget(self.namebot, 1, 0)
 
-        self.language = QComboBox()
-        self.language.addItems(cfg["LANGUAGE"])
-        self.layout.addWidget(self.language, 0, 0)
-        self.language.currentIndexChanged.connect(self.changeLanguage)
+class LanguagePicker(BasePicker):
+    def __init__(self, parent, tracker, 
+        list_top=cfg["LANGUAGE"], list_bot=cfg["ORIENTATION"]):
 
-        self.orientation = QComboBox()
-        self.orientation.addItems(cfg["ORIENTATION"])
-        self.layout.addWidget(self.orientation, 1, 0)
-        self.orientation.currentIndexChanged.connect(self.changeOrientation)
+        super().__init__(parent, tracker, list_top, list_bot)
+        self.picktop.currentIndexChanged.connect(self.changeLanguage)
+        self.picktop.setCurrentIndex(cfg["SELECTED_INDEX"]["language"])
+        self.nametop.setText("Language: ")
+        self.pickbot.currentIndexChanged.connect(self.changeOrientation)
+        self.pickbot.setCurrentIndex(cfg["SELECTED_INDEX"]["orientation"])
+        self.namebot.setText("Orientation: ")
+
+        self.language_index = self.picktop.currentIndex()
+        self.orientation_index = self.pickbot.currentIndex()
 
     def changeLanguage(self, i):
-        if self.language.currentText().strip() == "Japanese":
+        self.language_index = i
+        selected_language = self.picktop.currentText().strip()
+        if selected_language == "Japanese":
             self.tracker.language = "jpn"
-        if self.language.currentText().strip() == "Korean":
+        if selected_language == "Korean":
             self.tracker.language = "kor"
-        if self.language.currentText().strip() == "Chinese SIM":
+        if selected_language == "Chinese SIM":
             self.tracker.language = "chi_sim"
-        if self.language.currentText().strip() == "Chinese TRA":
+        if selected_language == "Chinese TRA":
             self.tracker.language = "chi_tra"
-        if self.language.currentText().strip() == "English":
+        if selected_language == "English":
             self.tracker.language = "eng"
 
     def changeOrientation(self, i):
-        if self.orientation.currentText().strip() == "Vertical":
+        self.orientation_index = i
+        selected_orientation = self.pickbot.currentText().strip()
+        if selected_orientation == "Vertical":
             self.tracker.orientation = "_vert"
-        if self.orientation.currentText().strip() == "Horizontal":
+        if selected_orientation == "Horizontal":
             self.tracker.orientation = ""
+
+    def applyChanges(self):
+        editCBoxConfig(self.language_index, 'language')
+        editCBoxConfig(self.orientation_index, 'orientation')
+        cfg["SELECTED_INDEX"]["language"] = self.language_index
+        cfg["SELECTED_INDEX"]["orientation"] = self.orientation_index
+
+class FontPicker(BasePicker):
+    def __init__(self, parent, tracker,
+        list_top=cfg["FONT_STYLE"], list_bot=cfg["FONT_SIZE"]):
+        super().__init__(parent, tracker, list_top, list_bot)
+        self.picktop.currentIndexChanged.connect(self.changeFontStyle)
+        self.picktop.setCurrentIndex(cfg["SELECTED_INDEX"]["font_style"])
+        self.nametop.setText("Font Style: ")
+        self.pickbot.currentIndexChanged.connect(self.changeFontSize)
+        self.pickbot.setCurrentIndex(cfg["SELECTED_INDEX"]["font_size"])
+        self.namebot.setText("Font Size: ")
+
+        self.font_style_text = "  font-family: 'Poppins';\n"
+        self.font_size_text = "  font-size: 16pt;\n"
+        self.font_style_index = self.picktop.currentIndex()
+        self.font_size_index = self.pickbot.currentIndex()
+
+    def changeFontStyle(self, i):
+        self.font_style_index = i
+        selected_font_style = self.picktop.currentText().strip()
+        replacement_text = f"  font-family: '{selected_font_style}';\n"
+        self.font_style_text = replacement_text
+
+    def changeFontSize(self, i):
+        self.font_size_index = i
+        selected_font_size = int(self.pickbot.currentText().strip())
+        replacement_text = f"  font-size: {selected_font_size}pt;\n"
+        self.font_size_text = replacement_text
+
+    def applyChanges(self):
+        editCBoxConfig(self.font_style_index, 'font_style')
+        editCBoxConfig(self.font_size_index, 'font_size')
+        cfg["SELECTED_INDEX"]["font_style"] = self.font_style_index
+        cfg["SELECTED_INDEX"]["font_size"] = self.font_size_index
+        editPreviewStyle(41, self.font_style_text)
+        editPreviewStyle(42, self.font_size_text)
+
+class PickerPopup(QDialog):
+    def __init__(self, widget):
+        super(QDialog, self).__init__(None, 
+            Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
+        self.widget = widget
+        self.setLayout(QVBoxLayout())
+        self.layout().addWidget(widget)
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.layout().addWidget(self.buttonBox)
+
+        self.buttonBox.accepted.connect(self.okClickedEvent)
+        self.buttonBox.rejected.connect(self.cancelClickedEvent)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)        
+    
+    def okClickedEvent(self):
+        self.widget.applyChanges()
+        self.close()
+    
+    def cancelClickedEvent(self):
+        self.close()
 
 class Ribbon(QTabWidget):
     def __init__(self, parent=None, tracker=None):

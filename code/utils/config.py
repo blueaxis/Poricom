@@ -17,6 +17,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 stylesheet_path = './assets/styles.qss'
+combobox_selected_index = {
+    'language': 0,
+    'orientation': 0,
+    'font_style': 0,
+    'font_size': 2,
+}
+picker_index = {
+    'language': 20,
+    'orientation': 21,
+    'font_style': 22,
+    'font_size': 23
+}
 cfg = {
     "IMAGE_EXTENSIONS": ["*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png", 
                          "*.pbm", "*.pgm", "*.ppm", "*.webp", "*.xbm", "*.xpm"],
@@ -24,6 +36,12 @@ cfg = {
     "LANGUAGE": [" Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"],
     "ORIENTATION": [" Vertical", " Horizontal"],
     "LANG_PATH": "./assets/languages/",
+
+    "FONT_STYLE": [" Poppins", " Arial", " Verdana", " Helvetica", " Times New Roman"],
+    "FONT_SIZE": [" 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72"],
+
+    "SELECTED_INDEX": combobox_selected_index,
+    "PICKER_INDEX": picker_index,
 
     "STYLES_PATH": "./assets/",
     "STYLES_DEFAULT": stylesheet_path,
@@ -69,12 +87,60 @@ cfg = {
                 "icon_w": 1.0
             }
         },
+        "VIEW": {
+            "toggle_stylesheet": {
+                "help_title": "Change theme",
+                "help_msg": "Switch between light and dark mode.",
+                "path": "toggle_stylesheet.png",
+                "toggle": False,
+                "align": "AlignLeft",
+                "icon_h": 1.0,
+                "icon_w": 1.0
+            },
+            "modify_font_settings": {
+                "help_title": "Modify preview text",
+                "help_msg": "Change font style and font size of preview text.",
+                "path": "modify_font_settings.png",
+                "toggle": False,
+                "align": "AlignLeft",
+                "icon_h": 1.0,
+                "icon_w": 1.0
+            },
+            "fit_horizontally": {
+                "help_title": "Fit image horizontally",
+                "help_msg": "",
+                "path": "fit_horizontally.png",
+                "toggle": True,
+                "align": "AlignLeft",
+                "icon_h": 1.0,
+                "icon_w": 1.0
+            },
+            "fit_vertically": {
+                "help_title": "Fit image vertically",
+                "help_msg": "",
+                "path": "fit_vertically.png",
+                "toggle": True,
+                "align": "AlignLeft",
+                "icon_h": 1.0,
+                "icon_w": 1.0
+            }
+        },
         "SETTINGS": {
             "load_model": {
                 "help_title": "Switch detection model",
                 "help_msg": "Switch between MangaOCR and Tesseract models.",
                 "path": "load_model.png",
                 "toggle": True,
+                "align": "AlignLeft",
+                "icon_h": 1.0,
+                "icon_w": 1.0
+            },
+            "modify_tesseract": {
+                "help_title": "Tesseract settings",
+                "help_msg": "Set the language and orientation for the \
+                    Tesseract model.",
+                "path": "modify_tesseract.png",
+                "toggle": False,
                 "align": "AlignLeft",
                 "icon_h": 1.0,
                 "icon_w": 1.0
@@ -96,15 +162,6 @@ cfg = {
                     on an image.",
                 "path": "toggle_mouse_mode.png",
                 "toggle": True,
-                "align": "AlignLeft",
-                "icon_h": 1.0,
-                "icon_w": 1.0
-            },
-            "toggle_stylesheet": {
-                "help_title": "Change theme",
-                "help_msg": "Switch between light and dark mode.",
-                "path": "toggle_stylesheet.png",
-                "toggle": False,
                 "align": "AlignLeft",
                 "icon_h": 1.0,
                 "icon_w": 1.0
