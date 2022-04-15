@@ -1,6 +1,16 @@
 # Changelog
 
-## [0.2.0](https://github.com/bluaxees/Poricom) - 2022-04-07
+## [0.2.1](https://github.com/bluaxees/Poricom/releases/tag/v0.2.1) - 2022-04-15
+
+### Fixed
+- Implement error message when MangaOCR model is loaded while not connected to the internet
+- Load the correct configuration (theme) when the application is launched
+- Address poppler path error when opening a pdf file
+
+### Changed
+- Log detected text only after the left mouse button is released
+
+## [0.2.0](https://github.com/bluaxees/Poricom/releases/tag/v0.2.0) - 2022-04-07
 
 ### Added
 - Allow capturing images outside the application using a shortcut (`Alt+Q`)
