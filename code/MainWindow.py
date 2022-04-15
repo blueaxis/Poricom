@@ -119,30 +119,25 @@ class PMainWindow(QMainWindow):
         ext_window.showFullScreen()
 
     def toggle_stylesheet(self):
-        config = "./utils/config.py"
+        config = "./utils/config.toml"
         light_mode = "./assets/styles.qss"
         dark_mode = "./assets/styles-dark.qss"
-        light_text = f"stylesheet_path = '{light_mode}'\n"
-        dark_text = f"stylesheet_path = '{dark_mode}'\n"
-        with open(config, 'r') as fh:
-            lines = fh.readlines()
-            mode_text = ""
-            if lines[18] == light_text:
-                mode_text = dark_text
-                mode_ = dark_mode
-            elif lines[18] == dark_text:
-                mode_text = light_text
-                mode_ = light_mode
-            lines[18] = mode_text
+
+        import toml
+        data = toml.load(config)
+        if data["STYLES_DEFAULT"] == light_mode:
+            data["STYLES_DEFAULT"] = dark_mode
+        elif data["STYLES_DEFAULT"] == dark_mode:
+            data["STYLES_DEFAULT"] = light_mode
         with open(config, 'w') as fh:
-            fh.writelines(lines)
+            toml.dump(data, fh)
 
         app = QApplication.instance()
         if app is None:
             raise RuntimeError("No Qt Application found.")
 
-        styles = mode_
-        cfg["STYLES_DEFAULT"] = mode_
+        styles = data["STYLES_DEFAULT"]
+        cfg["STYLES_DEFAULT"] = data["STYLES_DEFAULT"]
         with open(styles, 'r') as fh:
             app.setStyleSheet(fh.read())
 
