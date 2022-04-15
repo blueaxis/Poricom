@@ -107,6 +107,10 @@ class BaseCanvas(QGraphicsView):
         QGraphicsView.mouseMoveEvent(self, event)
     
     def mouseReleaseEvent(self, event):
+        log_path = self.tracker.filepath + "/log.txt"
+        log_to_file = self.tracker.write_mode
+        text = self.canvasText.text()
+        io_.logText(text, mode=log_to_file, path=log_path)
         self.canvasText.hide()
         super().mouseReleaseEvent(event)
 
@@ -118,13 +122,9 @@ class BaseCanvas(QGraphicsView):
             self.canvasText.show()
 
         lang = self.tracker.language + self.tracker.orientation
-        log_path = self.tracker.filepath + "/log.txt"
-        log_to_file = self.tracker.write_mode
-
         pixbox = self.grab(self.rubberBandRect())
         text = io_.pixboxToText(pixbox, lang, 
             self.tracker.ocr_model)
-        io_.logText(text, mode=log_to_file, path=log_path)
 
         self.canvasText.setText(text)
         self.canvasText.adjustSize()
