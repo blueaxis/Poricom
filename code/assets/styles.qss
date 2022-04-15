@@ -39,11 +39,13 @@
  */
 
 QLabel#canvasText {
+  font-family: 'Poppins';
   font-size: 16pt;
   background-color: rgba(72, 75, 106, 0.9); 
   color: #eff0f1;
   margin-top: 0.02em;
   margin-left: 0.02em;
+  padding: 0.25em;
 }
 
 QLabel {
