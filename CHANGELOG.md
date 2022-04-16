@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.2](https://github.com/bluaxees/Poricom/releases/tag/v0.2.2) - 2022-04-17
+
+### Fixed
+- Copy detected text to clipboard for external captures
+
 ## [0.2.1](https://github.com/bluaxees/Poricom/releases/tag/v0.2.1) - 2022-04-15
 
 ### Fixed
