@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from dataclasses import replace
 from os.path import exists
 
 from PyQt5.QtGui import (QIcon, QTransform)
