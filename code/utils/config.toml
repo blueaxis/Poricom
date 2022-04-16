@@ -1,3 +1,20 @@
+# Poricom
+# Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 IMAGE_EXTENSIONS = [ "*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png", "*.pbm", "*.pgm", "*.ppm", "*.webp", "*.xbm", "*.xpm",]
 LANGUAGE = [ " Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English",]
 ORIENTATION = [ " Vertical", " Horizontal",]
@@ -16,6 +33,7 @@ TBAR_ISIZE_MARGIN = 1.3
 TBAR_ICONS = "./assets/images/icons/"
 TBAR_ICONS_LIGHT = "./assets/images/icons/"
 TBAR_ICON_DEFAULT = "./assets/images/icons/default_icon.png"
+VIEW_IMAGE_MODE = 0
 
 [SELECTED_INDEX]
 language = 0
@@ -118,6 +136,15 @@ nav_clicked = "view_image_from_explorer"
     help_msg = "Change font style and font size of preview text."
     path = "modify_font_settings.png"
     toggle = false
+    align = "AlignLeft"
+    icon_h = 1.0
+    icon_w = 1.0
+
+    [TBAR_FUNCS.VIEW.toggle_split_view]
+    help_title = "Turn on split view"
+    help_msg = "View two images at once."
+    path = "toggle_split_view.png"
+    toggle = true
     align = "AlignLeft"
     icon_h = 1.0
     icon_w = 1.0

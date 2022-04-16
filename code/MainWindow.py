@@ -70,6 +70,8 @@ class PMainWindow(QMainWindow):
         self.tracker.p_image = filename
         if not self.tracker.p_image.is_valid():
             return False
+        self.canvas.resetTransform()
+        self.canvas.currentScale = 1
         self.canvas.viewImage()
         return True
 
@@ -152,6 +154,16 @@ class PMainWindow(QMainWindow):
 
             with open(cfg["STYLES_DEFAULT"], 'r') as fh:
                 app.setStyleSheet(fh.read())
+
+    def fit_horizontally(self):
+        self.canvas.setViewImageMode(0)
+        btn = self.ribbon.findChild(QPushButton, "fit_vertically")
+        btn.setChecked(False)
+
+    def fit_vertically(self):
+        self.canvas.setViewImageMode(1)
+        btn = self.ribbon.findChild(QPushButton, "fit_horizontally")
+        btn.setChecked(False)
 
     def load_model(self):
         load_model_btn = self.ribbon.findChild(QPushButton, "load_model")

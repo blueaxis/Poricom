@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QVBoxLayout,
 
 import image_io as io_
 from utils.config import cfg
-from utils.editor import editCBoxConfig, editPreviewStyle
+from utils.editor import editConfig, editCBoxConfig, editPreviewStyle
 
 # TODO: Decorate slots using pyqtSlot
 
@@ -156,6 +156,8 @@ class OCRCanvas(BaseCanvas):
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+
+        self._viewImageMode = cfg["VIEW_IMAGE_MODE"]
         self._zoomPanMode = False
         self.currentScale = 1
         self._scrollAtMin = 0
@@ -164,14 +166,23 @@ class OCRCanvas(BaseCanvas):
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
         self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
-            0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
+            self.viewport().geometry().width(), Qt.SmoothTransformation))
 
     def viewImage(self):
 
         self.verticalScrollBar().setSliderPosition(0)
-        self.pixmap.setPixmap(self.tracker.p_image.scaledToWidth(
-            0.96*self.viewport().geometry().width(), Qt.SmoothTransformation))
+        if self._viewImageMode == 0:
+            self.pixmap.setPixmap(self.tracker.p_image.scaledToWidth(
+                self.viewport().geometry().width(), Qt.SmoothTransformation))
+        elif self._viewImageMode == 1:
+            self.pixmap.setPixmap(self.tracker.p_image.scaledToHeight(
+                self.viewport().geometry().height(), Qt.SmoothTransformation))
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
+
+    def setViewImageMode(self, mode = False):
+        self._viewImageMode = mode
+        editConfig("VIEW_IMAGE_MODE", mode)
+        self.viewImage()
 
     def zoomView(self, isZoomIn, usingButton=False):
         factor = 1.1
