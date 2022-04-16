@@ -147,6 +147,7 @@ class FullScreen(BaseCanvas):
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
     def mouseReleaseEvent(self, event):
+        BaseCanvas.mouseReleaseEvent(self, event)
         self.parent.close()
 
 class OCRCanvas(BaseCanvas):
