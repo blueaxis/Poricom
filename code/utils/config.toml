@@ -27,6 +27,7 @@ NAV_VIEW_RATIO = [ 3, 11,]
 NAV_ROOT = "./assets/images/"
 LOGO = "./assets/images/icons/logo.ico"
 HOME_IMAGE = "./assets/images/home.png"
+ABOUT_IMAGE = "./assets/images/about.png"
 RBN_HEIGHT = 2.4
 TBAR_ISIZE_REL = 0.1
 TBAR_ISIZE_MARGIN = 1.3
@@ -34,6 +35,7 @@ TBAR_ICONS = "./assets/images/icons/"
 TBAR_ICONS_LIGHT = "./assets/images/icons/"
 TBAR_ICON_DEFAULT = "./assets/images/icons/default_icon.png"
 VIEW_IMAGE_MODE = 0
+SPLIT_VIEW_MODE = false
 
 [SELECTED_INDEX]
 language = 0

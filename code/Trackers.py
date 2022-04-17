@@ -16,17 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QPainter
 from os.path import isfile, join, splitext, normpath, abspath, exists, dirname
 from os import listdir
 
 from utils.config import cfg
 
 class Tracker:
-    
-    def __init__(self, filename=cfg["HOME_IMAGE"]):
 
-        self._p_image = PImage(filename)
+    def __init__(self, filename=cfg["HOME_IMAGE"], filenext=cfg["ABOUT_IMAGE"]):
+        if not cfg["SPLIT_VIEW_MODE"]:
+            self._p_image = PImage(filename)
+        if cfg["SPLIT_VIEW_MODE"]:
+            splitImage = self.twoFileToImage(filename, filenext)
+            self._p_image = PImage(splitImage, filename)
         self._p_mask = PImage(filename)
 
         self._filepath = abspath(dirname(filename))
@@ -39,18 +42,46 @@ class Tracker:
 
         self._better_ocr = False
         self._ocr_model = None
-    
+
+    def twoFileToImage(self, fileLeft, fileRight):
+        imageLeft, imageRight = PImage(fileLeft), PImage(fileRight)
+        if not (imageLeft.is_valid()):
+            return
+
+        w = imageLeft.width() + imageRight.width()
+        h = max(imageLeft.height(), imageRight.height())
+        if imageRight.isNull():
+            w = imageLeft.width() * 2
+            h = imageLeft.height()
+        splitImage = QPixmap(w, h)
+        painter = QPainter(splitImage)
+        painter.drawPixmap(0, 0, imageLeft.width(), imageLeft.height(),
+            imageLeft)
+        painter.drawPixmap(imageLeft.width(), 0, imageRight.width(), 
+            imageRight.height(), imageRight)
+        painter.end()
+
+        return splitImage
+
     @property
     def p_image(self): 
         return self._p_image
 
     @p_image.setter
     def p_image(self, image):
-        # TODO: use match case when 3.10 comes out
         if (type(image) is str and PImage(image).is_valid()):
             self._p_image = PImage(image)
             self._p_image.filename = abspath(image)
             self._filepath = abspath(dirname(image))
+        if (type(image) is tuple):
+            fileLeft, fileRight = image
+            if not fileRight:
+                return
+            splitImage = self.twoFileToImage(fileLeft, fileRight)
+
+            self._p_image = PImage(splitImage, fileLeft)
+            self._p_image.filename = abspath(fileLeft)
+            self._filepath = abspath(dirname(fileLeft))
 
     @property
     def p_mask(self):
@@ -80,7 +111,7 @@ class Tracker:
     @language.setter
     def language(self, language):
         self._language = language
-    
+
     @property
     def orientation(self):
         return self._orientation
@@ -115,11 +146,14 @@ class Tracker:
 
 class PImage(QPixmap):
 
-    def __init__(self, filename=None):
-        super(QPixmap, self).__init__(filename)
+    def __init__(self, *args):
+        super(QPixmap, self).__init__(args[0])
 
         # Current directory + filename
-        self._filename = filename
+        if type(args[0]) == str:
+            self._filename = args[0]
+        if type(args[0]) == QPixmap:
+            self._filename = args[1]
         # Current directory
         self._filepath = None
 
@@ -133,4 +167,3 @@ class PImage(QPixmap):
 
     def is_valid(self):
         return exists(self._filename) and isfile(self._filename)
-    

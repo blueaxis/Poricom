@@ -66,8 +66,11 @@ class PMainWindow(QMainWindow):
 
         self.threadpool = QThreadPool()
 
-    def view_image_from_explorer(self, filename): 
-        self.tracker.p_image = filename
+    def view_image_from_explorer(self, filename, filenext):
+        if not self.canvas.splitViewMode():
+            self.tracker.p_image = filename
+        if self.canvas.splitViewMode():
+            self.tracker.p_image = (filename, filenext)
         if not self.tracker.p_image.is_valid():
             return False
         self.canvas.resetTransform()
@@ -154,6 +157,16 @@ class PMainWindow(QMainWindow):
 
             with open(cfg["STYLES_DEFAULT"], 'r') as fh:
                 app.setStyleSheet(fh.read())
+
+    def toggle_split_view(self):
+        self.canvas.toggleSplitView()
+        if self.canvas.splitViewMode():
+            self.fit_vertically()
+            index = self.explorer.currentIndex()
+            self.explorer.currentChanged(index, index)
+        elif not self.canvas.splitViewMode():
+            index = self.explorer.currentIndex()
+            self.explorer.currentChanged(index, index)
 
     def fit_horizontally(self):
         self.canvas.setViewImageMode(0)

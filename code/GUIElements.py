@@ -56,9 +56,11 @@ class ImageNavigator(QTreeView):
         if not current.isValid():
             current = self.model.index(0, 0, self.rootIndex())
         filename = self.model.fileInfo(current).absoluteFilePath()
-        self.parent.view_image_from_explorer(filename)
+        nextIndex = self.indexBelow(current)
+        filenext = self.model.fileInfo(nextIndex).absoluteFilePath()
+        self.parent.view_image_from_explorer(filename, filenext)
         QTreeView.currentChanged(self, current, previous)
-    
+
     def setTopIndex(self):
         topIndex = self.model.index(0, 0, self.rootIndex())
         if topIndex.isValid():
@@ -158,6 +160,7 @@ class OCRCanvas(BaseCanvas):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
         self._viewImageMode = cfg["VIEW_IMAGE_MODE"]
+        self._splitViewMode = cfg["SPLIT_VIEW_MODE"]
         self._zoomPanMode = False
         self.currentScale = 1
         self._scrollAtMin = 0
@@ -169,7 +172,6 @@ class OCRCanvas(BaseCanvas):
             self.viewport().geometry().width(), Qt.SmoothTransformation))
 
     def viewImage(self):
-
         self.verticalScrollBar().setSliderPosition(0)
         if self._viewImageMode == 0:
             self.pixmap.setPixmap(self.tracker.p_image.scaledToWidth(
@@ -177,12 +179,23 @@ class OCRCanvas(BaseCanvas):
         elif self._viewImageMode == 1:
             self.pixmap.setPixmap(self.tracker.p_image.scaledToHeight(
                 self.viewport().geometry().height(), Qt.SmoothTransformation))
+        elif self._viewImageMode == 2:
+            self.pixmap.setPixmap(self.tracker.p_image.scaled(
+                self.viewport().geometry().width(), self.viewport().geometry().height(),
+                Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
-    def setViewImageMode(self, mode = False):
+    def setViewImageMode(self, mode):
         self._viewImageMode = mode
         editConfig("VIEW_IMAGE_MODE", mode)
         self.viewImage()
+
+    def splitViewMode(self):
+        return self._splitViewMode
+    
+    def toggleSplitView(self):
+        self._splitViewMode = not self._splitViewMode
+        editConfig("SPLIT_VIEW_MODE", self._splitViewMode)
 
     def zoomView(self, isZoomIn, usingButton=False):
         factor = 1.1
@@ -192,7 +205,7 @@ class OCRCanvas(BaseCanvas):
         if isZoomIn and self.currentScale < 15:
             self.scale(factor, factor)
             self.currentScale *= factor
-        elif not isZoomIn and self.currentScale > 0.5:
+        elif not isZoomIn and self.currentScale > 0.35:
             self.scale(1/factor, 1/factor)
             self.currentScale /= factor
 
