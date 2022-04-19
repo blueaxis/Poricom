@@ -14,26 +14,33 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+# Lists
 IMAGE_EXTENSIONS = [ "*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png", "*.pbm", "*.pgm", "*.ppm", "*.webp", "*.xbm", "*.xpm",]
 LANGUAGE = [ " Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English",]
 ORIENTATION = [ " Vertical", " Horizontal",]
-LANG_PATH = "./assets/languages/"
 FONT_STYLE = [ " Poppins", " Arial", " Verdana", " Helvetica", " Times New Roman",]
 FONT_SIZE = [ " 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72",]
+
+# Filepath
 STYLES_PATH = "./assets/"
-STYLES_DEFAULT = "./assets/styles.qss"
-NAV_VIEW_RATIO = [ 3, 11,]
 NAV_ROOT = "./assets/images/"
+TBAR_ICONS = "./assets/images/icons/"
+TBAR_ICONS_LIGHT = "./assets/images/icons/"
+LANG_PATH = "./assets/languages/"
+
+STYLES_DEFAULT = "./assets/styles.qss"
 LOGO = "./assets/images/icons/logo.ico"
 HOME_IMAGE = "./assets/images/home.png"
 ABOUT_IMAGE = "./assets/images/about.png"
+TBAR_ICON_DEFAULT = "./assets/images/icons/default_icon.png"
+
+# Sizes
 RBN_HEIGHT = 2.4
 TBAR_ISIZE_REL = 0.1
 TBAR_ISIZE_MARGIN = 1.3
-TBAR_ICONS = "./assets/images/icons/"
-TBAR_ICONS_LIGHT = "./assets/images/icons/"
-TBAR_ICON_DEFAULT = "./assets/images/icons/default_icon.png"
+NAV_VIEW_RATIO = [ 3, 11,]
+
+# Mode
 VIEW_IMAGE_MODE = 0
 SPLIT_VIEW_MODE = false
 
@@ -44,15 +51,16 @@ font_style = 0
 font_size = 2
 
 [PICKER_INDEX]
-language = 20
-orientation = 21
-font_style = 22
-font_size = 23
+language = 48
+orientation = 49
+font_style = 50
+font_size = 51
 
 [NAV_FUNCS]
 path_changed = "view_image_from_fdialog"
 nav_clicked = "view_image_from_explorer"
 
+# Ribbon buttons (always on)
 [MODE_FUNCS]
 
   [MODE_FUNCS.zoom_in]
@@ -100,6 +108,7 @@ nav_clicked = "view_image_from_explorer"
   icon_h = 0.45
   icon_w = 0.6
 
+# Ribbon buttons
 [TBAR_FUNCS]
 
   [TBAR_FUNCS.FILE]
