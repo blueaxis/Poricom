@@ -172,6 +172,9 @@ class PMainWindow(QMainWindow):
         confirmation = PickerPopup(ScaleImagePicker(self, self.tracker))
         confirmation.exec()
 
+    def toggle_mouse_mode(self):
+        self.canvas.toggleZoomPanMode()
+
     def load_model(self):
         load_model_btn = self.ribbon.findChild(QPushButton, "load_model")
         load_model_btn.setChecked(not self.tracker.ocr_model)
@@ -237,15 +240,12 @@ class PMainWindow(QMainWindow):
         self.threadpool.start(worker)
         load_model_btn.setEnabled(False)
 
-    def toggle_logging(self):
-        self.tracker.switch_write_mode()
-
-    def toggle_mouse_mode(self):
-        self.canvas.toggleZoomPanMode()
-
     def modify_tesseract(self):
         confirmation = PickerPopup(LanguagePicker(self, self.tracker))
         confirmation.exec()
+
+    def toggle_logging(self):
+        self.tracker.switch_write_mode()
 
     def load_prev_image(self):
         index = self.explorer.indexAbove(self.explorer.currentIndex())

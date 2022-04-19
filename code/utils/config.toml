@@ -172,9 +172,29 @@ nav_clicked = "view_image_from_explorer"
     icon_h = 1.0
     icon_w = 1.0
 
-  [TBAR_FUNCS.SETTINGS]
+  [TBAR_FUNCS.CONTROLS]
 
-    [TBAR_FUNCS.SETTINGS.load_model]
+    [TBAR_FUNCS.CONTROLS.toggle_mouse_mode]
+    help_title = "Change mouse behavior"
+    help_msg = "This will disable text detection. Turn this on only if do not want to hold CTRL key to zoom and pan on an image."
+    path = "toggle_mouse_mode.png"
+    toggle = true
+    align = "AlignLeft"
+    icon_h = 1.0
+    icon_w = 1.0
+
+    [TBAR_FUNCS.CONTROLS.modify_hotkeys]
+    help_title = "Remap hotkeys"
+    help_msg = "Change shortcut for external captures."
+    path = "modify_hotkeys.png"
+    toggle = false
+    align = "AlignLeft"
+    icon_h = 1.0
+    icon_w = 1.0
+
+  [TBAR_FUNCS.MISC]
+
+    [TBAR_FUNCS.MISC.load_model]
     help_title = "Switch detection model"
     help_msg = "Switch between MangaOCR and Tesseract models."
     path = "load_model.png"
@@ -183,7 +203,7 @@ nav_clicked = "view_image_from_explorer"
     icon_h = 1.0
     icon_w = 1.0
 
-    [TBAR_FUNCS.SETTINGS.modify_tesseract]
+    [TBAR_FUNCS.MISC.modify_tesseract]
     help_title = "Tesseract settings"
     help_msg = "Set the language and orientation for the Tesseract model."
     path = "modify_tesseract.png"
@@ -192,19 +212,10 @@ nav_clicked = "view_image_from_explorer"
     icon_h = 1.0
     icon_w = 1.0
 
-    [TBAR_FUNCS.SETTINGS.toggle_logging]
+    [TBAR_FUNCS.MISC.toggle_logging]
     help_title = "Enable text logging"
     help_msg = "Save detected text to a text file located in the current project directory."
     path = "toggle_logging.png"
-    toggle = true
-    align = "AlignLeft"
-    icon_h = 1.0
-    icon_w = 1.0
-
-    [TBAR_FUNCS.SETTINGS.toggle_mouse_mode]
-    help_title = "Change mouse behavior"
-    help_msg = "This will disable text detection. Turn this on only if do not want to hold CTRL key to zoom and pan on an image."
-    path = "toggle_mouse_mode.png"
     toggle = true
     align = "AlignLeft"
     icon_h = 1.0
