@@ -161,7 +161,7 @@ class PMainWindow(QMainWindow):
     def toggle_split_view(self):
         self.canvas.toggleSplitView()
         if self.canvas.splitViewMode():
-            self.fit_vertically()
+            self.canvas.setViewImageMode(2)
             index = self.explorer.currentIndex()
             self.explorer.currentChanged(index, index)
         elif not self.canvas.splitViewMode():
@@ -249,12 +249,20 @@ class PMainWindow(QMainWindow):
 
     def load_prev_image(self):
         index = self.explorer.indexAbove(self.explorer.currentIndex())
+        if self.canvas.splitViewMode():
+            tempIndex = self.explorer.indexAbove(index)
+            if tempIndex.isValid():
+                index = tempIndex
         if (not index.isValid()):
             return
         self.explorer.setCurrentIndex(index)
 
     def load_next_image(self):
         index = self.explorer.indexBelow(self.explorer.currentIndex())
+        if self.canvas.splitViewMode():
+            tempIndex = self.explorer.indexBelow(index)
+            if tempIndex.isValid():
+                index = tempIndex
         if (not index.isValid()):
             return
         self.explorer.setCurrentIndex(index)

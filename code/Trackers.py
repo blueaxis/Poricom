@@ -64,7 +64,7 @@ class Tracker:
         return splitImage
 
     @property
-    def p_image(self): 
+    def p_image(self):
         return self._p_image
 
     @p_image.setter
@@ -76,6 +76,10 @@ class Tracker:
         if (type(image) is tuple):
             fileLeft, fileRight = image
             if not fileRight:
+                if fileLeft:
+                    self._p_image = PImage(fileLeft)
+                    self._p_image.filename = abspath(fileLeft)
+                    self._filepath = abspath(dirname(fileLeft))
                 return
             splitImage = self.twoFileToImage(fileLeft, fileRight)
 
