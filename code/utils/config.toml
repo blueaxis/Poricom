@@ -20,6 +20,7 @@ LANGUAGE = [ " Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English
 ORIENTATION = [ " Vertical", " Horizontal",]
 FONT_STYLE = [ " Poppins", " Arial", " Verdana", " Helvetica", " Times New Roman",]
 FONT_SIZE = [ " 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72",]
+IMAGE_SCALING= [" Fit to Width", " Fit to Height", " Fit to Screen",]
 
 # Filepath
 STYLES_PATH = "./assets/"
@@ -49,12 +50,14 @@ language = 0
 orientation = 0
 font_style = 0
 font_size = 2
+image_scaling = 0
 
 [PICKER_INDEX]
 language = 48
 orientation = 49
 font_style = 50
 font_size = 51
+image_scaling = 52
 
 [NAV_FUNCS]
 path_changed = "view_image_from_fdialog"
@@ -160,20 +163,11 @@ nav_clicked = "view_image_from_explorer"
     icon_h = 1.0
     icon_w = 1.0
 
-    [TBAR_FUNCS.VIEW.fit_horizontally]
-    help_title = "Fit image horizontally"
-    help_msg = "Fit an image to the current width of the view. This is the default behavior."
-    path = "fit_horizontally.png"
-    toggle = true
-    align = "AlignLeft"
-    icon_h = 1.0
-    icon_w = 1.0
-
-    [TBAR_FUNCS.VIEW.fit_vertically]
-    help_title = "Fit image vertically"
-    help_msg = "Fit an image to the current height of the view."
-    path = "fit_vertically.png"
-    toggle = true
+    [TBAR_FUNCS.VIEW.scale_image]
+    help_title = "Adjust image scaling"
+    help_msg = "Fit an image according to the available options: fit to width, fit to height, fit to screen"
+    path = "scale_image.png"
+    toggle = false
     align = "AlignLeft"
     icon_h = 1.0
     icon_w = 1.0

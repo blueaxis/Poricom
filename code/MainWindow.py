@@ -23,10 +23,11 @@ from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget,
                             QInputDialog, QMainWindow, QApplication)
 from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
 from manga_ocr import MangaOcr
+import toml
 
 from Workers import BaseWorker
 from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, FullScreen,
-                        FontPicker, LanguagePicker, PickerPopup)
+                        FontPicker, LanguagePicker, ScaleImagePicker, PickerPopup)
 from image_io import mangaFileToImageDir
 from utils.config import cfg
 
@@ -128,7 +129,6 @@ class PMainWindow(QMainWindow):
         light_mode = "./assets/styles.qss"
         dark_mode = "./assets/styles-dark.qss"
 
-        import toml
         data = toml.load(config)
         if data["STYLES_DEFAULT"] == light_mode:
             data["STYLES_DEFAULT"] = dark_mode
@@ -168,15 +168,9 @@ class PMainWindow(QMainWindow):
             index = self.explorer.currentIndex()
             self.explorer.currentChanged(index, index)
 
-    def fit_horizontally(self):
-        self.canvas.setViewImageMode(0)
-        btn = self.ribbon.findChild(QPushButton, "fit_vertically")
-        btn.setChecked(False)
-
-    def fit_vertically(self):
-        self.canvas.setViewImageMode(1)
-        btn = self.ribbon.findChild(QPushButton, "fit_horizontally")
-        btn.setChecked(False)
+    def scale_image(self):
+        confirmation = PickerPopup(ScaleImagePicker(self, self.tracker))
+        confirmation.exec()
 
     def load_model(self):
         load_model_btn = self.ribbon.findChild(QPushButton, "load_model")

@@ -351,11 +351,12 @@ class BasePicker(QWidget):
         self.layout.addWidget(self.picktop, 0, 1)
         self.nametop = QLabel("")
         self.layout.addWidget(self.nametop, 0, 0)
-        self.pickbot = QComboBox()
-        self.pickbot.addItems(list_bot)
-        self.layout.addWidget(self.pickbot, 1, 1)
-        self.namebot = QLabel("")
-        self.layout.addWidget(self.namebot, 1, 0)
+        if list_bot:
+            self.pickbot = QComboBox()
+            self.pickbot.addItems(list_bot)
+            self.layout.addWidget(self.pickbot, 1, 1)
+            self.namebot = QLabel("")
+            self.layout.addWidget(self.namebot, 1, 0)
 
 class LanguagePicker(BasePicker):
     def __init__(self, parent, tracker, 
@@ -435,6 +436,25 @@ class FontPicker(BasePicker):
         cfg["SELECTED_INDEX"]["font_size"] = self.font_size_index
         editPreviewStyle(41, self.font_style_text)
         editPreviewStyle(42, self.font_size_text)
+
+class ScaleImagePicker(BasePicker):
+    def __init__(self, parent, tracker, 
+        list_top=cfg["IMAGE_SCALING"], list_bot=[]):
+
+        super().__init__(parent, tracker, list_top, list_bot)
+        self.picktop.currentIndexChanged.connect(self.changeScaling)
+        self.picktop.setCurrentIndex(cfg["SELECTED_INDEX"]["image_scaling"])
+        self.nametop.setText("Image Scaling: ")
+
+        self.scaling_index = self.picktop.currentIndex()
+
+    def changeScaling(self, i):
+        self.scaling_index = i
+
+    def applyChanges(self):
+        self.parent.canvas.setViewImageMode(self.scaling_index)
+        editCBoxConfig(self.scaling_index, 'image_scaling')
+        cfg["SELECTED_INDEX"]["image_scaling"] = self.scaling_index
 
 class PickerPopup(QDialog):
     def __init__(self, widget):
