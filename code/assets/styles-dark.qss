@@ -155,6 +155,8 @@ QComboBox::down-arrow:on {
   margin-right: 0.4em;
 }
 
+/* Input */
+
 QAbstractSpinBox {
   padding: 0.2em;
   border: 0.1em solid #76797C;
@@ -166,6 +168,18 @@ QAbstractSpinBox {
   font-size: 9pt;
 }
 
+QLineEdit {
+  padding: 0.2em;
+  border: 0.1em solid #76797c;
+  background-color: #31363b;
+  color: #eff0f1;
+  border-radius: 0.1em;
+  min-width: 3em;
+  /* min-height: 1.5em; */
+  font-size: 10pt;
+}
+
+QLineEdit:hover,
 QAbstractSpinBox:hover {
   border: 0.1em solid #6A88CB;
 }
