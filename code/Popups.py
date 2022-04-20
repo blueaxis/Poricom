@@ -24,6 +24,13 @@ from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QWidget,
 
 from utils.config import (config, editSelectionConfig, editStylesheet)
 
+class MessagePopup(QMessageBox):
+    def __init__(self, title, message, flags = QMessageBox.Ok):
+        super(QMessageBox, self).__init__(QMessageBox.NoIcon, 
+                                          title,
+                                          message,
+                                          flags)
+
 class BasePicker(QWidget):
     def __init__(self, parent, tracker, optionLists=[]):
         super(QWidget, self).__init__()
@@ -174,10 +181,10 @@ class ShortcutPicker(BasePicker):
         self.modifier_index = self.pickTop.currentIndex()
 
     def keyInvalidError(self):
-        QMessageBox(QMessageBox.NoIcon, 
-            "Invalid Key", 
-            "Please select an alphanumeric key.", 
-            QMessageBox.Ok).exec()
+        MessagePopup(
+            "Invalid Key",
+            "Please select an alphanumeric key."
+        ).exec()
 
     def changeModifier(self, i):
         self.modifier_index = i

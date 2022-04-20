@@ -22,14 +22,13 @@ from time import sleep
 import toml
 from manga_ocr import MangaOcr
 from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
-from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, 
-                            QPushButton, QMessageBox, QFileDialog, 
-                            QInputDialog, QMainWindow, QApplication)
+from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton, 
+                            QFileDialog, QInputDialog, QMainWindow, QApplication)
 
 from Workers import BaseWorker
 from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, FullScreen)
-from Popups import (FontPicker, LanguagePicker, 
-                    ScaleImagePicker, ShortcutPicker, PickerPopup)
+from Popups import (FontPicker, LanguagePicker, ScaleImagePicker, ShortcutPicker, 
+                    PickerPopup, MessagePopup)
 from image_io import mangaFileToImageDir
 from utils.config import config, saveOnClose
 
@@ -188,26 +187,27 @@ class PMainWindow(QMainWindow):
         confirmation = PickerPopup(ShortcutPicker(self, self.tracker))
         ret = confirmation.exec()
         if ret:
-            QMessageBox(QMessageBox.NoIcon, 
-            "Shortcut Remapped", 
-            "Close the app to apply changes.",
-            QMessageBox.Ok).exec()
+            MessagePopup(
+                "Shortcut Remapped",
+                "Close the app to apply changes."
+            ).exec()
 
     def load_model(self):
         load_model_btn = self.ribbon.findChild(QPushButton, "load_model")
         load_model_btn.setChecked(not self.tracker.ocr_model)
 
         if load_model_btn.isChecked():
-            confirmation = QMessageBox(QMessageBox.NoIcon,
+            confirmation = MessagePopup(
                 "Load the MangaOCR model?", 
                 "If you are running this for the first time, this will " + 
                 "download the MangaOcr model which is about 400 MB in size. " + 
                 "This will improve the accuracy of Japanese text detection " + 
                 "in Poricom. If it is already in your cache, it will take a " +
                 "few seconds to load the model.",
-                QMessageBox.Ok | QMessageBox.Cancel)
+                MessagePopup.Ok | MessagePopup.Cancel
+            )
             ret = confirmation.exec()
-            if (ret == QMessageBox.Ok):
+            if (ret == MessagePopup.Ok):
                 pass
             else:
                 load_model_btn.setChecked(False)
@@ -239,15 +239,16 @@ class PMainWindow(QMainWindow):
             using_manga_ocr, connected = type_connection_tuple
             model_name = "MangaOCR" if using_manga_ocr else "Tesseract"
             if connected:
-                QMessageBox(QMessageBox.NoIcon, 
-                    f"{model_name} model loaded", 
-                    f"You are now using the {model_name} model for Japanese text detection.",
-                    QMessageBox.Ok).exec()
+                MessagePopup(
+                    f"{model_name} model loaded",
+                    f"You are now using the {model_name} model for Japanese text detection."
+                ).exec()
+                
             elif not connected:
-                QMessageBox(QMessageBox.NoIcon, 
-                    "Connection Error", 
-                    "Please try again or make sure your Internet connection is on.",
-                    QMessageBox.Ok).exec()
+                MessagePopup(
+                    "Connection Error",
+                    "Please try again or make sure your Internet connection is on."
+                ).exec()
                 load_model_btn.setChecked(False)
 
         worker = BaseWorker(loadModelHelper, self.tracker)
@@ -316,7 +317,7 @@ class PMainWindow(QMainWindow):
         return QMainWindow.closeEvent(self, event)
     
     def poricomNoop(self):
-        QMessageBox(QMessageBox.NoIcon, 
-            "WIP", 
-            "This function is not yet implemented.",
-            QMessageBox.Ok).exec()
+        MessagePopup(
+            "WIP",
+            "This function is not yet implemented."
+        ).exec()
