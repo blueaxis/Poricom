@@ -17,13 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from shutil import rmtree
+from time import sleep
 
+import toml
+from manga_ocr import MangaOcr
+from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, 
                             QPushButton, QMessageBox, QFileDialog, 
                             QInputDialog, QMainWindow, QApplication)
-from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
-from manga_ocr import MangaOcr
-import toml
 
 from Workers import BaseWorker
 from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, FullScreen, PickerPopup,
@@ -116,6 +117,12 @@ class PMainWindow(QMainWindow):
 
             self.threadpool.start(worker)
             open_manga_btn.setEnabled(False)
+
+    def capture_external_helper(self):
+        self.showMinimized()
+        sleep(0.5)
+        if self.isMinimized():
+            self.capture_external()
 
     def capture_external(self):
         ext_window = QMainWindow()

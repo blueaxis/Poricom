@@ -141,6 +141,15 @@ nav_clicked = "view_image_from_explorer"
     icon_h = 1.0
     icon_w = 1.0
 
+    [TBAR_FUNCS.FILE.capture_external_helper]
+    help_title = "External capture"
+    help_msg = "This will minimize the app and perform OCR on the current screen. Alternatively, you may use the shortcut Alt+Q."
+    path = "capture_external_helper.png"
+    toggle = false
+    align = "AlignLeft"
+    icon_h = 1.0
+    icon_w = 1.0
+
   [TBAR_FUNCS.VIEW]
 
     [TBAR_FUNCS.VIEW.toggle_stylesheet]
