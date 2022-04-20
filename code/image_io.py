@@ -28,7 +28,7 @@ import zipfile
 import rarfile
 import pdf2image
 
-from utils.config import cfg
+from utils.config import config
 
 def mangaFileToImageDir(filepath):
     extract_path, extension = splitext(filepath)
@@ -76,7 +76,7 @@ def pixboxToText(pixmap, lang="jpn_vert", model=None):
     # By smaller, we mean textboxes with less text. Usually these
     # boxes have at most one vertical line of text.
     else:
-        with PyTessBaseAPI(path=cfg["LANG_PATH"], lang=lang, oem = 1, psm=1) as api:
+        with PyTessBaseAPI(path=config["LANG_PATH"], lang=lang, oem = 1, psm=1) as api:
             api.SetImage(pil_im)
             text = api.GetUTF8Text()
 

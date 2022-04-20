@@ -25,24 +25,25 @@ from pyqtkeybind import keybinder
 
 from MainWindow import PMainWindow, WinEventFilter
 from Trackers import Tracker
-from utils.config import cfg
+from utils.config import config
 
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     app.setApplicationName("Poricom")
-    app.setWindowIcon(QIcon(cfg["LOGO"]))
+    app.setWindowIcon(QIcon(config["LOGO"]))
 
     tracker = Tracker()
     widget = PMainWindow(parent=None, tracker=tracker)
 
-    styles = cfg["STYLES_DEFAULT"]
+    styles = config["STYLES_DEFAULT"]
     with open(styles, 'r') as fh:
         app.setStyleSheet(fh.read())
     
     keybinder.init()
+    previousShortcut = config["SHORTCUT"]["capture_external"]
     keybinder.register_hotkey(widget.winId(), 
-        cfg["SHORTCUT"]["external_capture"], widget.capture_external)
+        config["SHORTCUT"]["capture_external"], widget.capture_external)
     win_event_filter = WinEventFilter(keybinder)
     event_dispatcher = QAbstractEventDispatcher.instance()
     event_dispatcher.installNativeEventFilter(win_event_filter)
@@ -51,6 +52,5 @@ if __name__ == '__main__':
     widget.load_model()
     app.exec_()
 
-    keybinder.unregister_hotkey(widget.winId(), 
-        cfg["SHORTCUT"]["external_capture"])
+    # keybinder.unregister_hotkey(widget.winId(), previousShortcut)
     sys.exit()

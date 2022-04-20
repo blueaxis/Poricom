@@ -20,14 +20,14 @@ from PyQt5.QtGui import QPixmap, QPainter
 from os.path import isfile, join, splitext, normpath, abspath, exists, dirname
 from os import listdir
 
-from utils.config import cfg
+from utils.config import config
 
 class Tracker:
 
-    def __init__(self, filename=cfg["HOME_IMAGE"], filenext=cfg["ABOUT_IMAGE"]):
-        if not cfg["SPLIT_VIEW_MODE"]:
+    def __init__(self, filename=config["HOME_IMAGE"], filenext=config["ABOUT_IMAGE"]):
+        if not config["SPLIT_VIEW_MODE"]:
             self._p_image = PImage(filename)
-        if cfg["SPLIT_VIEW_MODE"]:
+        if config["SPLIT_VIEW_MODE"]:
             splitImage = self.twoFileToImage(filename, filenext)
             self._p_image = PImage(splitImage, filename)
         self._p_mask = PImage(filename)
@@ -106,7 +106,7 @@ class Tracker:
                         f)), listdir(self.filepath))
         self._image_list = list(map(lambda p: normpath(join(self.filepath, p)),
                         filter((lambda f: ('*'+splitext(f)[1]) 
-                            in cfg["IMAGE_EXTENSIONS"]), filelist)))
+                            in config["IMAGE_EXTENSIONS"]), filelist)))
 
     @property
     def language(self):

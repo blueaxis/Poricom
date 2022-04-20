@@ -27,11 +27,11 @@ from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget,
                             QInputDialog, QMainWindow, QApplication)
 
 from Workers import BaseWorker
-from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, FullScreen, PickerPopup,
-                        FontPicker, LanguagePicker, ScaleImagePicker, ShortcutPicker)
+from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, FullScreen)
+from Popups import (FontPicker, LanguagePicker, 
+                    ScaleImagePicker, ShortcutPicker, PickerPopup)
 from image_io import mangaFileToImageDir
-from utils.config import cfg
-from utils.editor import saveOnClose
+from utils.config import config, saveOnClose
 
 class WinEventFilter(QAbstractNativeEventFilter):
     def __init__(self, keybinder):
@@ -49,7 +49,7 @@ class PMainWindow(QMainWindow):
     def __init__(self, parent=None, tracker=None):
         super(QWidget, self).__init__(parent)
         self.tracker = tracker
-        self.config= cfg
+        self.config= config
 
         self.vlayout = QVBoxLayout()
         self.ribbon = Ribbon(self, self.tracker)
@@ -59,8 +59,8 @@ class PMainWindow(QMainWindow):
 
         self._view_widget = QWidget()
         hlayout = QHBoxLayout(self._view_widget)
-        hlayout.addWidget(self.explorer, cfg["NAV_VIEW_RATIO"][0])
-        hlayout.addWidget(self.canvas, cfg["NAV_VIEW_RATIO"][1])
+        hlayout.addWidget(self.explorer, config["NAV_VIEW_RATIO"][0])
+        hlayout.addWidget(self.canvas, config["NAV_VIEW_RATIO"][1])
         hlayout.setContentsMargins(0,0,0,0)
 
         self.vlayout.addWidget(self._view_widget)
@@ -151,7 +151,7 @@ class PMainWindow(QMainWindow):
             raise RuntimeError("No Qt Application found.")
 
         styles = data["STYLES_DEFAULT"]
-        cfg["STYLES_DEFAULT"] = data["STYLES_DEFAULT"]
+        config["STYLES_DEFAULT"] = data["STYLES_DEFAULT"]
         with open(styles, 'r') as fh:
             app.setStyleSheet(fh.read())
 
@@ -164,7 +164,7 @@ class PMainWindow(QMainWindow):
             if app is None:
                 raise RuntimeError("No Qt Application found.")
 
-            with open(cfg["STYLES_DEFAULT"], 'r') as fh:
+            with open(config["STYLES_DEFAULT"], 'r') as fh:
                 app.setStyleSheet(fh.read())
 
     def toggle_split_view(self):

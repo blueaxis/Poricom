@@ -63,8 +63,9 @@ image_scaling = 53
 modifier = 54
 
 [SHORTCUT]
-external_capture = "Alt+Q"
-external_capture_key = "Q"
+capture_external = "Alt+Q"
+capture_external_key = "Q"
+capture_external_tip = "This will minimize the app and perform OCR on the current screen. Alternatively, you may use the shortcut: "
 
 [NAV_FUNCS]
 path_changed = "view_image_from_fdialog"
