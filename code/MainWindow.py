@@ -26,7 +26,8 @@ from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton,
                             QFileDialog, QInputDialog, QMainWindow, QApplication)
 
 from Workers import BaseWorker
-from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, FullScreen)
+from GUIElements import (ImageNavigator, OCRCanvas, FullScreen)
+from Ribbon import Ribbon
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker, ShortcutPicker, 
                     PickerPopup, MessagePopup)
 from image_io import mangaFileToImageDir
