@@ -20,7 +20,8 @@ LANGUAGE = [ " Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English
 ORIENTATION = [ " Vertical", " Horizontal",]
 FONT_STYLE = [ " Poppins", " Arial", " Verdana", " Helvetica", " Times New Roman",]
 FONT_SIZE = [ " 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72",]
-IMAGE_SCALING= [" Fit to Width", " Fit to Height", " Fit to Screen",]
+IMAGE_SCALING= [ " Fit to Width", " Fit to Height", " Fit to Screen",]
+MODIFIER = [ " Ctrl", " Shift", " Alt", " Ctrl+Alt", " Shift+Alt", " Shift+Ctrl", " Shift+Alt+Ctrl", " No Modifier"]
 
 # Filepath
 STYLES_PATH = "./assets/"
@@ -51,13 +52,19 @@ orientation = 0
 font_style = 0
 font_size = 2
 image_scaling = 0
+modifier = 2
 
 [PICKER_INDEX]
-language = 48
-orientation = 49
-font_style = 50
-font_size = 51
-image_scaling = 52
+language = 49
+orientation = 50
+font_style = 51
+font_size = 52
+image_scaling = 53
+modifier = 54
+
+[SHORTCUT]
+external_capture = "Alt+Q"
+external_capture_key = "Q"
 
 [NAV_FUNCS]
 path_changed = "view_image_from_fdialog"

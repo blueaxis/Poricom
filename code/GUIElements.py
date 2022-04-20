@@ -22,8 +22,8 @@ from PyQt5.QtGui import (QIcon, QTransform)
 from PyQt5.QtCore import (Qt, QDir, QSize, QRectF, QTimer, pyqtSlot)
 from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QVBoxLayout,
                             QApplication, QTreeView, QFileSystemModel,
-                            QWidget, QTabWidget, QPushButton,
-                            QComboBox, QDialog, QDialogButtonBox,
+                            QWidget, QTabWidget, QPushButton, QLineEdit,
+                            QComboBox, QDialog, QDialogButtonBox, QMessageBox,
                             QGraphicsView, QGraphicsScene, QLabel)
 
 import image_io as io_
@@ -400,6 +400,7 @@ class LanguagePicker(BasePicker):
         editCBoxConfig(self.orientation_index, 'orientation')
         cfg["SELECTED_INDEX"]["language"] = self.language_index
         cfg["SELECTED_INDEX"]["orientation"] = self.orientation_index
+        return True
 
 class FontPicker(BasePicker):
     def __init__(self, parent, tracker,
@@ -436,9 +437,10 @@ class FontPicker(BasePicker):
         cfg["SELECTED_INDEX"]["font_size"] = self.font_size_index
         editPreviewStyle(41, self.font_style_text)
         editPreviewStyle(42, self.font_size_text)
+        return True
 
 class ScaleImagePicker(BasePicker):
-    def __init__(self, parent, tracker, 
+    def __init__(self, parent, tracker,
         list_top=cfg["IMAGE_SCALING"], list_bot=[]):
 
         super().__init__(parent, tracker, list_top, list_bot)
@@ -455,6 +457,53 @@ class ScaleImagePicker(BasePicker):
         self.parent.canvas.setViewImageMode(self.scaling_index)
         editCBoxConfig(self.scaling_index, 'image_scaling')
         cfg["SELECTED_INDEX"]["image_scaling"] = self.scaling_index
+        return True
+
+class ShortcutPicker(BasePicker):
+    def __init__(self, parent, tracker,
+        list_top=cfg["MODIFIER"], list_bot=[]):
+
+        super().__init__(parent, tracker, list_top, list_bot)
+        self.picktop.currentIndexChanged.connect(self.changeModifier)
+        self.picktop.setCurrentIndex(cfg["SELECTED_INDEX"]["modifier"])
+        self.nametop.setText("Modifier: ")
+
+        self.pickbot = QLineEdit(cfg["SHORTCUT"]["external_capture_key"])
+        self.layout.addWidget(self.pickbot, 1, 1)
+        self.namebot = QLabel("Key: ")
+        self.layout.addWidget(self.namebot, 1, 0)
+
+        self.modifier_index = self.picktop.currentIndex()
+
+    def keyInvalidError(self):
+        QMessageBox(QMessageBox.NoIcon, 
+            "Invalid Key", 
+            "Please select an alphanumeric key.", 
+            QMessageBox.Ok).exec()
+
+    def changeModifier(self, i):
+        self.modifier_index = i
+
+    def applyChanges(self):
+        selected_modifier = self.picktop.currentText().strip() + "+"
+        if selected_modifier == "No Modifier+":
+            selected_modifier = ""
+
+        if not self.pickbot.text().isalnum():
+            self.keyInvalidError()
+            return False
+        if len(self.pickbot.text()) != 1:
+            self.keyInvalidError()
+            return False
+
+        tooltip = f"This will minimize the app and perform OCR on the current screen. \
+            Alternatively, you may use the shortcut {selected_modifier}{self.pickbot.text()}."
+
+        self.parent.config["SELECTED_INDEX"]["modifier"] = self.modifier_index
+        self.parent.config["SHORTCUT"]["external_capture_key"] = self.pickbot.text()
+        self.parent.config["SHORTCUT"]["external_capture"] = f"{selected_modifier}{self.pickbot.text()}"
+        self.parent.config["TBAR_FUNCS"]["FILE"]["capture_external_helper"]["help_msg"] = tooltip
+        return True
 
 class PickerPopup(QDialog):
     def __init__(self, widget):
@@ -466,15 +515,14 @@ class PickerPopup(QDialog):
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.layout().addWidget(self.buttonBox)
 
-        self.buttonBox.accepted.connect(self.okClickedEvent)
         self.buttonBox.rejected.connect(self.cancelClickedEvent)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)        
-    
-    def okClickedEvent(self):
-        self.widget.applyChanges()
-        self.close()
-    
+
+    def accept(self):
+        if self.widget.applyChanges():
+            return super().accept()
+
     def cancelClickedEvent(self):
         self.close()
 

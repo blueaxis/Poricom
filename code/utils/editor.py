@@ -17,6 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import toml
 
+def saveOnClose(data, config="utils/config.toml"):
+    with open(config, 'w') as fh:
+        toml.dump(data, fh)
+
 def editConfig(index, replacement_text, config="utils/config.toml"):
     data = toml.load(config)
     data[index] = replacement_text

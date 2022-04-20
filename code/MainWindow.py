@@ -26,10 +26,11 @@ from manga_ocr import MangaOcr
 import toml
 
 from Workers import BaseWorker
-from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, FullScreen,
-                        FontPicker, LanguagePicker, ScaleImagePicker, PickerPopup)
+from GUIElements import (ImageNavigator, Ribbon, OCRCanvas, FullScreen, PickerPopup,
+                        FontPicker, LanguagePicker, ScaleImagePicker, ShortcutPicker)
 from image_io import mangaFileToImageDir
 from utils.config import cfg
+from utils.editor import saveOnClose
 
 class WinEventFilter(QAbstractNativeEventFilter):
     def __init__(self, keybinder):
@@ -47,6 +48,7 @@ class PMainWindow(QMainWindow):
     def __init__(self, parent=None, tracker=None):
         super(QWidget, self).__init__(parent)
         self.tracker = tracker
+        self.config= cfg
 
         self.vlayout = QVBoxLayout()
         self.ribbon = Ribbon(self, self.tracker)
@@ -175,6 +177,15 @@ class PMainWindow(QMainWindow):
     def toggle_mouse_mode(self):
         self.canvas.toggleZoomPanMode()
 
+    def modify_hotkeys(self):
+        confirmation = PickerPopup(ShortcutPicker(self, self.tracker))
+        ret = confirmation.exec()
+        if ret:
+            QMessageBox(QMessageBox.NoIcon, 
+            "Shortcut Remapped", 
+            "Close the app to apply changes.",
+            QMessageBox.Ok).exec()
+
     def load_model(self):
         load_model_btn = self.ribbon.findChild(QPushButton, "load_model")
         load_model_btn.setChecked(not self.tracker.ocr_model)
@@ -294,6 +305,7 @@ class PMainWindow(QMainWindow):
             rmtree("./poricom_cache")
         except FileNotFoundError:
             pass
+        saveOnClose(self.config)
         return QMainWindow.closeEvent(self, event)
     
     def poricomNoop(self):

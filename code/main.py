@@ -41,11 +41,16 @@ if __name__ == '__main__':
         app.setStyleSheet(fh.read())
     
     keybinder.init()
-    keybinder.register_hotkey(widget.winId(), "Alt+Q", widget.capture_external)
+    keybinder.register_hotkey(widget.winId(), 
+        cfg["SHORTCUT"]["external_capture"], widget.capture_external)
     win_event_filter = WinEventFilter(keybinder)
     event_dispatcher = QAbstractEventDispatcher.instance()
     event_dispatcher.installNativeEventFilter(win_event_filter)
 
     widget.showMaximized()
     widget.load_model()
-    sys.exit(app.exec_())
+    app.exec_()
+
+    keybinder.unregister_hotkey(widget.winId(), 
+        cfg["SHORTCUT"]["external_capture"])
+    sys.exit()
