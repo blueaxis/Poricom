@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton,
 
 from Workers import BaseWorker
 from Ribbon import (Ribbon)
-from GUIElements import (ImageNavigator)
+from Explorers import (ImageExplorer)
 from Views import (OCRCanvas, FullScreen)
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker, ShortcutPicker, 
                     PickerPopup, MessagePopup)
@@ -57,7 +57,7 @@ class PMainWindow(QMainWindow):
         self.ribbon = Ribbon(self, self.tracker)
         self.vlayout.addWidget(self.ribbon)
         self.canvas = OCRCanvas(self, self.tracker)
-        self.explorer = ImageNavigator(self, self.tracker)
+        self.explorer = ImageExplorer(self, self.tracker)
 
         self._view_widget = QWidget()
         hlayout = QHBoxLayout(self._view_widget)

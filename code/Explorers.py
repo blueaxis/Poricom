@@ -1,5 +1,6 @@
 """
-Poricom
+Poricom Explorer Components
+
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
 This program is free software: you can redistribute it and/or modify
@@ -21,7 +22,7 @@ from PyQt5.QtWidgets import (QTreeView, QFileSystemModel)
 
 from utils.config import config
 
-class ImageNavigator(QTreeView):
+class ImageExplorer(QTreeView):
     layoutCheck = False
     def __init__(self, parent=None, tracker=None):
         super(QTreeView, self).__init__()
