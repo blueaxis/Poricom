@@ -1,5 +1,6 @@
 """
-Poricom
+Poricom Main Window Component
+
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
 This program is free software: you can redistribute it and/or modify
@@ -26,8 +27,9 @@ from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton,
                             QFileDialog, QInputDialog, QMainWindow, QApplication)
 
 from Workers import BaseWorker
-from GUIElements import (ImageNavigator, OCRCanvas, FullScreen)
-from Ribbon import Ribbon
+from Ribbon import (Ribbon)
+from GUIElements import (ImageNavigator)
+from Views import (OCRCanvas, FullScreen)
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker, ShortcutPicker, 
                     PickerPopup, MessagePopup)
 from image_io import mangaFileToImageDir
