@@ -1,5 +1,6 @@
 """
-Poricom
+Poricom Configuration Utilities
+
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
 This program is free software: you can redistribute it and/or modify
