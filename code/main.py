@@ -23,7 +23,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QAbstractEventDispatcher
 from pyqtkeybind import keybinder
 
-from MainWindow import PMainWindow, WinEventFilter
+from MainWindow import MainWindow, WinEventFilter
 from Trackers import Tracker
 from utils.config import config
 
@@ -34,22 +34,22 @@ if __name__ == '__main__':
     app.setWindowIcon(QIcon(config["LOGO"]))
 
     tracker = Tracker()
-    widget = PMainWindow(parent=None, tracker=tracker)
+    widget = MainWindow(parent=None, tracker=tracker)
 
     styles = config["STYLES_DEFAULT"]
     with open(styles, 'r') as fh:
         app.setStyleSheet(fh.read())
-    
+
     keybinder.init()
-    previousShortcut = config["SHORTCUT"]["capture_external"]
-    keybinder.register_hotkey(widget.winId(), 
-        config["SHORTCUT"]["capture_external"], widget.capture_external)
-    win_event_filter = WinEventFilter(keybinder)
-    event_dispatcher = QAbstractEventDispatcher.instance()
-    event_dispatcher.installNativeEventFilter(win_event_filter)
+    previousShortcut = config["SHORTCUT"]["captureExternal"]
+    keybinder.register_hotkey(
+        widget.winId(), config["SHORTCUT"]["captureExternal"], widget.captureExternal)
+    winEventFilter = WinEventFilter(keybinder)
+    eventDispatcher = QAbstractEventDispatcher.instance()
+    eventDispatcher.installNativeEventFilter(winEventFilter)
 
     widget.showMaximized()
-    widget.load_model()
+    widget.loadModel()
     app.exec_()
 
     # keybinder.unregister_hotkey(widget.winId(), previousShortcut)

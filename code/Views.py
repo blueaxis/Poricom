@@ -19,13 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt5.QtGui import (QTransform)
 from PyQt5.QtCore import (Qt, QRectF, QTimer, pyqtSlot)
-from PyQt5.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene, QLabel)
+from PyQt5.QtWidgets import (
+    QApplication, QGraphicsView, QGraphicsScene, QLabel)
 
 from utils.image_io import logText, pixboxToText
 
+
 class BaseCanvas(QGraphicsView):
 
-    def __init__(self, parent = None, tracker = None):
+    def __init__(self, parent=None, tracker=None):
         super(QGraphicsView, self).__init__(parent)
         self.parent = parent
         self.tracker = tracker
@@ -41,9 +43,9 @@ class BaseCanvas(QGraphicsView):
 
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
-        self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
+        self.pixmap = self.scene.addPixmap(self.tracker.pixImage.scaledToWidth(
             self.viewport().geometry().width(), Qt.SmoothTransformation))
-        
+
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
     def mouseMoveEvent(self, event):
@@ -51,12 +53,12 @@ class BaseCanvas(QGraphicsView):
         if (event.buttons() & Qt.LeftButton) and rubberBandVisible:
             self.timer_.start()
         QGraphicsView.mouseMoveEvent(self, event)
-    
+
     def mouseReleaseEvent(self, event):
-        log_path = self.tracker.filepath + "/log.txt"
-        log_to_file = self.tracker.write_mode
+        logPath = self.tracker.filepath + "/log.txt"
+        logToFile = self.tracker.writeMode
         text = self.canvasText.text()
-        logText(text, mode=log_to_file, path=log_path)
+        logText(text, mode=logToFile, path=logPath)
         self.canvasText.hide()
         super().mouseReleaseEvent(event)
 
@@ -69,11 +71,12 @@ class BaseCanvas(QGraphicsView):
 
         lang = self.tracker.language + self.tracker.orientation
         pixbox = self.grab(self.rubberBandRect())
-        text = pixboxToText(pixbox, lang, 
-            self.tracker.ocr_model)
+        text = pixboxToText(pixbox, lang,
+                            self.tracker.ocrModel)
 
         self.canvasText.setText(text)
         self.canvasText.adjustSize()
+
 
 class FullScreen(BaseCanvas):
 
@@ -85,13 +88,14 @@ class FullScreen(BaseCanvas):
     def takeScreenshot(self):
         screen = QApplication.primaryScreen()
         s = screen.size()
-        self.pixmap.setPixmap(
-            screen.grabWindow(0).scaled(s.width(), s.height()))
+        self.pixmap.setPixmap(screen.grabWindow(
+            0).scaled(s.width(), s.height()))
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
     def mouseReleaseEvent(self, event):
         BaseCanvas.mouseReleaseEvent(self, event)
         self.parent.close()
+
 
 class OCRCanvas(BaseCanvas):
 
@@ -110,27 +114,26 @@ class OCRCanvas(BaseCanvas):
 
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
-        self.pixmap = self.scene.addPixmap(self.tracker.p_image.scaledToWidth(
+        self.pixmap = self.scene.addPixmap(self.tracker.pixImage.scaledToWidth(
             self.viewport().geometry().width(), Qt.SmoothTransformation))
 
     def viewImage(self):
         self.verticalScrollBar().setSliderPosition(0)
         if self._viewImageMode == 0:
-            self.pixmap.setPixmap(self.tracker.p_image.scaledToWidth(
+            self.pixmap.setPixmap(self.tracker.pixImage.scaledToWidth(
                 self.viewport().geometry().width(), Qt.SmoothTransformation))
         elif self._viewImageMode == 1:
-            self.pixmap.setPixmap(self.tracker.p_image.scaledToHeight(
+            self.pixmap.setPixmap(self.tracker.pixImage.scaledToHeight(
                 self.viewport().geometry().height(), Qt.SmoothTransformation))
         elif self._viewImageMode == 2:
-            self.pixmap.setPixmap(self.tracker.p_image.scaled(
-                self.viewport().geometry().width(), self.viewport().geometry().height(),
-                Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.pixmap.setPixmap(self.tracker.pixImage.scaled(self.viewport().geometry().width(
+            ), self.viewport().geometry().height(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
     def setViewImageMode(self, mode):
         self._viewImageMode = mode
         self.parent.config["VIEW_IMAGE_MODE"] = mode
-        self.parent.config["SELECTED_INDEX"]['image_scaling'] = mode
+        self.parent.config["SELECTED_INDEX"]['imageScaling'] = mode
         self.viewImage()
 
     def splitViewMode(self):
@@ -173,18 +176,18 @@ class OCRCanvas(BaseCanvas):
 
         if not zoomMode:
             if (event.angleDelta().y() < 0 and
-                self.verticalScrollBar().value() == self.verticalScrollBar().maximum()):
+                    self.verticalScrollBar().value() == self.verticalScrollBar().maximum()):
                 if (self._scrollAtMax == 3):
-                    self.parent.load_next_image()
+                    self.parent.loadNextImage()
                     self._scrollAtMax = 0
                     return
                 else:
                     self._scrollAtMax += 1
 
             if (event.angleDelta().y() > 0 and
-                self.verticalScrollBar().value() == self.verticalScrollBar().minimum()):
+                    self.verticalScrollBar().value() == self.verticalScrollBar().minimum()):
                 if (self._scrollAtMin == 3):
-                    self.parent.load_prev_image()
+                    self.parent.loadPrevImage()
                     self._scrollAtMin = 0
                     return
                 else:

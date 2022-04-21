@@ -18,18 +18,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from PyQt5.QtCore import (Qt)
-from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QWidget, 
-                            QLabel, QLineEdit, QComboBox, 
-                            QDialog, QDialogButtonBox, QMessageBox)
+from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QWidget, QLabel,
+                             QLineEdit, QComboBox, QDialog, QDialogButtonBox, QMessageBox)
 
 from utils.config import (editSelectionConfig, editStylesheet)
 
+
 class MessagePopup(QMessageBox):
-    def __init__(self, title, message, flags = QMessageBox.Ok):
-        super(QMessageBox, self).__init__(QMessageBox.NoIcon, 
-                                          title,
-                                          message,
-                                          flags)
+    def __init__(self, title, message, flags=QMessageBox.Ok):
+        super(QMessageBox, self).__init__(
+            QMessageBox.NoIcon, title, message, flags)
+
 
 class BasePicker(QWidget):
     def __init__(self, parent, tracker, optionLists=[]):
@@ -38,7 +37,7 @@ class BasePicker(QWidget):
         self.tracker = tracker
 
         self.layout = QGridLayout(self)
-        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.setContentsMargins(0, 0, 0, 0)
 
         _comboBoxList = []
         _labelList = []
@@ -56,12 +55,13 @@ class BasePicker(QWidget):
         self.pickBot = _comboBoxList[-1]
         self.nameTop = _labelList[0]
         self.nameBot = _labelList[-1]
-    
+
     def applySelections(self, selections):
         for selection in selections:
-            index = getattr(self, f"{selection}_index")
+            index = getattr(self, f"{selection}Index")
             self.parent.config["SELECTED_INDEX"][selection] = index
             editSelectionConfig(index, selection)
+
 
 class LanguagePicker(BasePicker):
     def __init__(self, parent, tracker):
@@ -78,11 +78,11 @@ class LanguagePicker(BasePicker):
         self.pickBot.setCurrentIndex(config["SELECTED_INDEX"]["orientation"])
         self.nameBot.setText("Orientation: ")
 
-        self.language_index = self.pickTop.currentIndex()
-        self.orientation_index = self.pickBot.currentIndex()
+        self.languageIndex = self.pickTop.currentIndex()
+        self.orientationIndex = self.pickBot.currentIndex()
 
     def changeLanguage(self, i):
-        self.language_index = i
+        self.languageIndex = i
         selectedLanguage = self.pickTop.currentText().strip()
         if selectedLanguage == "Japanese":
             self.tracker.language = "jpn"
@@ -96,7 +96,7 @@ class LanguagePicker(BasePicker):
             self.tracker.language = "eng"
 
     def changeOrientation(self, i):
-        self.orientation_index = i
+        self.orientationIndex = i
         selectedOrientation = self.pickBot.currentText().strip()
         if selectedOrientation == "Vertical":
             self.tracker.orientation = "_vert"
@@ -107,6 +107,7 @@ class LanguagePicker(BasePicker):
         self.applySelections(['language', 'orientation'])
         return True
 
+
 class FontPicker(BasePicker):
     def __init__(self, parent, tracker):
         config = parent.config
@@ -116,34 +117,35 @@ class FontPicker(BasePicker):
 
         super().__init__(parent, tracker, optionLists)
         self.pickTop.currentIndexChanged.connect(self.changeFontStyle)
-        self.pickTop.setCurrentIndex(config["SELECTED_INDEX"]["font_style"])
+        self.pickTop.setCurrentIndex(config["SELECTED_INDEX"]["fontStyle"])
         self.nameTop.setText("Font Style: ")
         self.pickBot.currentIndexChanged.connect(self.changeFontSize)
-        self.pickBot.setCurrentIndex(config["SELECTED_INDEX"]["font_size"])
+        self.pickBot.setCurrentIndex(config["SELECTED_INDEX"]["fontSize"])
         self.nameBot.setText("Font Size: ")
 
         self.fontStyleText = "  font-family: 'Poppins';\n"
         self.fontSizeText = "  font-size: 16pt;\n"
-        self.font_style_index = self.pickTop.currentIndex()
-        self.font_size_index = self.pickBot.currentIndex()
+        self.fontStyleIndex = self.pickTop.currentIndex()
+        self.fontSizeIndex = self.pickBot.currentIndex()
 
     def changeFontStyle(self, i):
-        self.font_style_index = i
+        self.fontStyleIndex = i
         selectedFontStyle = self.pickTop.currentText().strip()
         replacementText = f"  font-family: '{selectedFontStyle}';\n"
         self.fontStyleText = replacementText
 
     def changeFontSize(self, i):
-        self.font_size_index = i
+        self.fontSizeIndex = i
         selectedFontSize = int(self.pickBot.currentText().strip())
         replacementText = f"  font-size: {selectedFontSize}pt;\n"
         self.fontSizeText = replacementText
 
     def applyChanges(self):
-        self.applySelections(['font_style', 'font_size'])
+        self.applySelections(['fontStyle', 'fontSize'])
         editStylesheet(41, self.fontStyleText)
         editStylesheet(42, self.fontSizeText)
         return True
+
 
 class ScaleImagePicker(BasePicker):
     def __init__(self, parent, tracker):
@@ -153,18 +155,19 @@ class ScaleImagePicker(BasePicker):
 
         super().__init__(parent, tracker, optionLists)
         self.pickTop.currentIndexChanged.connect(self.changeScaling)
-        self.pickTop.setCurrentIndex(config["SELECTED_INDEX"]["image_scaling"])
+        self.pickTop.setCurrentIndex(config["SELECTED_INDEX"]["imageScaling"])
         self.nameTop.setText("Image Scaling: ")
 
-        self.image_scaling_index = self.pickTop.currentIndex()
+        self.imageScalingIndex = self.pickTop.currentIndex()
 
     def changeScaling(self, i):
-        self.image_scaling_index = i
+        self.imageScalingIndex = i
 
     def applyChanges(self):
-        self.applySelections(['image_scaling'])
-        self.parent.canvas.setViewImageMode(self.image_scaling_index)
+        self.applySelections(['imageScaling'])
+        self.parent.canvas.setViewImageMode(self.imageScalingIndex)
         return True
+
 
 class ShortcutPicker(BasePicker):
     def __init__(self, parent, tracker):
@@ -177,12 +180,12 @@ class ShortcutPicker(BasePicker):
         self.pickTop.setCurrentIndex(config["SELECTED_INDEX"]["modifier"])
         self.nameTop.setText("Modifier: ")
 
-        self.pickBot = QLineEdit(config["SHORTCUT"]["capture_external_key"])
+        self.pickBot = QLineEdit(config["SHORTCUT"]["captureExternalKey"])
         self.layout.addWidget(self.pickBot, 1, 1)
         self.nameBot = QLabel("Key: ")
         self.layout.addWidget(self.nameBot, 1, 0)
 
-        self.modifier_index = self.pickTop.currentIndex()
+        self.modifierIndex = self.pickTop.currentIndex()
 
     def keyInvalidError(self):
         MessagePopup(
@@ -191,14 +194,14 @@ class ShortcutPicker(BasePicker):
         ).exec()
 
     def changeModifier(self, i):
-        self.modifier_index = i
+        self.modifierIndex = i
 
     def setShortcut(self, keyName, modifierText, keyText):
 
-        tooltip = f"{self.parent.config['SHORTCUT'][f'{keyName}_tip']}{modifierText}{keyText}."
+        tooltip = f"{self.parent.config['SHORTCUT'][f'{keyName}Tip']}{modifierText}{keyText}."
         self.parent.config["SHORTCUT"][keyName] = f"{modifierText}{keyText}"
-        self.parent.config["SHORTCUT"][f"{keyName}_key"] = keyText
-        self.parent.config["TBAR_FUNCS"]["FILE"][f"{keyName}_helper"]["help_msg"] = tooltip
+        self.parent.config["SHORTCUT"][f"{keyName}Key"] = keyText
+        self.parent.config["TBAR_FUNCS"]["FILE"][f"{keyName}Helper"]["helpMsg"] = tooltip
 
     def applyChanges(self):
         selectedModifier = self.pickTop.currentText().strip() + "+"
@@ -212,23 +215,26 @@ class ShortcutPicker(BasePicker):
             self.keyInvalidError()
             return False
 
-        self.setShortcut('capture_external', selectedModifier, self.pickBot.text())
+        self.setShortcut('captureExternal', selectedModifier,
+                         self.pickBot.text())
         self.applySelections(['modifier'])
         return True
 
+
 class PickerPopup(QDialog):
     def __init__(self, widget):
-        super(QDialog, self).__init__(None, 
-            Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
+        super(QDialog, self).__init__(None,
+                                      Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
         self.widget = widget
         self.setLayout(QVBoxLayout())
         self.layout().addWidget(widget)
-        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttonBox = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.layout().addWidget(self.buttonBox)
 
         self.buttonBox.rejected.connect(self.cancelClickedEvent)
         self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.rejected.connect(self.reject)        
+        self.buttonBox.rejected.connect(self.reject)
 
     def accept(self):
         if self.widget.applyChanges():

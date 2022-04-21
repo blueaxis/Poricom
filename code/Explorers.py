@@ -22,8 +22,10 @@ from PyQt5.QtWidgets import (QTreeView, QFileSystemModel)
 
 from utils.config import config
 
+
 class ImageExplorer(QTreeView):
     layoutCheck = False
+
     def __init__(self, parent=None, tracker=None):
         super(QTreeView, self).__init__()
         self.parent = parent
@@ -35,7 +37,7 @@ class ImageExplorer(QTreeView):
         self.model.setNameFilters(config["IMAGE_EXTENSIONS"])
         self.setModel(self.model)
 
-        for i in range(1,4):
+        for i in range(1, 4):
             self.hideColumn(i)
         self.setIndentation(0)
 
@@ -48,7 +50,7 @@ class ImageExplorer(QTreeView):
         filename = self.model.fileInfo(current).absoluteFilePath()
         nextIndex = self.indexBelow(current)
         filenext = self.model.fileInfo(nextIndex).absoluteFilePath()
-        self.parent.view_image_from_explorer(filename, filenext)
+        self.parent.viewImageFromExplorer(filename, filenext)
         QTreeView.currentChanged(self, current, previous)
 
     def setTopIndex(self):

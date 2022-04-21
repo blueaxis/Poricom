@@ -31,31 +31,34 @@ import pdf2image
 
 from utils.config import config
 
+
 def mangaFileToImageDir(filepath):
-    extract_path, extension = splitext(filepath)
-    cache_path = f"./poricom_cache/{basename(extract_path)}"
+    extractPath, extension = splitext(filepath)
+    cachePath = f"./poricom_cache/{basename(extractPath)}"
 
     if extension in [".cbz", ".zip"]:
-        with zipfile.ZipFile(filepath, 'r') as zip_ref:
-            zip_ref.extractall(cache_path)
+        with zipfile.ZipFile(filepath, 'r') as zipRef:
+            zipRef.extractall(cachePath)
 
     rarfile.UNRAR_TOOL = "utils/unrar.exe"
     if extension in [".cbr", ".rar"]:
-        with rarfile.RarFile(filepath) as zip_ref:
-            zip_ref.extractall(cache_path)
+        with rarfile.RarFile(filepath) as zipRef:
+            zipRef.extractall(cachePath)
 
     if extension in [".pdf"]:
         try:
             images = pdf2image.convert_from_path(filepath)
         except pdf2image.exceptions.PDFInfoNotInstalledError:
-            images = pdf2image.convert_from_path(filepath, poppler_path="poppler/Library/bin")
+            images = pdf2image.convert_from_path(
+                filepath, poppler_path="poppler/Library/bin")
         for i in range(len(images)):
-            filename = basename(extract_path)
-            Path(cache_path).mkdir(parents=True, exist_ok=True)
+            filename = basename(extractPath)
+            Path(cachePath).mkdir(parents=True, exist_ok=True)
             images[i].save(
-                f"{cache_path}/{i+1}_{filename}.png", 'PNG')
-    
-    return cache_path
+                f"{cachePath}/{i+1}_{filename}.png", 'PNG')
+
+    return cachePath
+
 
 def pixboxToText(pixmap, lang="jpn_vert", model=None):
 
@@ -67,21 +70,22 @@ def pixboxToText(pixmap, lang="jpn_vert", model=None):
     if bytes.getbuffer().nbytes == 0:
         return
 
-    pil_im = Image.open(bytes)
+    pillowImage = Image.open(bytes)
     text = ""
 
     if model is not None:
-        text = model(pil_im)
+        text = model(pillowImage)
 
     # PSM = 1 works most of the time except on smaller bounding boxes.
     # By smaller, we mean textboxes with less text. Usually these
     # boxes have at most one vertical line of text.
     else:
-        with PyTessBaseAPI(path=config["LANG_PATH"], lang=lang, oem = 1, psm=1) as api:
-            api.SetImage(pil_im)
+        with PyTessBaseAPI(path=config["LANG_PATH"], lang=lang, oem=1, psm=1) as api:
+            api.SetImage(pillowImage)
             text = api.GetUTF8Text()
 
     return text.strip()
+
 
 def logText(text, mode=False, path="."):
     clipboard = QGuiApplication.clipboard()

@@ -23,17 +23,18 @@ from time import sleep
 import toml
 from manga_ocr import MangaOcr
 from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
-from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget, QPushButton, 
-                            QFileDialog, QInputDialog, QMainWindow, QApplication)
+from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget,
+                             QPushButton, QFileDialog, QInputDialog, QMainWindow, QApplication)
 
+from utils.image_io import mangaFileToImageDir
+from utils.config import config, saveOnClose
 from Workers import BaseWorker
 from Ribbon import (Ribbon)
 from Explorers import (ImageExplorer)
 from Views import (OCRCanvas, FullScreen)
-from Popups import (FontPicker, LanguagePicker, ScaleImagePicker, ShortcutPicker, 
-                    PickerPopup, MessagePopup)
-from utils.image_io import mangaFileToImageDir
-from utils.config import config, saveOnClose
+from Popups import (FontPicker, LanguagePicker, ScaleImagePicker,
+                    ShortcutPicker, PickerPopup, MessagePopup)
+
 
 class WinEventFilter(QAbstractNativeEventFilter):
     def __init__(self, keybinder):
@@ -44,59 +45,74 @@ class WinEventFilter(QAbstractNativeEventFilter):
         ret = self.keybinder.handler(eventType, message)
         return ret, 0
 
-class PMainWindow(QMainWindow):
-    # TODO: add pyqtSlot decorator that will update
-    # all GUI elements on the window
+
+class MainWindow(QMainWindow):
 
     def __init__(self, parent=None, tracker=None):
         super(QWidget, self).__init__(parent)
         self.tracker = tracker
-        self.config= config
+        self.config = config
 
-        self.vlayout = QVBoxLayout()
+        self.vLayout = QVBoxLayout()
         self.ribbon = Ribbon(self, self.tracker)
-        self.vlayout.addWidget(self.ribbon)
+        self.vLayout.addWidget(self.ribbon)
         self.canvas = OCRCanvas(self, self.tracker)
         self.explorer = ImageExplorer(self, self.tracker)
 
-        self._view_widget = QWidget()
-        hlayout = QHBoxLayout(self._view_widget)
-        hlayout.addWidget(self.explorer, config["NAV_VIEW_RATIO"][0])
-        hlayout.addWidget(self.canvas, config["NAV_VIEW_RATIO"][1])
-        hlayout.setContentsMargins(0,0,0,0)
+        _viewWidget = QWidget()
+        hLayout = QHBoxLayout(_viewWidget)
+        hLayout.addWidget(self.explorer, config["NAV_VIEW_RATIO"][0])
+        hLayout.addWidget(self.canvas, config["NAV_VIEW_RATIO"][1])
+        hLayout.setContentsMargins(0, 0, 0, 0)
 
-        self.vlayout.addWidget(self._view_widget)
-        _main_widget = QWidget()
-        _main_widget.setLayout(self.vlayout)
-        self.setCentralWidget(_main_widget)
+        self.vLayout.addWidget(_viewWidget)
+        _mainWidget = QWidget()
+        _mainWidget.setLayout(self.vLayout)
+        self.setCentralWidget(_mainWidget)
 
         self.threadpool = QThreadPool()
 
-    def view_image_from_explorer(self, filename, filenext):
+    def viewImageFromExplorer(self, filename, filenext):
         if not self.canvas.splitViewMode():
-            self.tracker.p_image = filename
+            self.tracker.pixImage = filename
         if self.canvas.splitViewMode():
-            self.tracker.p_image = (filename, filenext)
-        if not self.tracker.p_image.is_valid():
+            self.tracker.pixImage = (filename, filenext)
+        if not self.tracker.pixImage.isValid():
             return False
         self.canvas.resetTransform()
         self.canvas.currentScale = 1
         self.canvas.viewImage()
         return True
 
-    def open_dir(self):
+    def closeEvent(self, event):
+        try:
+            rmtree("./poricom_cache")
+        except FileNotFoundError:
+            pass
+        saveOnClose(self.config)
+        return QMainWindow.closeEvent(self, event)
+
+    def poricomNoop(self):
+        MessagePopup(
+            "WIP",
+            "This function is not yet implemented."
+        ).exec()
+
+# ------------------------------ File Functions ------------------------------ #
+
+    def openDir(self):
         filepath = QFileDialog.getExistingDirectory(
             self,
             "Open Directory",
-            "." # , QFileDialog.DontUseNativeDialog
+            "."  # , QFileDialog.DontUseNativeDialog
         )
 
         if filepath:
-            # self.tracker.p_image = filename
+            # self.tracker.pixImage = filename
             self.tracker.filepath = filepath
             self.explorer.setDirectory(filepath)
 
-    def open_manga(self):
+    def openManga(self):
         filename, _ = QFileDialog.getOpenFileName(
             self,
             "Open Manga File",
@@ -109,42 +125,45 @@ class PMainWindow(QMainWindow):
                 self.tracker.filepath = filepath
                 self.explorer.setDirectory(filepath)
 
-            open_manga_btn = self.ribbon.findChild(
-                QPushButton, "open_manga")
+            openMangaButton = self.ribbon.findChild(
+                QPushButton, "openManga")
 
             worker = BaseWorker(mangaFileToImageDir, filename)
             worker.signals.result.connect(setDirectory)
-            worker.signals.finished.connect(lambda: 
-                open_manga_btn.setEnabled(True))
+            worker.signals.finished.connect(
+                lambda: openMangaButton.setEnabled(True))
 
             self.threadpool.start(worker)
-            open_manga_btn.setEnabled(False)
+            openMangaButton.setEnabled(False)
 
-    def capture_external_helper(self):
+    def captureExternalHelper(self):
         self.showMinimized()
         sleep(0.5)
         if self.isMinimized():
-            self.capture_external()
+            self.captureExternal()
 
-    def capture_external(self):
-        ext_window = QMainWindow()
-        ext_window.layout().setContentsMargins(0, 0, 0, 0)
-        ext_window.setStyleSheet("border:0px; margin:0px")
+    def captureExternal(self):
+        externalWindow = QMainWindow()
+        externalWindow.layout().setContentsMargins(0, 0, 0, 0)
+        externalWindow.setStyleSheet("border:0px; margin:0px")
 
-        ext_window.setCentralWidget(FullScreen(ext_window, self.tracker))
-        ext_window.centralWidget().takeScreenshot()
-        ext_window.showFullScreen()
+        externalWindow.setCentralWidget(
+            FullScreen(externalWindow, self.tracker))
+        externalWindow.centralWidget().takeScreenshot()
+        externalWindow.showFullScreen()
 
-    def toggle_stylesheet(self):
+# ------------------------------ View Functions ------------------------------ #
+
+    def toggleStylesheet(self):
         config = "./utils/config.toml"
-        light_mode = "./assets/styles.qss"
-        dark_mode = "./assets/styles-dark.qss"
+        lightMode = "./assets/styles.qss"
+        darkMode = "./assets/styles-dark.qss"
 
         data = toml.load(config)
-        if data["STYLES_DEFAULT"] == light_mode:
-            data["STYLES_DEFAULT"] = dark_mode
-        elif data["STYLES_DEFAULT"] == dark_mode:
-            data["STYLES_DEFAULT"] = light_mode
+        if data["STYLES_DEFAULT"] == lightMode:
+            data["STYLES_DEFAULT"] = darkMode
+        elif data["STYLES_DEFAULT"] == darkMode:
+            data["STYLES_DEFAULT"] = lightMode
         with open(config, 'w') as fh:
             toml.dump(data, fh)
 
@@ -153,11 +172,11 @@ class PMainWindow(QMainWindow):
             raise RuntimeError("No Qt Application found.")
 
         styles = data["STYLES_DEFAULT"]
-        config["STYLES_DEFAULT"] = data["STYLES_DEFAULT"]
+        self.config["STYLES_DEFAULT"] = data["STYLES_DEFAULT"]
         with open(styles, 'r') as fh:
             app.setStyleSheet(fh.read())
 
-    def modify_font_settings(self):
+    def modifyFontSettings(self):
         confirmation = PickerPopup(FontPicker(self, self.tracker))
         ret = confirmation.exec()
 
@@ -169,7 +188,7 @@ class PMainWindow(QMainWindow):
             with open(config["STYLES_DEFAULT"], 'r') as fh:
                 app.setStyleSheet(fh.read())
 
-    def toggle_split_view(self):
+    def toggleSplitView(self):
         self.canvas.toggleSplitView()
         if self.canvas.splitViewMode():
             self.canvas.setViewImageMode(2)
@@ -179,14 +198,16 @@ class PMainWindow(QMainWindow):
             index = self.explorer.currentIndex()
             self.explorer.currentChanged(index, index)
 
-    def scale_image(self):
+    def scaleImage(self):
         confirmation = PickerPopup(ScaleImagePicker(self, self.tracker))
         confirmation.exec()
 
-    def toggle_mouse_mode(self):
+# ----------------------------- Control Functions ---------------------------- #
+
+    def toggleMouseMode(self):
         self.canvas.toggleZoomPanMode()
 
-    def modify_hotkeys(self):
+    def modifyHotkeys(self):
         confirmation = PickerPopup(ShortcutPicker(self, self.tracker))
         ret = confirmation.exec()
         if ret:
@@ -195,16 +216,18 @@ class PMainWindow(QMainWindow):
                 "Close the app to apply changes."
             ).exec()
 
-    def load_model(self):
-        load_model_btn = self.ribbon.findChild(QPushButton, "load_model")
-        load_model_btn.setChecked(not self.tracker.ocr_model)
+# ------------------------------ Misc Functions ------------------------------ #
 
-        if load_model_btn.isChecked():
+    def loadModel(self):
+        loadModelButton = self.ribbon.findChild(QPushButton, "loadModel")
+        loadModelButton.setChecked(not self.tracker.ocrModel)
+
+        if loadModelButton.isChecked():
             confirmation = MessagePopup(
-                "Load the MangaOCR model?", 
-                "If you are running this for the first time, this will " + 
-                "download the MangaOcr model which is about 400 MB in size. " + 
-                "This will improve the accuracy of Japanese text detection " + 
+                "Load the MangaOCR model?",
+                "If you are running this for the first time, this will " +
+                "download the MangaOcr model which is about 400 MB in size. " +
+                "This will improve the accuracy of Japanese text detection " +
                 "in Poricom. If it is already in your cache, it will take a " +
                 "few seconds to load the model.",
                 MessagePopup.Ok | MessagePopup.Cancel
@@ -213,13 +236,14 @@ class PMainWindow(QMainWindow):
             if (ret == MessagePopup.Ok):
                 pass
             else:
-                load_model_btn.setChecked(False)
+                loadModelButton.setChecked(False)
                 return
 
         def loadModelHelper(tracker):
-            better_ocr = tracker.switch_ocr_mode()
-            if better_ocr:
+            betterOCR = tracker.switchOCRMode()
+            if betterOCR:
                 import http.client as httplib
+
                 def isConnected(url="8.8.8.8"):
                     connection = httplib.HTTPSConnection(url, timeout=2)
                     try:
@@ -232,44 +256,46 @@ class PMainWindow(QMainWindow):
 
                 connected = isConnected()
                 if connected:
-                    tracker.ocr_model = MangaOcr()
-                return (better_ocr, connected)
+                    tracker.ocrModel = MangaOcr()
+                return (betterOCR, connected)
             else:
-                tracker.ocr_model = None
-                return (better_ocr, True)
+                tracker.ocrModel = None
+                return (betterOCR, True)
 
-        def modelLoadedConfirmation(type_connection_tuple):
-            using_manga_ocr, connected = type_connection_tuple
-            model_name = "MangaOCR" if using_manga_ocr else "Tesseract"
+        def modelLoadedConfirmation(typeConnectionTuple):
+            usingMangaOCR, connected = typeConnectionTuple
+            modelName = "MangaOCR" if usingMangaOCR else "Tesseract"
             if connected:
                 MessagePopup(
-                    f"{model_name} model loaded",
-                    f"You are now using the {model_name} model for Japanese text detection."
+                    f"{modelName} model loaded",
+                    f"You are now using the {modelName} model for Japanese text detection."
                 ).exec()
-                
+
             elif not connected:
                 MessagePopup(
                     "Connection Error",
                     "Please try again or make sure your Internet connection is on."
                 ).exec()
-                load_model_btn.setChecked(False)
+                loadModelButton.setChecked(False)
 
         worker = BaseWorker(loadModelHelper, self.tracker)
         worker.signals.result.connect(modelLoadedConfirmation)
-        worker.signals.finished.connect(lambda: 
-            load_model_btn.setEnabled(True))
+        worker.signals.finished.connect(lambda:
+                                        loadModelButton.setEnabled(True))
 
         self.threadpool.start(worker)
-        load_model_btn.setEnabled(False)
+        loadModelButton.setEnabled(False)
 
-    def modify_tesseract(self):
+    def modifyTesseract(self):
         confirmation = PickerPopup(LanguagePicker(self, self.tracker))
         confirmation.exec()
 
-    def toggle_logging(self):
-        self.tracker.switch_write_mode()
+    def toggleLogging(self):
+        self.tracker.switchWriteMode()
 
-    def load_prev_image(self):
+# --------------------------- Always On Functions ---------------------------- #
+
+    def loadPrevImage(self):
         index = self.explorer.indexAbove(self.explorer.currentIndex())
         if self.canvas.splitViewMode():
             tempIndex = self.explorer.indexAbove(index)
@@ -279,7 +305,7 @@ class PMainWindow(QMainWindow):
             return
         self.explorer.setCurrentIndex(index)
 
-    def load_next_image(self):
+    def loadNextImage(self):
         index = self.explorer.indexBelow(self.explorer.currentIndex())
         if self.canvas.splitViewMode():
             tempIndex = self.explorer.indexBelow(index)
@@ -289,38 +315,24 @@ class PMainWindow(QMainWindow):
             return
         self.explorer.setCurrentIndex(index)
 
-    def load_image_at_idx(self):
-        row_count = self.explorer.model.rowCount(self.explorer.rootIndex())
+    def loadImageAtIndex(self):
+        rowCount = self.explorer.model.rowCount(self.explorer.rootIndex())
         i, _ = QInputDialog.getInt(
-            self, 
-            'Jump to', 
-            f'Enter page number: (max is {row_count})',
-            value = -1,
-            min = 1,
-            max = row_count,
-            flags = Qt.CustomizeWindowHint| Qt.WindowTitleHint)
+            self,
+            'Jump to',
+            f'Enter page number: (max is {rowCount})',
+            value=-1,
+            min=1,
+            max=rowCount,
+            flags=Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         if (i == -1):
             return
 
         index = self.explorer.model.index(i-1, 0, self.explorer.rootIndex())
         self.explorer.setCurrentIndex(index)
 
-    def zoom_in(self):
+    def zoomIn(self):
         self.canvas.zoomView(True, usingButton=True)
 
-    def zoom_out(self):
+    def zoomOut(self):
         self.canvas.zoomView(False, usingButton=True)
-
-    def closeEvent(self, event):
-        try:
-            rmtree("./poricom_cache")
-        except FileNotFoundError:
-            pass
-        saveOnClose(self.config)
-        return QMainWindow.closeEvent(self, event)
-    
-    def poricomNoop(self):
-        MessagePopup(
-            "WIP",
-            "This function is not yet implemented."
-        ).exec()
