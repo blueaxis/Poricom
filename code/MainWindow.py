@@ -32,7 +32,7 @@ from Explorers import (ImageExplorer)
 from Views import (OCRCanvas, FullScreen)
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker, ShortcutPicker, 
                     PickerPopup, MessagePopup)
-from image_io import mangaFileToImageDir
+from utils.image_io import mangaFileToImageDir
 from utils.config import config, saveOnClose
 
 class WinEventFilter(QAbstractNativeEventFilter):

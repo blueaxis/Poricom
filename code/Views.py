@@ -21,7 +21,7 @@ from PyQt5.QtGui import (QTransform)
 from PyQt5.QtCore import (Qt, QRectF, QTimer, pyqtSlot)
 from PyQt5.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene, QLabel)
 
-import image_io as io_
+from utils.image_io import logText, pixboxToText
 
 class BaseCanvas(QGraphicsView):
 
@@ -56,7 +56,7 @@ class BaseCanvas(QGraphicsView):
         log_path = self.tracker.filepath + "/log.txt"
         log_to_file = self.tracker.write_mode
         text = self.canvasText.text()
-        io_.logText(text, mode=log_to_file, path=log_path)
+        logText(text, mode=log_to_file, path=log_path)
         self.canvasText.hide()
         super().mouseReleaseEvent(event)
 
@@ -69,7 +69,7 @@ class BaseCanvas(QGraphicsView):
 
         lang = self.tracker.language + self.tracker.orientation
         pixbox = self.grab(self.rubberBandRect())
-        text = io_.pixboxToText(pixbox, lang, 
+        text = pixboxToText(pixbox, lang, 
             self.tracker.ocr_model)
 
         self.canvasText.setText(text)

@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QWidget,
                             QLabel, QLineEdit, QComboBox, 
                             QDialog, QDialogButtonBox, QMessageBox)
 
-from utils.config import (config, editSelectionConfig, editStylesheet)
+from utils.config import (editSelectionConfig, editStylesheet)
 
 class MessagePopup(QMessageBox):
     def __init__(self, title, message, flags = QMessageBox.Ok):
@@ -65,8 +65,9 @@ class BasePicker(QWidget):
 
 class LanguagePicker(BasePicker):
     def __init__(self, parent, tracker):
-        listTop = parent.config["LANGUAGE"]
-        listBot = parent.config["ORIENTATION"]
+        config = parent.config
+        listTop = config["LANGUAGE"]
+        listBot = config["ORIENTATION"]
         optionLists = [listTop, listBot]
 
         super().__init__(parent, tracker, optionLists)
@@ -108,8 +109,9 @@ class LanguagePicker(BasePicker):
 
 class FontPicker(BasePicker):
     def __init__(self, parent, tracker):
-        listTop = parent.config["FONT_STYLE"]
-        listBot = parent.config["FONT_SIZE"]
+        config = parent.config
+        listTop = config["FONT_STYLE"]
+        listBot = config["FONT_SIZE"]
         optionLists = [listTop, listBot]
 
         super().__init__(parent, tracker, optionLists)
@@ -145,7 +147,8 @@ class FontPicker(BasePicker):
 
 class ScaleImagePicker(BasePicker):
     def __init__(self, parent, tracker):
-        listTop = parent.config["IMAGE_SCALING"]
+        config = parent.config
+        listTop = config["IMAGE_SCALING"]
         optionLists = [listTop]
 
         super().__init__(parent, tracker, optionLists)
@@ -165,7 +168,8 @@ class ScaleImagePicker(BasePicker):
 
 class ShortcutPicker(BasePicker):
     def __init__(self, parent, tracker):
-        listTop = parent.config["MODIFIER"]
+        config = parent.config
+        listTop = config["MODIFIER"]
         optionLists = [listTop]
 
         super().__init__(parent, tracker, optionLists)
