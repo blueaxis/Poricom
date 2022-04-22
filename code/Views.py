@@ -38,6 +38,7 @@ class BaseCanvas(QGraphicsView):
         self.timer_.timeout.connect(self.rubberBandStopped)
 
         self.canvasText = QLabel("", self, Qt.WindowStaysOnTopHint)
+        self.canvasText.setWordWrap(True)
         self.canvasText.hide()
         self.canvasText.setObjectName("canvasText")
 
