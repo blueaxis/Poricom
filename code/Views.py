@@ -68,6 +68,8 @@ class BaseCanvas(QGraphicsView):
     def rubberBandStopped(self):
 
         if (self.canvasText.isHidden()):
+            self.canvasText.setText("")
+            self.canvasText.adjustSize()
             self.canvasText.show()
 
         lang = self.tracker.language + self.tracker.orientation
