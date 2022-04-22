@@ -19,7 +19,7 @@ Poricom is a desktop program for optical character recognition in manga images. 
 
 Detect text on locally stored manga images:
 
-https://user-images.githubusercontent.com/45705751/161960776-da608849-c80d-4bb9-be9f-11e40b4c3160.mp4
+https://user-images.githubusercontent.com/45705751/164592647-bf6dab41-fb07-4151-8f8f-e7210f562498.mp4
 
 Perform OCR on the current screen by pressing `Alt+Q`:
 
