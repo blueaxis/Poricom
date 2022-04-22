@@ -18,10 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from PyQt5.QtGui import (QTransform)
-from PyQt5.QtCore import (Qt, QRectF, QTimer, pyqtSlot)
+from PyQt5.QtCore import (Qt, QRectF, QTimer, QThreadPool, pyqtSlot)
 from PyQt5.QtWidgets import (
     QApplication, QGraphicsView, QGraphicsScene, QLabel)
 
+from Workers import BaseWorker
 from utils.image_io import logText, pixboxToText
 
 
@@ -66,17 +67,19 @@ class BaseCanvas(QGraphicsView):
     @pyqtSlot()
     def rubberBandStopped(self):
 
-        # use threading either here or on image_io
         if (self.canvasText.isHidden()):
             self.canvasText.show()
 
         lang = self.tracker.language + self.tracker.orientation
         pixbox = self.grab(self.rubberBandRect())
-        text = pixboxToText(pixbox, lang,
-                            self.tracker.ocrModel)
 
-        self.canvasText.setText(text)
-        self.canvasText.adjustSize()
+        worker = BaseWorker(pixboxToText, pixbox, lang, self.tracker.ocrModel)
+        worker.signals.result.connect(self.canvasText.setText)
+        worker.signals.finished.connect(self.canvasText.adjustSize)
+        self.timer_.timeout.disconnect(self.rubberBandStopped)
+        worker.signals.finished.connect(
+            lambda: self.timer_.timeout.connect(self.rubberBandStopped))
+        QThreadPool.globalInstance().start(worker)
 
 
 class FullScreen(BaseCanvas):
