@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/bluaxees/Poricom/releases/tag/v0.3.0) - 2022-04-22
+
+### Added
+- Navigate through images using the scroll wheel (This was accidentally included in [v0.2.2](https://github.com/bluaxees/Poricom/releases/tag/v0.2.2))
+- Add image scaling in view settings (fit to width, fit to height, fit to screen)
+- Implement split view mode
+- Add option to adjust preview text font size and font style
+- Customize the external capture shortcut
+
+### Changed
+- Revamp ribbon button arrangement
+- Improve app responsiveness when selecting text in an image
+- Set default font to Helvetica
+
 ## [0.2.2](https://github.com/bluaxees/Poricom/releases/tag/v0.2.2) - 2022-04-17
 
 ### Fixed
