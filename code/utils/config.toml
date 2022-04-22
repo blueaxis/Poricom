@@ -19,7 +19,7 @@
 IMAGE_EXTENSIONS = [ "*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png", "*.pbm", "*.pgm", "*.ppm", "*.webp", "*.xbm", "*.xpm",]
 LANGUAGE = [ " Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English",]
 ORIENTATION = [ " Vertical", " Horizontal",]
-FONT_STYLE = [ " Poppins", " Arial", " Verdana", " Helvetica", " Times New Roman",]
+FONT_STYLE = [ " Helvetica", " Poppins", " Arial", " Verdana", " Times New Roman",]
 FONT_SIZE = [ " 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72",]
 IMAGE_SCALING= [ " Fit to Width", " Fit to Height", " Fit to Screen",]
 MODIFIER = [ " Ctrl", " Shift", " Alt", " Ctrl+Alt", " Shift+Alt", " Shift+Ctrl", " Shift+Alt+Ctrl", " No Modifier"]
