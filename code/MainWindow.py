@@ -81,6 +81,7 @@ class MainWindow(QMainWindow):
             return False
         self.canvas.resetTransform()
         self.canvas.currentScale = 1
+        self.canvas.verticalScrollBar().setSliderPosition(0)
         self.canvas.viewImage()
         return True
 

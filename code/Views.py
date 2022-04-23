@@ -124,7 +124,7 @@ class OCRCanvas(BaseCanvas):
             self.viewport().geometry().width(), Qt.SmoothTransformation))
 
     def viewImage(self):
-        self.verticalScrollBar().setSliderPosition(0)
+        # self.verticalScrollBar().setSliderPosition(0)
         if self._viewImageMode == 0:
             self.pixmap.setPixmap(self.tracker.pixImage.scaledToWidth(
                 self.viewport().geometry().width(), Qt.SmoothTransformation))
