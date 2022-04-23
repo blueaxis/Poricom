@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.1](https://github.com/bluaxees/Poricom/releases/tag/v0.3.1) - 2022-04-23
+
+### Changed
+- Show folders containing images in directory
+- Suppress scrolling for a few milliseconds after moving to the next/previous image
+
+### Fixed
+- Improve image resolution when zooming
+- Decrease sensitivity on trackpad scroll event
+
 ## [0.3.0](https://github.com/bluaxees/Poricom/releases/tag/v0.3.0) - 2022-04-22
 
 ### Added
