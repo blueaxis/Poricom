@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from time import sleep
+
 from PyQt5.QtGui import (QTransform)
 from PyQt5.QtCore import (Qt, QRectF, QTimer, QThreadPool, pyqtSlot)
 from PyQt5.QtWidgets import (
@@ -115,8 +117,12 @@ class OCRCanvas(BaseCanvas):
         self._splitViewMode = parent.config["SPLIT_VIEW_MODE"]
         self._zoomPanMode = False
         self.currentScale = 1
+
         self._scrollAtMin = 0
         self._scrollAtMax = 0
+        self._trackPadAtMin = 0
+        self._trackPadAtMax = 0
+        self._scrollSuppressed = False
 
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
@@ -180,24 +186,59 @@ class OCRCanvas(BaseCanvas):
                 isZoomIn = False
             self.zoomView(isZoomIn)
 
+        if self._scrollSuppressed:
+            return
+
         if not zoomMode:
+
+            mouseScrollLimit = 3
+            trackpadScrollLimit = 36
+            wheelDelta = 120
+
+            def suppressScroll():
+                self._scrollSuppressed = True
+                worker = BaseWorker(sleep, 0.3)
+                worker.signals.finished.connect(
+                    lambda: setattr(self, "_scrollSuppressed", False))
+                QThreadPool.globalInstance().start(worker)
+
             if (event.angleDelta().y() < 0 and
                     self.verticalScrollBar().value() == self.verticalScrollBar().maximum()):
-                if (self._scrollAtMax == 3):
-                    self.parent.loadNextImage()
-                    self._scrollAtMax = 0
-                    return
-                else:
-                    self._scrollAtMax += 1
+                if (event.angleDelta().y() > -wheelDelta):
+                    if (self._trackPadAtMax == trackpadScrollLimit):
+                        self.parent.loadNextImage()
+                        self._trackPadAtMax = 0
+                        suppressScroll()
+                        return
+                    else:
+                        self._trackPadAtMax += 1
+                elif (event.angleDelta().y() <= -wheelDelta):
+                    if (self._scrollAtMax == mouseScrollLimit):
+                        self.parent.loadNextImage()
+                        self._scrollAtMax = 0
+                        suppressScroll()
+                        return
+                    else:
+                        self._scrollAtMax += 1
 
             if (event.angleDelta().y() > 0 and
                     self.verticalScrollBar().value() == self.verticalScrollBar().minimum()):
-                if (self._scrollAtMin == 3):
-                    self.parent.loadPrevImage()
-                    self._scrollAtMin = 0
-                    return
-                else:
-                    self._scrollAtMin += 1
+                if (event.angleDelta().y() < wheelDelta):
+                    if (self._trackPadAtMin == trackpadScrollLimit):
+                        self.parent.loadPrevImage()
+                        self._trackPadAtMin = 0
+                        suppressScroll()
+                        return
+                    else:
+                        self._trackPadAtMin += 1
+                elif (event.angleDelta().y() >= wheelDelta):
+                    if (self._scrollAtMin == mouseScrollLimit):
+                        self.parent.loadPrevImage()
+                        self._scrollAtMin = 0
+                        suppressScroll()
+                        return
+                    else:
+                        self._scrollAtMin += 1
             QGraphicsView.wheelEvent(self, event)
 
     def mouseMoveEvent(self, event):
