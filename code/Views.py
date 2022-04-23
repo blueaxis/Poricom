@@ -19,8 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from time import sleep
 
-from PyQt5.QtGui import (QTransform)
 from PyQt5.QtCore import (Qt, QRectF, QTimer, QThreadPool, pyqtSlot)
+from PyQt5.QtCore import (Qt, QRect, QSize, QRectF,
+                          QTimer, QThreadPool, pyqtSlot)
 from PyQt5.QtWidgets import (
     QApplication, QGraphicsView, QGraphicsScene, QLabel)
 
@@ -129,17 +130,20 @@ class OCRCanvas(BaseCanvas):
         self.pixmap = self.scene.addPixmap(self.tracker.pixImage.scaledToWidth(
             self.viewport().geometry().width(), Qt.SmoothTransformation))
 
-    def viewImage(self):
-        self.verticalScrollBar().setSliderPosition(0)
+    def viewImage(self, factor=1):
+        # self.verticalScrollBar().setSliderPosition(0)
+        factor = self.currentScale
+        w = factor*self.viewport().geometry().width()
+        h = factor*self.viewport().geometry().height()
         if self._viewImageMode == 0:
-            self.pixmap.setPixmap(self.tracker.pixImage.scaledToWidth(
-                self.viewport().geometry().width(), Qt.SmoothTransformation))
+            self.pixmap.setPixmap(
+                self.tracker.pixImage.scaledToWidth(w, Qt.SmoothTransformation))
         elif self._viewImageMode == 1:
-            self.pixmap.setPixmap(self.tracker.pixImage.scaledToHeight(
-                self.viewport().geometry().height(), Qt.SmoothTransformation))
+            self.pixmap.setPixmap(
+                self.tracker.pixImage.scaledToHeight(h, Qt.SmoothTransformation))
         elif self._viewImageMode == 2:
-            self.pixmap.setPixmap(self.tracker.pixImage.scaled(self.viewport().geometry().width(
-            ), self.viewport().geometry().height(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.pixmap.setPixmap(self.tracker.pixImage.scaled(
+                w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
     def setViewImageMode(self, mode):
@@ -160,12 +164,15 @@ class OCRCanvas(BaseCanvas):
         if usingButton:
             factor = 1.4
 
+        print(self.currentScale)
         if isZoomIn and self.currentScale < 15:
-            self.scale(factor, factor)
+            #self.scale(factor, factor)
             self.currentScale *= factor
+            self.viewImage(self.currentScale)
         elif not isZoomIn and self.currentScale > 0.35:
-            self.scale(1/factor, 1/factor)
+            #self.scale(1/factor, 1/factor)
             self.currentScale /= factor
+            self.viewImage(self.currentScale)
 
     def toggleZoomPanMode(self):
         self._zoomPanMode = not self._zoomPanMode
@@ -178,12 +185,15 @@ class OCRCanvas(BaseCanvas):
         pressedKey = QApplication.keyboardModifiers()
         zoomMode = pressedKey == Qt.ControlModifier or self._zoomPanMode
 
-        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        # self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         if zoomMode:
             if event.angleDelta().y() > 0:
                 isZoomIn = True
             elif event.angleDelta().y() < 0:
                 isZoomIn = False
+            scenePos = self.mapToScene(event.pos())
+            truePos = QRect(scenePos.toPoint(), QSize(2, 2)).center()
+            self.centerOn(truePos)
             self.zoomView(isZoomIn)
 
         if self._scrollSuppressed:
@@ -253,6 +263,6 @@ class OCRCanvas(BaseCanvas):
         BaseCanvas.mouseMoveEvent(self, event)
 
     def mouseDoubleClickEvent(self, event):
-        self.setTransform(QTransform())
         self.currentScale = 1
+        self.viewImage(self.currentScale)
         QGraphicsView.mouseDoubleClickEvent(self, event)
