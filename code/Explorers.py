@@ -32,7 +32,7 @@ class ImageExplorer(QTreeView):
         self.tracker = tracker
 
         self.model = QFileSystemModel()
-        self.model.setFilter(QDir.Files)
+        # self.model.setFilter(QDir.Files)
         self.model.setNameFilterDisables(False)
         self.model.setNameFilters(config["IMAGE_EXTENSIONS"])
         self.setModel(self.model)

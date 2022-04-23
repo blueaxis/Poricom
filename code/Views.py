@@ -164,7 +164,6 @@ class OCRCanvas(BaseCanvas):
         if usingButton:
             factor = 1.4
 
-        print(self.currentScale)
         if isZoomIn and self.currentScale < 15:
             #self.scale(factor, factor)
             self.currentScale *= factor
