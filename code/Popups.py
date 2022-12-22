@@ -123,10 +123,18 @@ class FontPicker(BasePicker):
         self.pickBot.setCurrentIndex(config["SELECTED_INDEX"]["fontSize"])
         self.nameBot.setText("Font Size: ")
 
-        self.fontStyleText = "  font-family: 'Poppins';\n"
-        self.fontSizeText = "  font-size: 16pt;\n"
+        self.persistText = QComboBox()
+        self.persistText.addItems(["Disabled", "Enabled"])
+        self.layout.addWidget(QLabel("Persist Text: "), 2, 0)
+        self.layout.addWidget(self.persistText, 2, 1)
+        self.persistText.setCurrentIndex(config["PERSIST_TEXT_MODE"])
+        self.persistText.currentIndexChanged.connect(self.changePersistText)
+
+        self.fontStyleText = f"  font-family: '{self.pickTop.currentText().strip()}';\n"
+        self.fontSizeText = f"  font-size: {self.pickBot.currentText().strip()}pt;\n"
         self.fontStyleIndex = self.pickTop.currentIndex()
         self.fontSizeIndex = self.pickBot.currentIndex()
+        self.persistTextIndex = self.persistText.currentIndex()
 
     def changeFontStyle(self, i):
         self.fontStyleIndex = i
@@ -139,11 +147,15 @@ class FontPicker(BasePicker):
         selectedFontSize = int(self.pickBot.currentText().strip())
         replacementText = f"  font-size: {selectedFontSize}pt;\n"
         self.fontSizeText = replacementText
+    
+    def changePersistText(self, i):
+        self.persistTextIndex = i
 
     def applyChanges(self):
         self.applySelections(['fontStyle', 'fontSize'])
         editStylesheet(41, self.fontStyleText)
         editStylesheet(42, self.fontSizeText)
+        self.parent.config["PERSIST_TEXT_MODE"] = self.persistTextIndex
         return True
 
 
