@@ -23,8 +23,8 @@ from time import sleep
 import toml
 from manga_ocr import MangaOcr
 from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
-from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QWidget,
-                             QPushButton, QFileDialog, QInputDialog, QMainWindow, QApplication)
+from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QMainWindow, QApplication,
+                             QPushButton, QFileDialog, QInputDialog, QSplitter)
 
 from utils.image_io import mangaFileToImageDir
 from utils.config import config, saveOnClose
@@ -59,13 +59,14 @@ class MainWindow(QMainWindow):
         self.canvas = OCRCanvas(self, self.tracker)
         self.explorer = ImageExplorer(self, self.tracker)
 
-        _viewWidget = QWidget()
-        hLayout = QHBoxLayout(_viewWidget)
-        hLayout.addWidget(self.explorer, config["NAV_VIEW_RATIO"][0])
-        hLayout.addWidget(self.canvas, config["NAV_VIEW_RATIO"][1])
-        hLayout.setContentsMargins(0, 0, 0, 0)
+        self.splitter = QSplitter()
+        self.splitter.addWidget(self.explorer)
+        self.splitter.addWidget(self.canvas)
+        self.splitter.setChildrenCollapsible(False)
+        for i, s in enumerate(config["NAV_VIEW_RATIO"]):
+            self.splitter.setStretchFactor(i, s)
 
-        self.vLayout.addWidget(_viewWidget)
+        self.vLayout.addWidget(self.splitter)
         _mainWidget = QWidget()
         _mainWidget.setLayout(self.vLayout)
         self.setCentralWidget(_mainWidget)
@@ -84,6 +85,11 @@ class MainWindow(QMainWindow):
         self.canvas.verticalScrollBar().setSliderPosition(0)
         self.canvas.viewImage()
         return True
+
+    def resizeEvent(self, event):
+        self.explorer.setMinimumWidth(0.1*self.width())
+        self.explorer.setMaximumWidth(0.3*self.width())
+        return super().resizeEvent(event)
 
     def closeEvent(self, event):
         try:

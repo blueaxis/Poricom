@@ -41,7 +41,7 @@ TBAR_ICON_DEFAULT = "./assets/images/icons/default_icon.png"
 RBN_HEIGHT = 2.4
 TBAR_ISIZE_REL = 0.1
 TBAR_ISIZE_MARGIN = 1.3
-NAV_VIEW_RATIO = [ 3, 11,]
+NAV_VIEW_RATIO = [ 1, 9,]
 
 # Mode
 VIEW_IMAGE_MODE = 0
