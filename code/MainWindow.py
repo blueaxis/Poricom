@@ -90,6 +90,7 @@ class MainWindow(QMainWindow):
             rmtree("./poricom_cache")
         except FileNotFoundError:
             pass
+        self.config["NAV_ROOT"] = self.tracker.filepath
         saveOnClose(self.config)
         return QMainWindow.closeEvent(self, event)
 
@@ -105,19 +106,24 @@ class MainWindow(QMainWindow):
         filepath = QFileDialog.getExistingDirectory(
             self,
             "Open Directory",
-            "."  # , QFileDialog.DontUseNativeDialog
+            self.tracker.filepath  # , QFileDialog.DontUseNativeDialog
         )
 
         if filepath:
-            # self.tracker.pixImage = filename
-            self.tracker.filepath = filepath
-            self.explorer.setDirectory(filepath)
+            try:
+                self.tracker.filepath = filepath
+                self.explorer.setDirectory(filepath)
+            except FileNotFoundError:
+                MessagePopup(
+                    f"No images found in the directory",
+                    f"Please select a directory with images."
+                ).exec()
 
     def openManga(self):
         filename, _ = QFileDialog.getOpenFileName(
             self,
             "Open Manga File",
-            ".",
+            self.tracker.filepath,
             "Manga (*.cbz *.cbr *.zip *.rar *.pdf)"
         )
 

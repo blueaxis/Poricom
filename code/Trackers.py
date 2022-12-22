@@ -26,8 +26,16 @@ from utils.config import config
 
 
 class Tracker:
-
-    def __init__(self, filename=config["HOME_IMAGE"], filenext=config["ABOUT_IMAGE"]):
+    def __init__(self):
+        try:
+            self.filepath = abspath(config["NAV_ROOT"])
+        except FileNotFoundError:
+            self.filepath = abspath(config["DEFAULT_NAV_ROOT"])
+        try:
+            filename, filenext, *_ = self._imageList
+        except ValueError:
+            filename, *_ = self._imageList
+            filenext = None
         if not config["SPLIT_VIEW_MODE"]:
             self._pixImage = PImage(filename)
         if config["SPLIT_VIEW_MODE"]:
@@ -35,7 +43,6 @@ class Tracker:
             self._pixImage = PImage(splitImage, filename)
         self._pixMask = PImage(filename)
 
-        self._filepath = abspath(dirname(filename))
         self._writeMode = False
 
         self._imageList = []
@@ -104,11 +111,14 @@ class Tracker:
 
     @filepath.setter
     def filepath(self, filepath):
+        fileList = filter(lambda f: isfile(join(filepath, f)), listdir(filepath))
+        imageList = list(map(lambda p: normpath(join(filepath, p)), filter(
+            (lambda f: ('*'+splitext(f)[1]) in config["IMAGE_EXTENSIONS"]), fileList)))
+        if len(imageList) <= 0:
+            raise FileNotFoundError("Empty directory")
+
         self._filepath = filepath
-        filelist = filter(lambda f: isfile(join(self.filepath,
-                                                f)), listdir(self.filepath))
-        self._imageList = list(map(lambda p: normpath(join(self.filepath, p)), filter(
-            (lambda f: ('*'+splitext(f)[1]) in config["IMAGE_EXTENSIONS"]), filelist)))
+        self._imageList = imageList
 
     @property
     def language(self):
