@@ -246,12 +246,15 @@ class MainWindow(QMainWindow):
             if betterOCR:
                 import http.client as httplib
 
-                def isConnected(url="8.8.8.8"):
+                def isConnected(url=self.config["CHECK_INTERNET_URL"]):
+                    if not self.config["CHECK_INTERNET_POPUP"]:
+                        return True
                     connection = httplib.HTTPSConnection(url, timeout=2)
                     try:
                         connection.request("HEAD", "/")
                         return True
                     except Exception:
+                        tracker.switchOCRMode()
                         return False
                     finally:
                         connection.close()
@@ -274,10 +277,16 @@ class MainWindow(QMainWindow):
                 ).exec()
 
             elif not connected:
-                MessagePopup(
+                connectionErrorMessage = CheckboxPopup(
                     "Connection Error",
-                    "Please try again or make sure your Internet connection is on."
-                ).exec()
+                    "Please try again or make sure your Internet connection is on.",
+                    checkboxMessage=(
+                        "Check this box if you keep getting this error even with connection on."
+                    )
+                )
+                connectionErrorMessage.exec()
+                self.config["CHECK_INTERNET_POPUP"] = \
+                            not connectionErrorMessage.checkBox().isChecked()
                 loadModelButton.setChecked(False)
 
         worker = BaseWorker(loadModelHelper, self.tracker)
