@@ -40,11 +40,30 @@ class Tracker:
 
         self._imageList = []
 
-        self._language = "jpn"
-        self._orientation = "_vert"
+        selectedLanguage = config["LANGUAGE"][config["SELECTED_INDEX"]["language"]]
+        self._language = self.selectionToLangCode(selectedLanguage.strip())
+        selectedOrientation = config["ORIENTATION"][config["SELECTED_INDEX"]["orientation"]]
+        self._orientation = self.selectionToOrientCode(selectedOrientation.strip())
 
         self._betterOCR = False
         self._ocrModel = None
+
+    def selectionToLangCode(self, selectedLanguage):
+        if selectedLanguage == "Japanese":
+            langCode = "jpn"
+        if selectedLanguage == "Korean":
+            langCode = "kor"
+        if selectedLanguage == "Chinese SIM":
+            langCode = "chi_sim"
+        if selectedLanguage == "Chinese TRA":
+            langCode = "chi_tra"
+        if selectedLanguage == "English":
+            langCode = "eng"
+        return langCode
+    
+    def selectionToOrientCode(self, selectedOrientation):
+        isVert = selectedOrientation == "Vertical"
+        return "_vert" if isVert else ""
 
     def twoFileToImage(self, fileLeft, fileRight):
         imageLeft, imageRight = PImage(fileLeft), PImage(fileRight)
