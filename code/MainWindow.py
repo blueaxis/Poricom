@@ -203,6 +203,9 @@ class MainWindow(QMainWindow):
         confirmation = PickerPopup(ScaleImagePicker(self, self.tracker))
         confirmation.exec()
 
+    def hideExplorer(self):
+        self.explorer.setVisible(not self.explorer.isVisible())
+
 # ----------------------------- Control Functions ---------------------------- #
 
     def toggleMouseMode(self):

@@ -163,6 +163,15 @@ navClicked = "viewImageFromExplorer"
     iconH = 1.0
     iconW = 1.0
 
+    [TBAR_FUNCS.VIEW.hideExplorer]
+    helpTitle = "Hide explorer"
+    helpMsg = "Hide the file explorer from view"
+    path = "hideExplorer.png"
+    toggle = true
+    align = "AlignLeft"
+    iconH = 1.0
+    iconW = 1.0
+
     [TBAR_FUNCS.VIEW.modifyFontSettings]
     helpTitle = "Modify preview text"
     helpMsg = "Change font style and font size of preview text."
