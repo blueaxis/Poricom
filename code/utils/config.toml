@@ -47,6 +47,10 @@ NAV_VIEW_RATIO = [ 3, 11,]
 VIEW_IMAGE_MODE = 0
 SPLIT_VIEW_MODE = false
 
+# Popups
+LOAD_MODEL_POPUP = true
+CHECK_INTERNET_POPUP = true
+
 [SELECTED_INDEX]
 language = 0
 orientation = 0

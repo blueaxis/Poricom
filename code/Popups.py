@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from PyQt5.QtCore import (Qt)
-from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QWidget, QLabel,
+from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QWidget, QLabel, QCheckBox,
                              QLineEdit, QComboBox, QDialog, QDialogButtonBox, QMessageBox)
 
 from utils.config import (editSelectionConfig, editStylesheet)
@@ -29,6 +29,14 @@ class MessagePopup(QMessageBox):
         super(QMessageBox, self).__init__(
             QMessageBox.NoIcon, title, message, flags)
 
+
+class CheckboxPopup(MessagePopup):
+    def __init__(self, title, message, flags=QMessageBox.Ok,
+                checkboxMessage="Don't show this dialog again"):
+        super(MessagePopup, self).__init__(
+            MessagePopup.NoIcon, title, message, flags)
+        self.checkbox = QCheckBox(checkboxMessage)
+        self.setCheckBox(self.checkbox)
 
 class BasePicker(QWidget):
     def __init__(self, parent, tracker, optionLists=[]):

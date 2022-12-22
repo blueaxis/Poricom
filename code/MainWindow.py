@@ -33,7 +33,7 @@ from Ribbon import (Ribbon)
 from Explorers import (ImageExplorer)
 from Views import (OCRCanvas, FullScreen)
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker,
-                    ShortcutPicker, PickerPopup, MessagePopup)
+                    ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
 
 
 class WinEventFilter(QAbstractNativeEventFilter):
@@ -223,8 +223,8 @@ class MainWindow(QMainWindow):
         loadModelButton = self.ribbon.findChild(QPushButton, "loadModel")
         loadModelButton.setChecked(not self.tracker.ocrModel)
 
-        if loadModelButton.isChecked():
-            confirmation = MessagePopup(
+        if loadModelButton.isChecked() and self.config["LOAD_MODEL_POPUP"]:
+            confirmation = CheckboxPopup(
                 "Load the MangaOCR model?",
                 "If you are running this for the first time, this will " +
                 "download the MangaOcr model which is about 400 MB in size. " +
@@ -234,6 +234,7 @@ class MainWindow(QMainWindow):
                 MessagePopup.Ok | MessagePopup.Cancel
             )
             ret = confirmation.exec()
+            self.config["LOAD_MODEL_POPUP"] = not confirmation.checkBox().isChecked()
             if (ret == MessagePopup.Ok):
                 pass
             else:
