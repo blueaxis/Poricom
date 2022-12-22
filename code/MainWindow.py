@@ -261,7 +261,10 @@ class MainWindow(QMainWindow):
 
                 connected = isConnected()
                 if connected:
-                    tracker.ocrModel = MangaOcr()
+                    try:
+                        tracker.ocrModel = MangaOcr()
+                    except ValueError:
+                        return (betterOCR, False)
                 return (betterOCR, connected)
             else:
                 tracker.ocrModel = None
