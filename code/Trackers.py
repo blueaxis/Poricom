@@ -47,7 +47,7 @@ class Tracker:
         self._ocrModel = None
 
     def twoFileToImage(self, fileLeft, fileRight):
-        imageLeft, imageRight = PImage(fileLeft), PImage(fileRight)
+        imageLeft, imageRight = PImage(fileRight), PImage(fileLeft)
         if not (imageLeft.isValid()):
             return
 
