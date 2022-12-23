@@ -147,6 +147,7 @@ class MainWindow(QMainWindow):
         externalWindow = QMainWindow()
         externalWindow.layout().setContentsMargins(0, 0, 0, 0)
         externalWindow.setStyleSheet("border:0px; margin:0px")
+        externalWindow.setAttribute(Qt.WA_DeleteOnClose)
 
         externalWindow.setCentralWidget(
             FullScreen(externalWindow, self.tracker))
