@@ -265,3 +265,18 @@ class OCRCanvas(BaseCanvas):
         self.currentScale = 1
         self.viewImage(self.currentScale)
         QGraphicsView.mouseDoubleClickEvent(self, event)
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Left:
+            self.parent.loadPrevImage()
+            return
+        if event.key() == Qt.Key_Right:
+            self.parent.loadNextImage()
+            return
+        if event.key() == Qt.Key_Minus:
+            self.zoomView(isZoomIn=False, usingButton=True)
+            return
+        if event.key() == Qt.Key_Plus:
+            self.zoomView(isZoomIn=True, usingButton=True)
+            return
+        super().keyPressEvent(event)
