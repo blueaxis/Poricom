@@ -71,6 +71,18 @@ class BaseCanvas(QGraphicsView):
             pass
         super().mouseReleaseEvent(event)
 
+    def handleTextResult(self, result):
+        try:
+            self.canvasText.setText(result)
+        except RuntimeError:
+            pass
+    
+    def handleTextFinished(self):
+        try:
+            self.canvasText.adjustSize()
+        except RuntimeError:
+            pass
+
     @pyqtSlot()
     def rubberBandStopped(self):
 
@@ -83,8 +95,8 @@ class BaseCanvas(QGraphicsView):
         pixbox = self.grab(self.rubberBandRect())
 
         worker = BaseWorker(pixboxToText, pixbox, lang, self.tracker.ocrModel)
-        worker.signals.result.connect(self.canvasText.setText)
-        worker.signals.finished.connect(self.canvasText.adjustSize)
+        worker.signals.result.connect(self.handleTextResult)
+        worker.signals.finished.connect(self.handleTextFinished)
         self.timer_.timeout.disconnect(self.rubberBandStopped)
         worker.signals.finished.connect(
             lambda: self.timer_.timeout.connect(self.rubberBandStopped))
