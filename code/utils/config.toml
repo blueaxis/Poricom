@@ -41,7 +41,7 @@ TBAR_ICON_DEFAULT = "./assets/images/icons/default_icon.png"
 RBN_HEIGHT = 2.4
 TBAR_ISIZE_REL = 0.1
 TBAR_ISIZE_MARGIN = 1.3
-NAV_VIEW_RATIO = [ 3, 11,]
+NAV_VIEW_RATIO = [ 1, 9,]
 
 # Mode
 VIEW_IMAGE_MODE = 0
@@ -160,6 +160,15 @@ navClicked = "viewImageFromExplorer"
     helpMsg = "Switch between light and dark mode."
     path = "toggleStylesheet.png"
     toggle = false
+    align = "AlignLeft"
+    iconH = 1.0
+    iconW = 1.0
+
+    [TBAR_FUNCS.VIEW.hideExplorer]
+    helpTitle = "Hide explorer"
+    helpMsg = "Hide the file explorer from view"
+    path = "hideExplorer.png"
+    toggle = true
     align = "AlignLeft"
     iconH = 1.0
     iconW = 1.0
