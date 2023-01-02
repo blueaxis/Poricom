@@ -82,7 +82,7 @@ Recommended:
 
 Approximately 250 MB of free space and 200 MB of memory is needed to run the application using the Tesseract API. If using the Manga OCR model, an additional 450 MB of free space and 800 MB of memory is required.
 
-For developers, the following Python versions are supported: 3.7, 3.8, and 3.9.
+For developers, the following Python versions are supported: 3.7, 3.8, 3.9, and 3.10.
 
 ## Acknowledgements <a name = "acknowledgements"></a>
 This project will not be possible without the MangaOcr model by [Maciej Budyś](https://github.com/kha-white) and the Tesseract python wrapper by [sirfz](https://github.com/sirfz) and [the tesserocr contributors](https://github.com/sirfz/tesserocr/graphs/contributors). 

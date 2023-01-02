@@ -52,11 +52,11 @@ class RibbonTab(QWidget):
 
     def loadButtonConfig(self, buttonName, buttonConfig):
 
-        w = self.parent.frameGeometry().height(
-        )*config["TBAR_ISIZE_REL"]*buttonConfig["iconW"]
-        h = self.parent.frameGeometry().height(
-        )*config["TBAR_ISIZE_REL"]*buttonConfig["iconH"]
-        m = config["TBAR_ISIZE_MARGIN"]
+        w = int(self.parent.frameGeometry().height(
+        )*config["TBAR_ISIZE_REL"]*buttonConfig["iconW"])
+        h = int(self.parent.frameGeometry().height(
+        )*config["TBAR_ISIZE_REL"]*buttonConfig["iconH"])
+        m = int(config["TBAR_ISIZE_MARGIN"])
 
         icon = QIcon()
         path = config["TBAR_ICONS"] + buttonConfig["path"]
@@ -111,8 +111,8 @@ class Ribbon(QTabWidget):
         self.parent = parent
         self.tracker = tracker
 
-        h = self.parent.frameGeometry().height(
-        ) * config["TBAR_ISIZE_REL"] * config["RBN_HEIGHT"]
+        h = int(self.parent.frameGeometry().height(
+        ) * config["TBAR_ISIZE_REL"] * config["RBN_HEIGHT"])
         self.setFixedHeight(h)
 
         for tabName, tools in config["TBAR_FUNCS"].items():
