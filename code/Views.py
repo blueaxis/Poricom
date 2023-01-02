@@ -19,11 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from time import sleep
 
-from PyQt5.QtCore import (Qt, QRectF, QTimer, QThreadPool, pyqtSlot)
-from PyQt5.QtCore import (Qt, QRect, QSize, QRectF,
+from PyQt5.QtCore import (Qt, QRect, QRectF, QSize,
                           QTimer, QThreadPool, pyqtSlot)
 from PyQt5.QtWidgets import (
     QApplication, QGraphicsView, QGraphicsScene, QLabel)
+from PyQt5.QtGui import QCursor
 
 from Workers import BaseWorker
 from utils.image_io import logText, pixboxToText
@@ -71,6 +71,18 @@ class BaseCanvas(QGraphicsView):
             pass
         super().mouseReleaseEvent(event)
 
+    def handleTextResult(self, result):
+        try:
+            self.canvasText.setText(result)
+        except RuntimeError:
+            pass
+    
+    def handleTextFinished(self):
+        try:
+            self.canvasText.adjustSize()
+        except RuntimeError:
+            pass
+
     @pyqtSlot()
     def rubberBandStopped(self):
 
@@ -83,8 +95,8 @@ class BaseCanvas(QGraphicsView):
         pixbox = self.grab(self.rubberBandRect())
 
         worker = BaseWorker(pixboxToText, pixbox, lang, self.tracker.ocrModel)
-        worker.signals.result.connect(self.canvasText.setText)
-        worker.signals.finished.connect(self.canvasText.adjustSize)
+        worker.signals.result.connect(self.handleTextResult)
+        worker.signals.finished.connect(self.handleTextFinished)
         self.timer_.timeout.disconnect(self.rubberBandStopped)
         worker.signals.finished.connect(
             lambda: self.timer_.timeout.connect(self.rubberBandStopped))
@@ -98,12 +110,16 @@ class FullScreen(BaseCanvas):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-    def takeScreenshot(self):
-        screen = QApplication.primaryScreen()
+    def takeScreenshot(self, screenIndex):
+        screen = QApplication.screens()[screenIndex]
         s = screen.size()
         self.pixmap.setPixmap(screen.grabWindow(
             0).scaled(s.width(), s.height()))
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
+
+    def getActiveScreenIndex(self):
+        cursor = QCursor.pos()
+        return QApplication.desktop().screenNumber(cursor)
 
     def mouseReleaseEvent(self, event):
         BaseCanvas.mouseReleaseEvent(self, event)

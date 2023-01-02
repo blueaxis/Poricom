@@ -23,7 +23,7 @@ from time import sleep
 import toml
 from manga_ocr import MangaOcr
 from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
-from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QMainWindow, QApplication,
+from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, QApplication,
                              QPushButton, QFileDialog, QInputDialog, QSplitter)
 
 from utils.image_io import mangaFileToImageDir
@@ -160,10 +160,16 @@ class MainWindow(QMainWindow):
         externalWindow = QMainWindow()
         externalWindow.layout().setContentsMargins(0, 0, 0, 0)
         externalWindow.setStyleSheet("border:0px; margin:0px")
+        externalWindow.setAttribute(Qt.WA_DeleteOnClose)
 
         externalWindow.setCentralWidget(
             FullScreen(externalWindow, self.tracker))
-        externalWindow.centralWidget().takeScreenshot()
+        fullScreen = externalWindow.centralWidget()
+
+        screenIndex = fullScreen.getActiveScreenIndex()
+        screen = QDesktopWidget().screenGeometry(screenIndex)
+        fullScreen.takeScreenshot(screenIndex)
+        externalWindow.move(screen.left(), screen.top())
         externalWindow.showFullScreen()
 
 # ------------------------------ View Functions ------------------------------ #
