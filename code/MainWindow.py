@@ -84,6 +84,7 @@ class MainWindow(QMainWindow):
         self.canvas.currentScale = 1
         self.canvas.verticalScrollBar().setSliderPosition(0)
         self.canvas.viewImage()
+        self.canvas.setFocus()
         return True
 
     def resizeEvent(self, event):
