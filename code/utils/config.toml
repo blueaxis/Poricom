@@ -48,6 +48,11 @@ VIEW_IMAGE_MODE = 0
 SPLIT_VIEW_MODE = false
 PERSIST_TEXT_MODE = 1
 
+# Popups
+LOAD_MODEL_POPUP = true
+CHECK_INTERNET_POPUP = true
+CHECK_INTERNET_URL = "8.8.8.8"
+
 [SELECTED_INDEX]
 language = 0
 orientation = 0

@@ -33,7 +33,7 @@ from Ribbon import (Ribbon)
 from Explorers import (ImageExplorer)
 from Views import (OCRCanvas, FullScreen)
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker,
-                    ShortcutPicker, PickerPopup, MessagePopup)
+                    ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
 
 
 class WinEventFilter(QAbstractNativeEventFilter):
@@ -232,8 +232,8 @@ class MainWindow(QMainWindow):
         loadModelButton = self.ribbon.findChild(QPushButton, "loadModel")
         loadModelButton.setChecked(not self.tracker.ocrModel)
 
-        if loadModelButton.isChecked():
-            confirmation = MessagePopup(
+        if loadModelButton.isChecked() and self.config["LOAD_MODEL_POPUP"]:
+            confirmation = CheckboxPopup(
                 "Load the MangaOCR model?",
                 "If you are running this for the first time, this will " +
                 "download the MangaOcr model which is about 400 MB in size. " +
@@ -243,6 +243,7 @@ class MainWindow(QMainWindow):
                 MessagePopup.Ok | MessagePopup.Cancel
             )
             ret = confirmation.exec()
+            self.config["LOAD_MODEL_POPUP"] = not confirmation.checkBox().isChecked()
             if (ret == MessagePopup.Ok):
                 pass
             else:
@@ -254,19 +255,25 @@ class MainWindow(QMainWindow):
             if betterOCR:
                 import http.client as httplib
 
-                def isConnected(url="8.8.8.8"):
+                def isConnected(url=self.config["CHECK_INTERNET_URL"]):
+                    if not self.config["CHECK_INTERNET_POPUP"]:
+                        return True
                     connection = httplib.HTTPSConnection(url, timeout=2)
                     try:
                         connection.request("HEAD", "/")
                         return True
                     except Exception:
+                        tracker.switchOCRMode()
                         return False
                     finally:
                         connection.close()
 
                 connected = isConnected()
                 if connected:
-                    tracker.ocrModel = MangaOcr()
+                    try:
+                        tracker.ocrModel = MangaOcr()
+                    except ValueError:
+                        return (betterOCR, False)
                 return (betterOCR, connected)
             else:
                 tracker.ocrModel = None
@@ -282,10 +289,16 @@ class MainWindow(QMainWindow):
                 ).exec()
 
             elif not connected:
-                MessagePopup(
+                connectionErrorMessage = CheckboxPopup(
                     "Connection Error",
-                    "Please try again or make sure your Internet connection is on."
-                ).exec()
+                    "Please try again or make sure your Internet connection is on.",
+                    checkboxMessage=(
+                        "Check this box if you keep getting this error even with connection on."
+                    )
+                )
+                connectionErrorMessage.exec()
+                self.config["CHECK_INTERNET_POPUP"] = \
+                            not connectionErrorMessage.checkBox().isChecked()
                 loadModelButton.setChecked(False)
 
         worker = BaseWorker(loadModelHelper, self.tracker)
