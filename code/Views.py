@@ -64,7 +64,11 @@ class BaseCanvas(QGraphicsView):
         logToFile = self.tracker.writeMode
         text = self.canvasText.text()
         logText(text, mode=logToFile, path=logPath)
-        self.canvasText.hide()
+        try:
+            if not self.parent.config["PERSIST_TEXT_MODE"]:
+                self.canvasText.hide()
+        except AttributeError:
+            pass
         super().mouseReleaseEvent(event)
 
     @pyqtSlot()
