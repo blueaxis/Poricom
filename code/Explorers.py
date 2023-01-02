@@ -46,15 +46,30 @@ class ImageExplorer(QTreeView):
 
     def currentChanged(self, current, previous):
         if not current.isValid():
-            current = self.model.index(0, 0, self.rootIndex())
+            current = self.model.index(self.getTopIndex(), 0, self.rootIndex())
         filename = self.model.fileInfo(current).absoluteFilePath()
         nextIndex = self.indexBelow(current)
         filenext = self.model.fileInfo(nextIndex).absoluteFilePath()
         self.parent.viewImageFromExplorer(filename, filenext)
         QTreeView.currentChanged(self, current, previous)
 
+    def getTopIndex(self):
+        r = self.model.rowCount(self.rootIndex()) // 2
+        while True:
+            item = self.model.index(r, 0, self.rootIndex())
+            if not item.isValid():
+                break
+            if self.model.fileInfo(item).isFile():
+                r //= 2
+            elif not self.model.fileInfo(item).isFile():
+                r += 1
+                item = self.model.index(r, 0, self.rootIndex())
+                if self.model.fileInfo(item).isFile():
+                    break
+        return r
+
     def setTopIndex(self):
-        topIndex = self.model.index(0, 0, self.rootIndex())
+        topIndex = self.model.index(self.getTopIndex(), 0, self.rootIndex())
         if topIndex.isValid():
             self.setCurrentIndex(topIndex)
             if self.layoutCheck:

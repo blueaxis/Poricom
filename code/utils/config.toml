@@ -21,11 +21,12 @@ LANGUAGE = [ " Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English
 ORIENTATION = [ " Vertical", " Horizontal",]
 FONT_STYLE = [ " Helvetica", " Poppins", " Arial", " Verdana", " Times New Roman",]
 FONT_SIZE = [ " 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72",]
-IMAGE_SCALING= [ " Fit to Width", " Fit to Height", " Fit to Screen",]
-MODIFIER = [ " Ctrl", " Shift", " Alt", " Ctrl+Alt", " Shift+Alt", " Shift+Ctrl", " Shift+Alt+Ctrl", " No Modifier"]
+IMAGE_SCALING = [ " Fit to Width", " Fit to Height", " Fit to Screen",]
+MODIFIER = [ " Ctrl", " Shift", " Alt", " Ctrl+Alt", " Shift+Alt", " Shift+Ctrl", " Shift+Alt+Ctrl", " No Modifier",]
 
 # Filepath
 STYLES_PATH = "./assets/"
+DEFAULT_NAV_ROOT = "./assets/images/"
 NAV_ROOT = "./assets/images/"
 TBAR_ICONS = "./assets/images/icons/"
 TBAR_ICONS_LIGHT = "./assets/images/icons/"
