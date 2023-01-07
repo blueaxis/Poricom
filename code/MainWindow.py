@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
 
     def resizeEvent(self, event):
         self.explorer.setMinimumWidth(0.1*self.width())
-        self.explorer.setMaximumWidth(0.3*self.width())
+        self.canvas.setMinimumWidth(0.6*self.width())
         return super().resizeEvent(event)
 
     def closeEvent(self, event):

@@ -54,6 +54,10 @@ class ImageExplorer(QTreeView):
         QTreeView.currentChanged(self, current, previous)
 
     def getTopIndex(self):
+        item = self.model.index(0, 0, self.rootIndex())
+        if self.model.fileInfo(item).isFile():
+            return 0
+
         r = self.model.rowCount(self.rootIndex()) // 2
         while True:
             item = self.model.index(r, 0, self.rootIndex())
