@@ -1,0 +1,19 @@
+name: poricom-py39
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.9
+  - pip
+  - conda-forge:tesserocr
+  - pip:
+    - pyqt5
+    - pillow
+    - manga-ocr
+    - pyqtkeybind
+    - rarfile
+    - pdf2image
+    - toml
+    - huggingface-hub==0.7.0

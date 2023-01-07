@@ -1,8 +1,0 @@
-pyqt5~=5.15.6
-pillow~=9.0.1
-tesserocr~=2.5.1
-manga-ocr~=0.1.5
-pyqtkeybind~=0.0.9
-rarfile~=4.0
-pdf2image~=1.16.0
-toml~=0.10.2

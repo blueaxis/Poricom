@@ -1,0 +1,9 @@
+name: poricom-py39
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - pip:
+    - black
