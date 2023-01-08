@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from PyQt5.QtWidgets import (QGridLayout, QMainWindow)
 
 from .base import BaseToolbarContainer
-from utils.config import config
+from utils.constants import NAVIGATION_FUNCTIONS
 
 class NavigateToolbarContainer(BaseToolbarContainer):
     """Widget that contains the toolbar navigation functions
@@ -38,8 +38,8 @@ class NavigateToolbarContainer(BaseToolbarContainer):
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        for funcName, funcConfig in config["MODE_FUNCS"].items():
-            self.initializeButton(funcName, funcConfig)
+        for name, config in NAVIGATION_FUNCTIONS.items():
+            self.initializeButton(name, config)
 
         self.layout().addWidget(self.buttonList[0], 0, 0, 1, 1)
         self.layout().addWidget(self.buttonList[1], 1, 0, 1, 1)
