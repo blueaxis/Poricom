@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtWidgets import (QMainWindow, QTabWidget)
+from PyQt5.QtWidgets import (QMainWindow, QSizePolicy, QTabWidget)
 
 from .tabs import BaseToolbarTab, NavigateToolbarContainer
-from utils.config import config
-
+from utils.constants import TOOLBAR_FUNCTIONS
 
 class BaseToolbar(QTabWidget):
     """
@@ -36,13 +35,11 @@ class BaseToolbar(QTabWidget):
         super(QTabWidget, self).__init__(parent)
         self.parent = parent
 
-        h = self.parent.frameGeometry().height(
-        ) * config["TBAR_ISIZE_REL"] * config["RBN_HEIGHT"]
-        self.setFixedHeight(h)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
-        for tabName, tools in config["TBAR_FUNCS"].items():
-            tab = BaseToolbarTab(parent=self.parent, funcs=tools)
+        for tabName, funcs in TOOLBAR_FUNCTIONS.items():
+            tab = BaseToolbarTab(parent=self.parent, funcs=funcs)
             tab.layout().addStretch()
             tab.layout().addWidget(
                 NavigateToolbarContainer(self.parent))
-            self.addTab(tab, tabName)
+            self.addTab(tab, tabName.upper())

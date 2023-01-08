@@ -21,12 +21,13 @@ from os.path import exists
 
 from PyQt5.QtCore import (QSize)
 from PyQt5.QtGui import (QIcon)
-from PyQt5.QtWidgets import (QMainWindow, QPushButton, QWidget)
+from PyQt5.QtWidgets import (QMainWindow, QPushButton)
 
-# TODO: config should be a constant
-from utils.config import config
+from components.misc import ScreenAwareWidget
+from utils.constants import TOOLBAR_ICON_DEFAULT, TOOLBAR_ICON_SIZE, TOOLBAR_ICONS
+from utils.types import ButtonConfig
 
-class BaseToolbarContainer(QWidget):
+class BaseToolbarContainer(ScreenAwareWidget):
     """Widget that contains the toolbar functions
 
     Args:
@@ -48,39 +49,35 @@ class BaseToolbarContainer(QWidget):
         self.buttonList.append(QPushButton(self))
         return self.buttonList[-1]
 
-    def initializeButton(self, buttonName, buttonConfig):
-        # TODO: Base icon size on screen height instead of parent height
-        w = self.mainWindow.frameGeometry().height(
-        )*config["TBAR_ISIZE_REL"]*buttonConfig["iconW"]
-        h = self.mainWindow.frameGeometry().height(
-        )*config["TBAR_ISIZE_REL"]*buttonConfig["iconH"]
-        m = config["TBAR_ISIZE_MARGIN"]
-
-        icon = QIcon()
-        path = config["TBAR_ICONS"] + buttonConfig["path"]
-        if (exists(path)):
-            icon = QIcon(path)
-        else:
-            icon = QIcon(config["TBAR_ICON_DEFAULT"])
-
+    def initializeButton(self, name: str, config: ButtonConfig):
         button = self.addButton()
 
         # Allows to programmatically interact with buttons
-        button.setObjectName(buttonName)
+        button.setObjectName(name)
 
+        # Set button icon and size
+        path = TOOLBAR_ICONS + config["path"]
+        if (exists(path)):
+            icon = QIcon(path)
+        else:
+            icon = QIcon(TOOLBAR_ICON_DEFAULT)
         button.setIcon(icon)
+        w = self.primaryScreenHeight()*TOOLBAR_ICON_SIZE*config["iconWidth"]
+        h = self.primaryScreenHeight()*TOOLBAR_ICON_SIZE*config["iconHeight"]
         button.setIconSize(QSize(w, h))
-        # TODO: Do not set fixed size
-        button.setFixedSize(QSize(w*m, h*m))
 
-        tooltip = f"<h3 style='margin-bottom: 4px;'>{buttonConfig['helpTitle']}\
-            </h3><p style='margin-top: 0;'>{buttonConfig['helpMsg']}</p>"
+        tooltip = f"\
+            <h3 style='margin-bottom: 4px;'>{config['title']}</h3>\
+            <p style='margin-top: 0;'>{config['message']}</p>\
+        "
         button.setToolTip(tooltip)
-        button.setCheckable(buttonConfig["toggle"])
 
-        if hasattr(self.mainWindow, buttonName):
+        button.setCheckable(config["toggle"])
+
+        # Connect button to main window function
+        if hasattr(self.mainWindow, name):
             button.clicked.connect(
-                getattr(self.mainWindow, buttonName))
+                getattr(self.mainWindow, name))
         else:
             button.clicked.connect(
                 getattr(self.mainWindow, 'poricomNoop'))
