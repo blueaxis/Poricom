@@ -31,7 +31,7 @@ class BaseToolbarContainer(ScreenAwareWidget):
     """Widget that contains the toolbar functions
 
     Args:
-        parent (QMainWindow, optional): Container parent. Set to main window.
+        parent (QMainWindow): Container parent. Set to main window.
     """
     def __init__(self, parent: QMainWindow):
         super().__init__(parent)
