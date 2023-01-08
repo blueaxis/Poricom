@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QCursor, QTransform
 
 from Popups import MessagePopup
-from Workers import BaseWorker
+from components.services import BaseWorker
 from utils.image_io import logText, pixboxToText
 
 
