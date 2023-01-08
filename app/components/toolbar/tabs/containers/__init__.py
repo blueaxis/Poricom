@@ -1,5 +1,6 @@
 """
 Poricom Toolbar
+
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
 This program is free software: you can redistribute it and/or modify
@@ -16,5 +17,5 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .base import BaseToolbarTab
-from .containers import NavigateToolbarContainer
+from .base import BaseToolbarContainer
+from .navigate import NavigateToolbarContainer
