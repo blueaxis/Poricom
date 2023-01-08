@@ -17,31 +17,32 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from os.path import exists
-
-from PyQt5.QtGui import (QIcon)
-from PyQt5.QtCore import (Qt, QSize)
-from PyQt5.QtWidgets import (
-    QGridLayout, QHBoxLayout, QWidget, QTabWidget, QPushButton)
+from PyQt5.QtWidgets import (QMainWindow, QTabWidget)
 
 from .tabs import BaseToolbarTab, NavigateToolbarContainer
 from utils.config import config
 
 
 class BaseToolbar(QTabWidget):
-    def __init__(self, parent=None, tracker=None):
+    """
+    Toolbar widget
+
+    Args:
+        parent (QWidget, optional): Toolbar parent. Set to main window.
+    Notes:
+        Parent must be passed to children to call main window functions.
+    """
+    def __init__(self, parent: QMainWindow):
         super(QTabWidget, self).__init__(parent)
         self.parent = parent
-        self.tracker = tracker
 
         h = self.parent.frameGeometry().height(
         ) * config["TBAR_ISIZE_REL"] * config["RBN_HEIGHT"]
         self.setFixedHeight(h)
 
         for tabName, tools in config["TBAR_FUNCS"].items():
-            tab = BaseToolbarTab(parent=self.parent, funcs=tools,
-                        tracker=self.tracker, tabName=tabName)
+            tab = BaseToolbarTab(parent=self.parent, funcs=tools)
             tab.layout().addStretch()
             tab.layout().addWidget(
-                NavigateToolbarContainer(self.parent, self.tracker))
+                NavigateToolbarContainer(self.parent))
             self.addTab(tab, tabName)

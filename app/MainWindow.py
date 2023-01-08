@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
         self.config = config
 
         self.vLayout = QVBoxLayout()
-        self.ribbon = BaseToolbar(self, self.tracker)
+        self.ribbon = BaseToolbar(self)
         self.vLayout.addWidget(self.ribbon)
         self.canvas = OCRCanvas(self, self.tracker)
         self.explorer = ImageExplorer(self, self.tracker)
