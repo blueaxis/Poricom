@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import (
     QApplication, QGraphicsView, QGraphicsScene, QLabel)
 from PyQt5.QtGui import QCursor
 
-from Workers import BaseWorker
+from components.services import BaseWorker
 from utils.image_io import logText, pixboxToText
 
 

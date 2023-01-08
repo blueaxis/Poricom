@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, 
 
 from utils.image_io import mangaFileToImageDir
 from utils.config import config, saveOnClose
-from Workers import BaseWorker
+from components.services import BaseWorker
 from Ribbon import (Ribbon)
 from Explorers import (ImageExplorer)
 from Views import (OCRCanvas, FullScreen)

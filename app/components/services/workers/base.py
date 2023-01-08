@@ -1,5 +1,5 @@
 """
-Poricom Multithreaded Workers
+Poricom Services
 
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
@@ -17,24 +17,29 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtCore import (QRunnable, QObject, pyqtSignal, pyqtSlot)
+from typing import Callable
 
+from PyQt5.QtCore import (pyqtSlot, QRunnable)
+
+from .signal import BaseWorkerSignal
 
 class BaseWorker(QRunnable):
-    def __init__(self, fn, *args, **kwargs):
+    """Runnable object to support multithreading
+
+    Args:
+        fn (Callable): Long running task or function
+    *Note: args/kwargs passed onto the BaseWorker are passed onto fn
+    """
+
+    def __init__(self, fn: Callable, *args, **kwargs):
         super(BaseWorker, self).__init__()
         self.fn = fn
         self.args = args
         self.kwargs = kwargs
-        self.signals = WorkerSignal()
+        self.signals = BaseWorkerSignal()
 
     @pyqtSlot()
     def run(self):
         output = self.fn(*self.args, **self.kwargs)
         self.signals.result.emit(output)
         self.signals.finished.emit()
-
-
-class WorkerSignal(QObject):
-    finished = pyqtSignal()
-    result = pyqtSignal(object)
