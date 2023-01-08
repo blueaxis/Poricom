@@ -20,9 +20,13 @@ from .types import ButtonConfigDict
 
 # ------------------------------------- General ------------------------------------- #
 
+IMAGE_EXTENSIONS = ["*.bmp", "*.gif", "*.jpeg", "*.jpg", "*.pbm", "*.pgm", "*.png", "*.ppm", "*.webp", "*.xbm", "*.xpm",]
+
 # Paths
 TOOLBAR_ICONS = './assets/images/icons/'
 TOOLBAR_ICON_DEFAULT = './assets/images/icons/default_icon.png'
+
+EXPLORER_ROOT_DEFAULT = './assets/images/'
 
 # --------------------------------------- UI ---------------------------------------- #
 
