@@ -27,7 +27,7 @@ class BaseToolbar(QTabWidget):
     Toolbar widget
 
     Args:
-        parent (QWidget, optional): Toolbar parent. Set to main window.
+        parent (QMainWindow): Toolbar parent. Set to main window.
     Notes:
         Parent must be passed to children to call main window functions.
     """

@@ -20,20 +20,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from PyQt5.QtWidgets import (QHBoxLayout, QMainWindow)
 
 from .containers import BaseToolbarContainer
+from utils.types import ButtonConfigDict
 
 class BaseToolbarTab(BaseToolbarContainer):
-    """Widget to contain all toolbar tab functions
+    """Tab widget to arrange toolbar tab containers
 
     Args:
-        parent (QWidget, optional): Toolbar tab parent. Set to main window.
-        funcs (Any, optional): Toolbar function configuration. Defaults to {}.
+        parent (QMainWindow): Toolbar tab parent. Set to main window.
+        funcs (ButtonConfigDict, optional): Toolbar function configuration. Defaults to {}.
     """
-    def __init__(self, parent: QMainWindow, funcs={}):
+    def __init__(self, parent: QMainWindow, funcs: ButtonConfigDict={}):
         super().__init__(parent)
 
         self.initializeButtons(funcs)
 
-    def initializeButtons(self, funcs):
+    def initializeButtons(self, funcs: ButtonConfigDict):
         self.setLayout(QHBoxLayout())
         for name, config in funcs.items():
             self.initializeButton(name, config)

@@ -26,7 +26,7 @@ class NavigateToolbarContainer(BaseToolbarContainer):
     """Widget that contains the toolbar navigation functions
 
     Args:
-        parent (QWidget, optional): Container parent. Set to main window.
+        parent (QWidget): Container parent. Set to main window.
     """
 
     def __init__(self, parent: QMainWindow):
