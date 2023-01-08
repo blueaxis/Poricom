@@ -28,9 +28,9 @@ from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, 
 
 from utils.image_io import mangaFileToImageDir
 from utils.config import config, saveOnClose
+from components.explorers import ImageExplorer
 from components.services import BaseWorker
 from components.toolbar import BaseToolbar
-from Explorers import (ImageExplorer)
 from Views import (OCRCanvas, FullScreen)
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker,
                     ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
@@ -57,7 +57,7 @@ class MainWindow(QMainWindow):
         self.ribbon = BaseToolbar(self)
         self.vLayout.addWidget(self.ribbon)
         self.canvas = OCRCanvas(self, self.tracker)
-        self.explorer = ImageExplorer(self, self.tracker)
+        self.explorer = ImageExplorer(self, self.tracker.filepath)
 
         self.splitter = QSplitter()
         self.splitter.addWidget(self.explorer)
