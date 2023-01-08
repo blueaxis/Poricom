@@ -31,7 +31,7 @@ from utils.config import config, saveOnClose
 from components.explorers import ImageExplorer
 from components.services import BaseWorker
 from components.toolbar import BaseToolbar
-from Views import (OCRCanvas, FullScreen)
+from components.views import BaseImageView, FullScreenOCRView
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker,
                     ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
 
@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
         self.vLayout = QVBoxLayout()
         self.ribbon = BaseToolbar(self)
         self.vLayout.addWidget(self.ribbon)
-        self.canvas = OCRCanvas(self, self.tracker)
+        self.canvas = BaseImageView(self, self.tracker)
         self.explorer = ImageExplorer(self, self.tracker.filepath)
 
         self.splitter = QSplitter()
@@ -163,7 +163,7 @@ class MainWindow(QMainWindow):
         externalWindow.setAttribute(Qt.WA_DeleteOnClose)
 
         externalWindow.setCentralWidget(
-            FullScreen(externalWindow, self.tracker))
+            FullScreenOCRView(externalWindow, self.tracker))
         fullScreen = externalWindow.centralWidget()
 
         screenIndex = fullScreen.getActiveScreenIndex()
