@@ -1,5 +1,5 @@
 """
-Poricom View Components
+Poricom Views
 
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
@@ -19,116 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from time import sleep
 
-from PyQt5.QtCore import (Qt, QRect, QRectF, QSize,
-                          QTimer, QThreadPool, pyqtSlot)
-from PyQt5.QtWidgets import (
-    QApplication, QGraphicsView, QGraphicsScene, QLabel)
-from PyQt5.QtGui import QCursor
+from PyQt5.QtCore import (Qt, QRect, QRectF, QSize, QThreadPool)
+from PyQt5.QtWidgets import (QApplication, QGraphicsScene, QGraphicsView, QMainWindow)
 
+from ..ocr import BaseOCRView
 from components.services import BaseWorker
-from utils.image_io import logText, pixboxToText
 
+# TODO: This should be the other way around. OCRView should inherit from ImageView
+class BaseImageView(BaseOCRView):
+    """
+    Base image view to allow view/zoom/pan functions 
+    """
 
-class BaseCanvas(QGraphicsView):
-
-    def __init__(self, parent=None, tracker=None):
-        super(QGraphicsView, self).__init__(parent)
-        self.parent = parent
-        self.tracker = tracker
-
-        self.timer_ = QTimer()
-        self.timer_.setInterval(300)
-        self.timer_.setSingleShot(True)
-        self.timer_.timeout.connect(self.rubberBandStopped)
-
-        self.canvasText = QLabel("", self, Qt.WindowStaysOnTopHint)
-        self.canvasText.setWordWrap(True)
-        self.canvasText.hide()
-        self.canvasText.setObjectName("canvasText")
-
-        self.scene = QGraphicsScene()
-        self.setScene(self.scene)
-        self.pixmap = self.scene.addPixmap(self.tracker.pixImage.scaledToWidth(
-            self.viewport().geometry().width(), Qt.SmoothTransformation))
-
-        self.setDragMode(QGraphicsView.RubberBandDrag)
-
-    def mouseMoveEvent(self, event):
-        rubberBandVisible = not self.rubberBandRect().isNull()
-        if (event.buttons() & Qt.LeftButton) and rubberBandVisible:
-            self.timer_.start()
-        QGraphicsView.mouseMoveEvent(self, event)
-
-    def mouseReleaseEvent(self, event):
-        logPath = self.tracker.filepath + "/log.txt"
-        logToFile = self.tracker.writeMode
-        text = self.canvasText.text()
-        logText(text, mode=logToFile, path=logPath)
-        try:
-            if not self.parent.config["PERSIST_TEXT_MODE"]:
-                self.canvasText.hide()
-        except AttributeError:
-            pass
-        super().mouseReleaseEvent(event)
-
-    def handleTextResult(self, result):
-        try:
-            self.canvasText.setText(result)
-        except RuntimeError:
-            pass
-    
-    def handleTextFinished(self):
-        try:
-            self.canvasText.adjustSize()
-        except RuntimeError:
-            pass
-
-    @pyqtSlot()
-    def rubberBandStopped(self):
-
-        if (self.canvasText.isHidden()):
-            self.canvasText.setText("")
-            self.canvasText.adjustSize()
-            self.canvasText.show()
-
-        lang = self.tracker.language + self.tracker.orientation
-        pixbox = self.grab(self.rubberBandRect())
-
-        worker = BaseWorker(pixboxToText, pixbox, lang, self.tracker.ocrModel)
-        worker.signals.result.connect(self.handleTextResult)
-        worker.signals.finished.connect(self.handleTextFinished)
-        self.timer_.timeout.disconnect(self.rubberBandStopped)
-        worker.signals.finished.connect(
-            lambda: self.timer_.timeout.connect(self.rubberBandStopped))
-        QThreadPool.globalInstance().start(worker)
-
-
-class FullScreen(BaseCanvas):
-
-    def __init__(self, parent=None, tracker=None):
-        super().__init__(parent, tracker)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-    def takeScreenshot(self, screenIndex):
-        screen = QApplication.screens()[screenIndex]
-        s = screen.size()
-        self.pixmap.setPixmap(screen.grabWindow(
-            0).scaled(s.width(), s.height()))
-        self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
-
-    def getActiveScreenIndex(self):
-        cursor = QCursor.pos()
-        return QApplication.desktop().screenNumber(cursor)
-
-    def mouseReleaseEvent(self, event):
-        BaseCanvas.mouseReleaseEvent(self, event)
-        self.parent.close()
-
-
-class OCRCanvas(BaseCanvas):
-
-    def __init__(self, parent=None, tracker=None):
+    def __init__(self, parent: QMainWindow, tracker=None):
         super().__init__(parent, tracker)
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
@@ -166,6 +69,7 @@ class OCRCanvas(BaseCanvas):
                 w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
+    # TODO: Cloe settings component might be useful
     def setViewImageMode(self, mode):
         self._viewImageMode = mode
         self.parent.config["VIEW_IMAGE_MODE"] = mode
@@ -198,13 +102,14 @@ class OCRCanvas(BaseCanvas):
 
     def resizeEvent(self, event):
         self.viewImage()
-        QGraphicsView.resizeEvent(self, event)
+        super().resizeEvent(event)
 
     def wheelEvent(self, event):
         pressedKey = QApplication.keyboardModifiers()
         zoomMode = pressedKey == Qt.ControlModifier or self._zoomPanMode
 
         # self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        # TODO: Rewrite individual event handlers as separate functions
         if zoomMode:
             if event.angleDelta().y() > 0:
                 isZoomIn = True
@@ -268,7 +173,7 @@ class OCRCanvas(BaseCanvas):
                         return
                     else:
                         self._scrollAtMin += 1
-            QGraphicsView.wheelEvent(self, event)
+            super().wheelEvent(event)
 
     def mouseMoveEvent(self, event):
         pressedKey = QApplication.keyboardModifiers()
@@ -279,13 +184,14 @@ class OCRCanvas(BaseCanvas):
         else:
             self.setDragMode(QGraphicsView.RubberBandDrag)
 
-        BaseCanvas.mouseMoveEvent(self, event)
+        super().mouseMoveEvent(event)
 
     def mouseDoubleClickEvent(self, event):
         self.currentScale = 1
         self.viewImage(self.currentScale)
-        QGraphicsView.mouseDoubleClickEvent(self, event)
+        super().mouseDoubleClickEvent(event)
 
+    # TODO: Keyboard shortcuts should be in another class
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Left:
             self.parent.loadPrevImage()
