@@ -28,6 +28,22 @@ TOOLBAR_ICON_DEFAULT = './assets/images/icons/default_icon.png'
 
 EXPLORER_ROOT_DEFAULT = './assets/images/'
 
+# ------------------------------------ Settings ------------------------------------- #
+
+SETTINGS_FILE_DEFAULT = './utils/poricom-config.ini'
+
+# View
+IMAGE_VIEW_DEFAULT = {
+    "viewImageMode": 0,
+    "splitViewMode": "false",
+    "zoomPanMode": "false"
+}
+IMAGE_VIEW_TYPES = {
+    "viewImageMode": int,
+    "splitViewMode": bool,
+    "zoomPanMode": bool
+}
+
 # --------------------------------------- UI ---------------------------------------- #
 
 # Main view

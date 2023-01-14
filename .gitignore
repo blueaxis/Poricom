@@ -144,3 +144,6 @@ cython_debug/
 
 # Documentation
 *.mp4
+
+# Settings
+*.ini

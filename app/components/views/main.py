@@ -92,10 +92,10 @@ class MainView(QSplitter):
         self.explorer.setCurrentIndex(index)
 
     def zoomIn(self):
-        self.canvas.zoomView(True, usingButton=True)
+        self.canvas.zoomView(True)
 
     def zoomOut(self):
-        self.canvas.zoomView(False, usingButton=True)
+        self.canvas.zoomView(False)
 
     def resizeEvent(self, event):
         self.explorer.setMinimumWidth(0.1*self.width())
