@@ -25,8 +25,10 @@ from components.explorers import ImageExplorer
 from utils.config import config
 from utils.constants import MAIN_VIEW_RATIO
 
-class MainView(QSplitter):
-
+class WorkspaceView(QSplitter):
+    """
+    Main view of the program. Includes the explorer and the view.
+    """
     def __init__(self, parent: QMainWindow, tracker=None):
         super().__init__(parent)
         self.tracker = tracker

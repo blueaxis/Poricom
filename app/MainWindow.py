@@ -30,7 +30,7 @@ from utils.image_io import mangaFileToImageDir
 from utils.config import config, saveOnClose
 from components.services import BaseWorker
 from components.toolbar import BaseToolbar
-from components.views import MainView, FullScreenOCRView
+from components.views import WorkspaceView, FullScreenOCRView
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker,
                     ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
 
@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
 
         self.vLayout = QVBoxLayout()
 
-        self.mainView = MainView(self, self.tracker)
+        self.mainView = WorkspaceView(self, self.tracker)
         self.ribbon = BaseToolbar(self)
         self.vLayout.addWidget(self.ribbon)
 
