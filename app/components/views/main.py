@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from PyQt5.QtCore import (Qt)
 from PyQt5.QtWidgets import (QInputDialog, QMainWindow, QSplitter)
 
-from .ocr import BaseOCRView
+from .ocr import OCRView
 from components.explorers import ImageExplorer
 from utils.config import config
 from utils.constants import MAIN_VIEW_RATIO
@@ -32,7 +32,7 @@ class MainView(QSplitter):
         self.tracker = tracker
         self.config = config
 
-        self.canvas = BaseOCRView(self, self.tracker)
+        self.canvas = OCRView(self, self.tracker)
         self.explorer = ImageExplorer(self, self.tracker.filepath)
 
         self.addWidget(self.explorer)

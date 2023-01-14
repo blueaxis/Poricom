@@ -1,5 +1,5 @@
 """
-Poricom View Components
+Poricom Views
 
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
@@ -20,12 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from PyQt5.QtCore import (pyqtSlot, Qt, QThreadPool, QTimer)
 from PyQt5.QtWidgets import (QGraphicsView, QLabel, QMainWindow)
 
-from ..image import BaseImageView
 from components.services import BaseWorker
 from utils.image_io import logText, pixboxToText
 
 
-class BaseOCRView(BaseImageView):
+class BaseOCRView(QGraphicsView):
     """Base view with OCR capabilities
 
     Args:
@@ -34,7 +33,8 @@ class BaseOCRView(BaseImageView):
     """
     def __init__(self, parent: QMainWindow, tracker=None):
         # TODO: Remove references to tracker
-        super().__init__(parent, tracker)
+        super().__init__(parent)
+        self.tracker = tracker
 
         self.timer = QTimer()
         self.timer.setInterval(300)
@@ -59,6 +59,10 @@ class BaseOCRView(BaseImageView):
             self.canvasText.adjustSize()
         except RuntimeError:
             pass
+        try:
+            self.timer.timeout.connect(self.rubberBandStopped)
+        except TypeError:
+            pass
 
     @pyqtSlot()
     def rubberBandStopped(self):
@@ -75,8 +79,6 @@ class BaseOCRView(BaseImageView):
         worker.signals.result.connect(self.handleTextResult)
         worker.signals.finished.connect(self.handleTextFinished)
         self.timer.timeout.disconnect(self.rubberBandStopped)
-        worker.signals.finished.connect(
-            lambda: self.timer.timeout.connect(self.rubberBandStopped))
         QThreadPool.globalInstance().start(worker)
 
     def mouseMoveEvent(self, event):
@@ -91,7 +93,7 @@ class BaseOCRView(BaseImageView):
         text = self.canvasText.text()
         logText(text, mode=logToFile, path=logPath)
         try:
-            if not self.parent.config["PERSIST_TEXT_MODE"]:
+            if not self.parent().config["PERSIST_TEXT_MODE"]:
                 self.canvasText.hide()
         except AttributeError:
             pass

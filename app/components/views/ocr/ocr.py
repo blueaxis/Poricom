@@ -17,5 +17,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .fullscreen import FullScreenOCRView
-from .ocr import OCRView
+from PyQt5.QtCore import (pyqtSlot)
+from PyQt5.QtWidgets import (QMainWindow)
+
+from ..image import BaseImageView
+from .base import BaseOCRView
+
+
+class OCRView(BaseImageView, BaseOCRView):
+    def __init__(self, parent: QMainWindow, tracker=None):
+        # TODO: Remove references to tracker
+        super().__init__(parent, tracker)
+
+    @pyqtSlot()
+    def rubberBandStopped(self):
+        super().rubberBandStopped()
