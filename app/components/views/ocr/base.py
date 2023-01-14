@@ -18,13 +18,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from PyQt5.QtCore import (pyqtSlot, Qt, QThreadPool, QTimer)
-from PyQt5.QtWidgets import (QGraphicsScene, QGraphicsView, QLabel, QMainWindow)
+from PyQt5.QtWidgets import (QGraphicsView, QLabel, QMainWindow)
 
+from ..image import BaseImageView
 from components.services import BaseWorker
 from utils.image_io import logText, pixboxToText
 
 
-class BaseOCRView(QGraphicsView):
+class BaseOCRView(BaseImageView):
     """Base view with OCR capabilities
 
     Args:
@@ -33,9 +34,7 @@ class BaseOCRView(QGraphicsView):
     """
     def __init__(self, parent: QMainWindow, tracker=None):
         # TODO: Remove references to tracker
-        super().__init__(parent)
-        self.parent = parent
-        self.tracker = tracker
+        super().__init__(parent, tracker)
 
         self.timer = QTimer()
         self.timer.setInterval(300)
@@ -47,31 +46,7 @@ class BaseOCRView(QGraphicsView):
         self.canvasText.hide()
         self.canvasText.setObjectName("canvasText")
 
-        # TODO: Set scene and pixmap should be on BaseImageView
-        self.scene = QGraphicsScene()
-        self.setScene(self.scene)
-        self.pixmap = self.scene.addPixmap(self.tracker.pixImage.scaledToWidth(
-            self.viewport().geometry().width(), Qt.SmoothTransformation))
-
         self.setDragMode(QGraphicsView.RubberBandDrag)
-
-    def mouseMoveEvent(self, event):
-        rubberBandVisible = not self.rubberBandRect().isNull()
-        if (event.buttons() & Qt.LeftButton) and rubberBandVisible:
-            self.timer.start()
-        super().mouseMoveEvent(event)
-
-    def mouseReleaseEvent(self, event):
-        logPath = self.tracker.filepath + "/log.txt"
-        logToFile = self.tracker.writeMode
-        text = self.canvasText.text()
-        logText(text, mode=logToFile, path=logPath)
-        try:
-            if not self.parent.config["PERSIST_TEXT_MODE"]:
-                self.canvasText.hide()
-        except AttributeError:
-            pass
-        super().mouseReleaseEvent(event)
 
     def handleTextResult(self, result):
         try:
@@ -103,3 +78,21 @@ class BaseOCRView(QGraphicsView):
         worker.signals.finished.connect(
             lambda: self.timer.timeout.connect(self.rubberBandStopped))
         QThreadPool.globalInstance().start(worker)
+
+    def mouseMoveEvent(self, event):
+        rubberBandVisible = not self.rubberBandRect().isNull()
+        if (event.buttons() & Qt.LeftButton) and rubberBandVisible:
+            self.timer.start()
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        logPath = self.tracker.filepath + "/log.txt"
+        logToFile = self.tracker.writeMode
+        text = self.canvasText.text()
+        logText(text, mode=logToFile, path=logPath)
+        try:
+            if not self.parent.config["PERSIST_TEXT_MODE"]:
+                self.canvasText.hide()
+        except AttributeError:
+            pass
+        super().mouseReleaseEvent(event)
