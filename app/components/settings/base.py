@@ -78,6 +78,7 @@ class BaseSettings(QWidget):
     def addProperty(self, prop: str, value: Any, t: Callable = str):
         self._defaults[prop] = value
         self._types[prop] = t
+        self.setProperty(prop, value)
 
     def removeProperty(self, prop: str):
         del self._defaults[prop]

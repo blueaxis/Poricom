@@ -21,10 +21,11 @@ from PyQt5.QtCore import (pyqtSlot, Qt, QThreadPool, QTimer)
 from PyQt5.QtWidgets import (QGraphicsView, QLabel, QMainWindow)
 
 from components.services import BaseWorker
+from components.settings import BaseSettings
 from utils.image_io import logText, pixboxToText
 
 
-class BaseOCRView(QGraphicsView):
+class BaseOCRView(QGraphicsView, BaseSettings):
     """Base view with OCR capabilities
 
     Args:
@@ -47,6 +48,8 @@ class BaseOCRView(QGraphicsView):
         self.canvasText.setObjectName("canvasText")
 
         self.setDragMode(QGraphicsView.RubberBandDrag)
+
+        self.addProperty('persistTextMode', "false", bool)
 
     def handleTextResult(self, result):
         try:
@@ -93,7 +96,7 @@ class BaseOCRView(QGraphicsView):
         text = self.canvasText.text()
         logText(text, mode=logToFile, path=logPath)
         try:
-            if not self.parent().config["PERSIST_TEXT_MODE"]:
+            if not self.persistTextMode:
                 self.canvasText.hide()
         except AttributeError:
             pass
