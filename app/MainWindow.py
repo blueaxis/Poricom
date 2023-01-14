@@ -24,14 +24,13 @@ import toml
 from manga_ocr import MangaOcr
 from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
 from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, QApplication,
-                             QPushButton, QFileDialog, QInputDialog, QSplitter)
+                             QPushButton, QFileDialog)
 
 from utils.image_io import mangaFileToImageDir
 from utils.config import config, saveOnClose
-from components.explorers import ImageExplorer
 from components.services import BaseWorker
 from components.toolbar import BaseToolbar
-from components.views import BaseImageView, FullScreenOCRView
+from components.views import MainView, FullScreenOCRView
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker,
                     ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
 
@@ -54,43 +53,25 @@ class MainWindow(QMainWindow):
         self.config = config
 
         self.vLayout = QVBoxLayout()
+
+        self.mainView = MainView(self, self.tracker)
         self.ribbon = BaseToolbar(self)
         self.vLayout.addWidget(self.ribbon)
-        self.canvas = BaseImageView(self, self.tracker)
-        self.explorer = ImageExplorer(self, self.tracker.filepath)
 
-        self.splitter = QSplitter()
-        self.splitter.addWidget(self.explorer)
-        self.splitter.addWidget(self.canvas)
-        self.splitter.setChildrenCollapsible(False)
-        for i, s in enumerate(config["NAV_VIEW_RATIO"]):
-            self.splitter.setStretchFactor(i, s)
-
-        self.vLayout.addWidget(self.splitter)
+        self.vLayout.addWidget(self.mainView)
         _mainWidget = QWidget()
         _mainWidget.setLayout(self.vLayout)
         self.setCentralWidget(_mainWidget)
 
         self.threadpool = QThreadPool()
 
-    def viewImageFromExplorer(self, filename, filenext):
-        if not self.canvas.splitViewMode():
-            self.tracker.pixImage = filename
-        if self.canvas.splitViewMode():
-            self.tracker.pixImage = (filename, filenext)
-        if not self.tracker.pixImage.isValid():
-            return False
-        self.canvas.resetTransform()
-        self.canvas.currentScale = 1
-        self.canvas.verticalScrollBar().setSliderPosition(0)
-        self.canvas.viewImage()
-        self.canvas.setFocus()
-        return True
-
-    def resizeEvent(self, event):
-        self.explorer.setMinimumWidth(0.1*self.width())
-        self.canvas.setMinimumWidth(0.6*self.width())
-        return super().resizeEvent(event)
+    @property
+    def canvas(self):
+        return self.mainView.canvas
+    
+    @property
+    def explorer(self):
+        return self.mainView.explorer
 
     def closeEvent(self, event):
         try:
@@ -328,47 +309,3 @@ class MainWindow(QMainWindow):
 
     def toggleLogging(self):
         self.tracker.switchWriteMode()
-
-# --------------------------- Always On Functions ---------------------------- #
-
-    def loadPrevImage(self):
-        index = self.explorer.indexAbove(self.explorer.currentIndex())
-        if self.canvas.splitViewMode():
-            tempIndex = self.explorer.indexAbove(index)
-            if tempIndex.isValid():
-                index = tempIndex
-        if (not index.isValid()):
-            return
-        self.explorer.setCurrentIndex(index)
-
-    def loadNextImage(self):
-        index = self.explorer.indexBelow(self.explorer.currentIndex())
-        if self.canvas.splitViewMode():
-            tempIndex = self.explorer.indexBelow(index)
-            if tempIndex.isValid():
-                index = tempIndex
-        if (not index.isValid()):
-            return
-        self.explorer.setCurrentIndex(index)
-
-    def loadImageAtIndex(self):
-        rowCount = self.explorer.model.rowCount(self.explorer.rootIndex())
-        i, _ = QInputDialog.getInt(
-            self,
-            'Jump to',
-            f'Enter page number: (max is {rowCount})',
-            value=-1,
-            min=1,
-            max=rowCount,
-            flags=Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-        if (i == -1):
-            return
-
-        index = self.explorer.model.index(i-1, 0, self.explorer.rootIndex())
-        self.explorer.setCurrentIndex(index)
-
-    def zoomIn(self):
-        self.canvas.zoomView(True)
-
-    def zoomOut(self):
-        self.canvas.zoomView(False)
