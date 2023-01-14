@@ -18,22 +18,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from time import sleep
+from typing import TYPE_CHECKING
 
 from PyQt5.QtCore import (Qt, QRect, QRectF, QSize, QThreadPool)
-from PyQt5.QtWidgets import (QApplication, QGraphicsScene, QGraphicsView, QMainWindow)
+from PyQt5.QtWidgets import (QApplication, QGraphicsScene, QGraphicsView, QSplitter)
 
 from components.services import BaseWorker
 from components.settings import BaseSettings
 from utils.constants import IMAGE_VIEW_DEFAULT, IMAGE_VIEW_TYPES
+
+if TYPE_CHECKING:
+    from ..workspace import WorkspaceView
 
 class BaseImageView(QGraphicsView, BaseSettings):
     """
     Base image view to allow view/zoom/pan functions 
     """
 
-    def __init__(self, parent: QMainWindow, tracker=None):
+    def __init__(self, parent: 'WorkspaceView', tracker=None):
         super().__init__(parent)
-        self.parent = parent
         self.tracker = tracker
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
@@ -139,7 +142,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
                     self.verticalScrollBar().value() == self.verticalScrollBar().maximum()):
                 if (event.angleDelta().y() > -wheelDelta):
                     if (self._trackPadAtMax == trackpadScrollLimit):
-                        self.parent.loadNextImage()
+                        self.parent().loadNextImage()
                         self._trackPadAtMax = 0
                         suppressScroll()
                         return
@@ -147,7 +150,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
                         self._trackPadAtMax += 1
                 elif (event.angleDelta().y() <= -wheelDelta):
                     if (self._scrollAtMax == mouseScrollLimit):
-                        self.parent.loadNextImage()
+                        self.parent().loadNextImage()
                         self._scrollAtMax = 0
                         suppressScroll()
                         return
@@ -158,7 +161,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
                     self.verticalScrollBar().value() == self.verticalScrollBar().minimum()):
                 if (event.angleDelta().y() < wheelDelta):
                     if (self._trackPadAtMin == trackpadScrollLimit):
-                        self.parent.loadPrevImage()
+                        self.parent().loadPrevImage()
                         self._trackPadAtMin = 0
                         suppressScroll()
                         return
@@ -166,7 +169,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
                         self._trackPadAtMin += 1
                 elif (event.angleDelta().y() >= wheelDelta):
                     if (self._scrollAtMin == mouseScrollLimit):
-                        self.parent.loadPrevImage()
+                        self.parent().loadPrevImage()
                         self._scrollAtMin = 0
                         suppressScroll()
                         return
@@ -195,10 +198,10 @@ class BaseImageView(QGraphicsView, BaseSettings):
     # TODO: Keyboard shortcuts should be in another class
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Left:
-            self.parent.loadPrevImage()
+            self.parent().loadPrevImage()
             return
         if event.key() == Qt.Key_Right:
-            self.parent.loadNextImage()
+            self.parent().loadNextImage()
             return
         if event.key() == Qt.Key_Minus:
             self.zoomView(isZoomIn=False)
