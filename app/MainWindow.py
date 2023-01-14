@@ -191,11 +191,11 @@ class MainWindow(QMainWindow):
 
     def toggleSplitView(self):
         self.canvas.toggleSplitView()
-        if self.canvas.splitViewMode():
+        if self.canvas.splitViewMode:
             self.canvas.setViewImageMode(2)
             index = self.explorer.currentIndex()
             self.explorer.currentChanged(index, index)
-        elif not self.canvas.splitViewMode():
+        elif not self.canvas.splitViewMode:
             index = self.explorer.currentIndex()
             self.explorer.currentChanged(index, index)
 
