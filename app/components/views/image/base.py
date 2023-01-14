@@ -22,17 +22,17 @@ from time import sleep
 from PyQt5.QtCore import (Qt, QRect, QRectF, QSize, QThreadPool)
 from PyQt5.QtWidgets import (QApplication, QGraphicsScene, QGraphicsView, QMainWindow)
 
-from ..ocr import BaseOCRView
 from components.services import BaseWorker
 
-# TODO: This should be the other way around. OCRView should inherit from ImageView
-class BaseImageView(BaseOCRView):
+class BaseImageView(QGraphicsView):
     """
     Base image view to allow view/zoom/pan functions 
     """
 
     def __init__(self, parent: QMainWindow, tracker=None):
-        super().__init__(parent, tracker)
+        super().__init__(parent)
+        self.parent = parent
+        self.tracker = tracker
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -48,9 +48,11 @@ class BaseImageView(BaseOCRView):
         self._trackPadAtMax = 0
         self._scrollSuppressed = False
 
-        self.scene = QGraphicsScene()
-        self.setScene(self.scene)
-        self.pixmap = self.scene.addPixmap(self.tracker.pixImage.scaledToWidth(
+        self.initializePixmapItem()
+
+    def initializePixmapItem(self):
+        self.setScene(QGraphicsScene())
+        self.pixmap = self.scene().addPixmap(self.tracker.pixImage.scaledToWidth(
             self.viewport().geometry().width(), Qt.SmoothTransformation))
 
     def viewImage(self, factor=1):
@@ -67,7 +69,7 @@ class BaseImageView(BaseOCRView):
         elif self._viewImageMode == 2:
             self.pixmap.setPixmap(self.tracker.pixImage.scaled(
                 w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        self.scene.setSceneRect(QRectF(self.pixmap.pixmap().rect()))
+        self.scene().setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
     # TODO: Cloe settings component might be useful
     def setViewImageMode(self, mode):
