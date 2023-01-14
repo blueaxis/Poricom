@@ -75,9 +75,13 @@ class BaseToolbarContainer(ScreenAwareWidget):
         button.setCheckable(config["toggle"])
 
         # Connect button to main window function
-        if hasattr(self.mainWindow, name):
+        try:
             button.clicked.connect(
                 getattr(self.mainWindow, name))
-        else:
-            button.clicked.connect(
-                getattr(self.mainWindow, 'poricomNoop'))
+        except AttributeError:
+            try:
+                button.clicked.connect(
+                    getattr(self.mainWindow.mainView, name))
+            except AttributeError:
+                button.clicked.connect(
+                    getattr(self.mainWindow, 'poricomNoop'))

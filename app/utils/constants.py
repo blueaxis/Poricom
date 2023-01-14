@@ -30,6 +30,9 @@ EXPLORER_ROOT_DEFAULT = './assets/images/'
 
 # --------------------------------------- UI ---------------------------------------- #
 
+# Main view
+MAIN_VIEW_RATIO = [1, 9]
+
 # Toolbar
 TOOLBAR_ICON_SIZE = 0.05  # Fraction of primary screen height
 
