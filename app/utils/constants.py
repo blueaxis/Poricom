@@ -22,6 +22,10 @@ from .types import ButtonConfigDict
 
 IMAGE_EXTENSIONS = ["*.bmp", "*.gif", "*.jpeg", "*.jpg", "*.pbm", "*.pgm", "*.png", "*.ppm", "*.webp", "*.xbm", "*.xpm",]
 
+# Settings
+LANGUAGE = [ " Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"]
+ORIENTATION = [ " Vertical", " Horizontal"]
+
 # Paths
 TESSERACT_LANGUAGES = "./assets/languages/"
 
@@ -52,6 +56,12 @@ IMAGE_VIEW_TYPES = {
     "viewImageMode": int,
     "splitViewMode": bool,
     "zoomPanMode": bool
+}
+
+# Tesseract
+TESSERACT_DEFAULTS = {
+    "language": "jpn",
+    "orientation": "_vert"
 }
 
 # --------------------------------------- UI ---------------------------------------- #
