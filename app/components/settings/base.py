@@ -57,9 +57,12 @@ class BaseSettings(QWidget):
 
     def addDefaults(self, defaults: dict[str, Any]):
         """
-        Extends the defaults dictionary
+        Extends the defaults dictionary, if it exists
         """
-        self.setDefaults({**self._defaults, **defaults})
+        try:
+            self.setDefaults({**self._defaults, **defaults})
+        except AttributeError:
+            self.setDefaults(defaults)
 
     def setTypes(self, types: dict[str, Callable]):
         """Set the types dictionary
@@ -69,11 +72,14 @@ class BaseSettings(QWidget):
         """
         self._types = types
     
-    def setTypes(self, types: dict[str, Callable]):
+    def addTypes(self, types: dict[str, Callable]):
         """
-        Extends the types dictionary
+        Extends the types dictionary, if it exists
         """
-        self.setTypes({**self._types, **types})
+        try:
+            self.setTypes({**self._types, **types})
+        except AttributeError:
+            self.setTypes(types)
 
     def getProperty(self, prop: str):
         return getattr(self, prop)

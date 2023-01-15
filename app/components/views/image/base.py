@@ -50,8 +50,8 @@ class BaseImageView(QGraphicsView, BaseSettings):
         self._trackPadAtMax = 0
         self._scrollSuppressed = False
 
-        self.setDefaults(IMAGE_VIEW_DEFAULT)
-        self.setTypes(IMAGE_VIEW_TYPES)
+        self.addDefaults(IMAGE_VIEW_DEFAULT)
+        self.addTypes(IMAGE_VIEW_TYPES)
         self.loadSettings()
 
         self.initializePixmapItem()
