@@ -17,9 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtCore import (Qt)
-from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QWidget, QLabel, QCheckBox,
-                             QLineEdit, QComboBox, QDialog, QDialogButtonBox, QMessageBox)
+from PyQt5.QtWidgets import (QWidget)
 
 from utils.constants import LANGUAGE, ORIENTATION
 
@@ -29,7 +27,7 @@ class TesseractOptions(BaseOptions):
     def __init__(self, parent: QWidget):
         super().__init__(parent, [LANGUAGE, ORIENTATION])
         # TODO: Use constants here
-        self.addOptionProperties([("language", "jpn", str), ("orientation", "_vert", str)])
+        self.initializeProperties([("language", "jpn", str), ("orientation", "_vert", str)])
 
     def changeLanguage(self, i):
         self.languageIndex = i

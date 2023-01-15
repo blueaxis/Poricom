@@ -23,8 +23,15 @@ from PyQt5.QtWidgets import (QVBoxLayout, QDialog, QDialogButtonBox)
 from .base import BaseOptions
 
 class OptionsContainer(QDialog):
+    """Dialog to contain option widgets
+
+    Args:
+        options (BaseOptions): Child option widget
+    """
     def __init__(self, options: BaseOptions):
         super().__init__(None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
+        self.setAttribute(Qt.WA_DeleteOnClose)
+
         self.options = options
         self.setLayout(QVBoxLayout())
         self.layout().addWidget(options)
@@ -42,3 +49,7 @@ class OptionsContainer(QDialog):
 
     def cancelClickedEvent(self):
         self.close()
+    
+    def closeEvent(self, event):
+        self.options.close()
+        return super().closeEvent(event)
