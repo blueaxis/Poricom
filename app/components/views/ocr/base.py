@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import (QGraphicsView, QLabel, QMainWindow)
 
 from components.services import BaseWorker
 from components.settings import BaseSettings
+from utils.constants import TESSERACT_DEFAULTS
 from utils.scripts import logText, pixmapToText
 
 class BaseOCRView(QGraphicsView, BaseSettings):
@@ -48,6 +49,7 @@ class BaseOCRView(QGraphicsView, BaseSettings):
 
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
+        self.addDefaults(TESSERACT_DEFAULTS)
         self.addProperty('persistTextMode', "false", bool)
 
     def handleTextResult(self, result):
@@ -68,16 +70,15 @@ class BaseOCRView(QGraphicsView, BaseSettings):
 
     @pyqtSlot()
     def rubberBandStopped(self):
-
         if (self.canvasText.isHidden()):
             self.canvasText.setText("")
             self.canvasText.adjustSize()
             self.canvasText.show()
 
-        language = self.tracker.language + self.tracker.orientation
-        pixbox = self.grab(self.rubberBandRect())
+        language = self.language + self.orientation
+        pixmap = self.grab(self.rubberBandRect())
 
-        worker = BaseWorker(pixmapToText, pixbox, language, self.tracker.ocrModel)
+        worker = BaseWorker(pixmapToText, pixmap, language, self.tracker.ocrModel)
         worker.signals.result.connect(self.handleTextResult)
         worker.signals.finished.connect(self.handleTextFinished)
         self.timer.timeout.disconnect(self.rubberBandStopped)
