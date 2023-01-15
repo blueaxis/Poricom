@@ -23,7 +23,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QAbstractEventDispatcher
 from pyqtkeybind import keybinder
 
-from MainWindow import MainWindow, WinEventFilter
+from components.services import WinEventFilter
+from MainWindow import MainWindow
 from Trackers import Tracker
 from utils.config import config
 
