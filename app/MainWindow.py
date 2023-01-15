@@ -27,9 +27,10 @@ from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, 
                              QPushButton, QFileDialog)
 
 from components.services import BaseWorker
+from components.settings import OptionsContainer, TesseractOptions
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView, FullScreenOCRView
-from Popups import (FontPicker, LanguagePicker, ScaleImagePicker,
+from Popups import (FontPicker, ScaleImagePicker,
                     ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
 from utils.config import config, saveOnClose
 from utils.constants import LOAD_MODEL_MESSAGE
@@ -264,8 +265,10 @@ class MainWindow(QMainWindow):
         loadModelButton.setEnabled(False)
 
     def modifyTesseract(self):
-        confirmation = PickerPopup(LanguagePicker(self, self.tracker))
+        confirmation = OptionsContainer(TesseractOptions(self))
         confirmation.exec()
+        if confirmation:
+            self.canvas.loadSettings()
 
     def toggleLogging(self):
         self.tracker.switchWriteMode()

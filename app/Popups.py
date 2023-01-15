@@ -71,51 +71,6 @@ class BasePicker(QWidget):
             editSelectionConfig(index, selection)
 
 
-class LanguagePicker(BasePicker):
-    def __init__(self, parent, tracker):
-        config = parent.config
-        listTop = config["LANGUAGE"]
-        listBot = config["ORIENTATION"]
-        optionLists = [listTop, listBot]
-
-        super().__init__(parent, tracker, optionLists)
-        self.pickTop.currentIndexChanged.connect(self.changeLanguage)
-        self.pickTop.setCurrentIndex(config["SELECTED_INDEX"]["language"])
-        self.nameTop.setText("Language: ")
-        self.pickBot.currentIndexChanged.connect(self.changeOrientation)
-        self.pickBot.setCurrentIndex(config["SELECTED_INDEX"]["orientation"])
-        self.nameBot.setText("Orientation: ")
-
-        self.languageIndex = self.pickTop.currentIndex()
-        self.orientationIndex = self.pickBot.currentIndex()
-
-    def changeLanguage(self, i):
-        self.languageIndex = i
-        selectedLanguage = self.pickTop.currentText().strip()
-        if selectedLanguage == "Japanese":
-            self.tracker.language = "jpn"
-        if selectedLanguage == "Korean":
-            self.tracker.language = "kor"
-        if selectedLanguage == "Chinese SIM":
-            self.tracker.language = "chi_sim"
-        if selectedLanguage == "Chinese TRA":
-            self.tracker.language = "chi_tra"
-        if selectedLanguage == "English":
-            self.tracker.language = "eng"
-
-    def changeOrientation(self, i):
-        self.orientationIndex = i
-        selectedOrientation = self.pickBot.currentText().strip()
-        if selectedOrientation == "Vertical":
-            self.tracker.orientation = "_vert"
-        if selectedOrientation == "Horizontal":
-            self.tracker.orientation = ""
-
-    def applyChanges(self):
-        self.applySelections(['language', 'orientation'])
-        return True
-
-
 class FontPicker(BasePicker):
     def __init__(self, parent, tracker):
         config = parent.config
