@@ -26,8 +26,8 @@ from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
 from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, QApplication,
                              QPushButton, QFileDialog)
 
-from utils.image_io import mangaFileToImageDir
 from utils.config import config, saveOnClose
+from utils.scripts import mangaFileToImageDir
 from components.services import BaseWorker
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView, FullScreenOCRView

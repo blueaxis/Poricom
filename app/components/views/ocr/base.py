@@ -22,8 +22,7 @@ from PyQt5.QtWidgets import (QGraphicsView, QLabel, QMainWindow)
 
 from components.services import BaseWorker
 from components.settings import BaseSettings
-from utils.image_io import logText, pixboxToText
-
+from utils.scripts import logText, pixmapToText
 
 class BaseOCRView(QGraphicsView, BaseSettings):
     """Base view with OCR capabilities
@@ -75,10 +74,10 @@ class BaseOCRView(QGraphicsView, BaseSettings):
             self.canvasText.adjustSize()
             self.canvasText.show()
 
-        lang = self.tracker.language + self.tracker.orientation
+        language = self.tracker.language + self.tracker.orientation
         pixbox = self.grab(self.rubberBandRect())
 
-        worker = BaseWorker(pixboxToText, pixbox, lang, self.tracker.ocrModel)
+        worker = BaseWorker(pixmapToText, pixbox, language, self.tracker.ocrModel)
         worker.signals.result.connect(self.handleTextResult)
         worker.signals.finished.connect(self.handleTextFinished)
         self.timer.timeout.disconnect(self.rubberBandStopped)
@@ -91,10 +90,10 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
-        logPath = self.tracker.filepath + "/log.txt"
-        logToFile = self.tracker.writeMode
+        logPath = self.tracker.filepath + "/text-log.txt"
+        isLogFile = self.tracker.writeMode
         text = self.canvasText.text()
-        logText(text, mode=logToFile, path=logPath)
+        logText(text, isLogFile=isLogFile, path=logPath)
         try:
             if not self.persistTextMode:
                 self.canvasText.hide()
