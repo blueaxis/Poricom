@@ -1,5 +1,5 @@
 """
-Poricom Main Window Component
+Poricom Windows
 
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
@@ -22,27 +22,18 @@ from time import sleep
 
 import toml
 from manga_ocr import MangaOcr
-from PyQt5.QtCore import (Qt, QAbstractNativeEventFilter, QThreadPool)
+from PyQt5.QtCore import (Qt, QThreadPool)
 from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, QApplication,
                              QPushButton, QFileDialog)
 
-from utils.config import config, saveOnClose
-from utils.scripts import mangaFileToImageDir
 from components.services import BaseWorker
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView, FullScreenOCRView
 from Popups import (FontPicker, LanguagePicker, ScaleImagePicker,
                     ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
-
-
-class WinEventFilter(QAbstractNativeEventFilter):
-    def __init__(self, keybinder):
-        self.keybinder = keybinder
-        super().__init__()
-
-    def nativeEventFilter(self, eventType, message):
-        ret = self.keybinder.handler(eventType, message)
-        return ret, 0
+from utils.config import config, saveOnClose
+from utils.constants import LOAD_MODEL_MESSAGE
+from utils.scripts import mangaFileToImageDir
 
 
 class MainWindow(QMainWindow):
@@ -229,11 +220,7 @@ class MainWindow(QMainWindow):
         if loadModelButton.isChecked() and self.config["LOAD_MODEL_POPUP"]:
             confirmation = CheckboxPopup(
                 "Load the MangaOCR model?",
-                "If you are running this for the first time, this will " +
-                "download the MangaOcr model which is about 400 MB in size. " +
-                "This will improve the accuracy of Japanese text detection " +
-                "in Poricom. If it is already in your cache, it will take a " +
-                "few seconds to load the model.",
+                LOAD_MODEL_MESSAGE,
                 MessagePopup.Ok | MessagePopup.Cancel
             )
             ret = confirmation.exec()
@@ -247,56 +234,29 @@ class MainWindow(QMainWindow):
         def loadModelHelper(tracker):
             betterOCR = tracker.switchOCRMode()
             if betterOCR:
-                import http.client as httplib
-
-                def isConnected(url=self.config["CHECK_INTERNET_URL"]):
-                    if not self.config["CHECK_INTERNET_POPUP"]:
-                        return True
-                    connection = httplib.HTTPSConnection(url, timeout=2)
-                    try:
-                        connection.request("HEAD", "/")
-                        return True
-                    except Exception:
-                        tracker.switchOCRMode()
-                        return False
-                    finally:
-                        connection.close()
-
-                connected = isConnected()
-                if connected:
-                    try:
-                        tracker.ocrModel = MangaOcr()
-                    except ValueError:
-                        return (betterOCR, False)
-                return (betterOCR, connected)
+                try:
+                    tracker.ocrModel = MangaOcr()
+                    return "success"
+                except Exception as e:
+                    tracker.switchOCRMode()
+                    return str(e)
             else:
                 tracker.ocrModel = None
-                return (betterOCR, True)
+                return "success"
 
-        def modelLoadedConfirmation(typeConnectionTuple):
-            usingMangaOCR, connected = typeConnectionTuple
-            modelName = "MangaOCR" if usingMangaOCR else "Tesseract"
-            if connected:
+        def loadModelConfirm(message: str):
+            modelName = "MangaOCR" if self.tracker.ocrModel else "Tesseract"
+            if message == "success":
                 MessagePopup(
                     f"{modelName} model loaded",
                     f"You are now using the {modelName} model for Japanese text detection."
                 ).exec()
-
-            elif not connected:
-                connectionErrorMessage = CheckboxPopup(
-                    "Connection Error",
-                    "Please try again or make sure your Internet connection is on.",
-                    checkboxMessage=(
-                        "Check this box if you keep getting this error even with connection on."
-                    )
-                )
-                connectionErrorMessage.exec()
-                self.config["CHECK_INTERNET_POPUP"] = \
-                            not connectionErrorMessage.checkBox().isChecked()
+            else:
+                MessagePopup("Load Model Error", message).exec()
                 loadModelButton.setChecked(False)
 
         worker = BaseWorker(loadModelHelper, self.tracker)
-        worker.signals.result.connect(modelLoadedConfirmation)
+        worker.signals.result.connect(loadModelConfirm)
         worker.signals.finished.connect(lambda:
                                         loadModelButton.setEnabled(True))
 
