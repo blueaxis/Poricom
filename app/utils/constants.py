@@ -23,6 +23,8 @@ from .types import ButtonConfigDict
 IMAGE_EXTENSIONS = ["*.bmp", "*.gif", "*.jpeg", "*.jpg", "*.pbm", "*.pgm", "*.png", "*.ppm", "*.webp", "*.xbm", "*.xpm",]
 
 # Paths
+TESSERACT_LANGUAGES = "./assets/languages/"
+
 TOOLBAR_ICONS = './assets/images/icons/'
 TOOLBAR_ICON_DEFAULT = './assets/images/icons/default_icon.png'
 

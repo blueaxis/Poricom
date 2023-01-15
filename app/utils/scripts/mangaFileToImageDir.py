@@ -1,5 +1,5 @@
 """
-Poricom Image Processing Utility
+Poricom Helper Functions
 
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
@@ -17,26 +17,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from io import BytesIO
 from os.path import splitext, basename
 from pathlib import Path
 
-from PyQt5.QtCore import QBuffer
-from PyQt5.QtGui import QGuiApplication
-from PIL import Image
 import zipfile
 import rarfile
 import pdf2image
-try:
-    from tesserocr import PyTessBaseAPI
-except UnicodeDecodeError:
-    pass
 
 
-from utils.config import config
+def mangaFileToImageDir(filepath: str):
+    """Converts a manga file to a directory of images
 
+    Args:
+        filepath (str): Path to manga file.
 
-def mangaFileToImageDir(filepath):
+    Returns:
+        str: Path to directory of images.
+    """
     extractPath, extension = splitext(filepath)
     cachePath = f"./poricom_cache/{basename(extractPath)}"
 
@@ -62,43 +59,3 @@ def mangaFileToImageDir(filepath):
                 f"{cachePath}/{i+1}_{filename}.png", 'PNG')
 
     return cachePath
-
-
-def pixboxToText(pixmap, lang="jpn_vert", model=None):
-
-    buffer = QBuffer()
-    buffer.open(QBuffer.ReadWrite)
-    pixmap.save(buffer, "PNG")
-    bytes = BytesIO(buffer.data())
-
-    if bytes.getbuffer().nbytes == 0:
-        return
-
-    pillowImage = Image.open(bytes)
-    text = ""
-
-    if model is not None:
-        text = model(pillowImage)
-
-    # PSM = 1 works most of the time except on smaller bounding boxes.
-    # By smaller, we mean textboxes with less text. Usually these
-    # boxes have at most one vertical line of text.
-    else:
-        try:
-            with PyTessBaseAPI(path=config["LANG_PATH"], lang=lang, oem=1, psm=1) as api:
-                api.SetImage(pillowImage)
-                text = api.GetUTF8Text()
-        except NameError:
-            # PyTessBaseAPI is undefined and there is no fallback model
-            return None
-
-    return text.strip()
-
-
-def logText(text, mode=False, path="."):
-    clipboard = QGuiApplication.clipboard()
-    clipboard.setText(text)
-
-    if mode:
-        with open(path, 'a', encoding="utf-8") as fh:
-            fh.write(text + "\n")
