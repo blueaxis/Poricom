@@ -20,8 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from PyQt5.QtCore import pyqtSlot, Qt, QThreadPool, QTimer
 from PyQt5.QtWidgets import QGraphicsView, QLabel, QMainWindow
 
-from components.services import BaseWorker
 from components.settings import BaseSettings
+from services import BaseWorker
 from utils.constants import TESSERACT_DEFAULTS
 from utils.scripts import logText, pixmapToText
 
