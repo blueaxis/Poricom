@@ -24,7 +24,7 @@ from utils.constants import FONT_SIZE, FONT_STYLE, TOGGLE_CHOICES
 from utils.scripts import editStylesheet
 
 
-class FontOptions(BaseOptions):
+class PreviewOptions(BaseOptions):
     def __init__(self, parent: QWidget):
         super().__init__(parent, [FONT_STYLE, FONT_SIZE, TOGGLE_CHOICES])
         self.initializeProperties([
