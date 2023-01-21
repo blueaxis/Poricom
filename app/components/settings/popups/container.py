@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from PyQt5.QtCore import (Qt)
-from PyQt5.QtWidgets import (QVBoxLayout, QDialog, QDialogButtonBox)
+from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout)
 
 from .base import BaseOptions
 

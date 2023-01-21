@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from shutil import rmtree
 from time import sleep
 
-import toml
 from manga_ocr import MangaOcr
 from PyQt5.QtCore import (Qt, QThreadPool)
 from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, QApplication,
@@ -31,8 +30,7 @@ from components.services import BaseWorker
 from components.settings import BaseSettings, PreviewOptions, ImageScalingOptions, OptionsContainer, ShortcutOptions, TesseractOptions
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView, FullScreenOCRView
-from utils.config import config, saveOnClose
-from utils.constants import LOAD_MODEL_MESSAGE
+from utils.constants import LOAD_MODEL_MESSAGE, MAIN_WINDOW_DEFAULTS, MAIN_WINDOW_TYPES, STYLESHEET_DARK, STYLESHEET_LIGHT
 from utils.scripts import mangaFileToImageDir
 
 
@@ -40,7 +38,6 @@ class MainWindow(QMainWindow, BaseSettings):
     def __init__(self, parent=None, tracker=None):
         super().__init__(parent)
         self.tracker = tracker
-        self.config = config
 
         self.vLayout = QVBoxLayout()
 
@@ -53,11 +50,9 @@ class MainWindow(QMainWindow, BaseSettings):
         mainWidget.setLayout(self.vLayout)
         self.setCentralWidget(mainWidget)
 
-        self.setDefaults({"hasLoadModelPopup": "true"})
-        self.setTypes({"hasLoadModelPopup": bool})
+        self.setDefaults(MAIN_WINDOW_DEFAULTS)
+        self.setTypes(MAIN_WINDOW_TYPES)
         self.loadSettings()
-        print(self.hasLoadModelPopup)
-
 
         self.threadpool = QThreadPool()
 
@@ -74,9 +69,8 @@ class MainWindow(QMainWindow, BaseSettings):
             rmtree("./poricom_cache")
         except FileNotFoundError:
             pass
-        self.config["NAV_ROOT"] = self.tracker.filepath
-        saveOnClose(self.config)
-        return QMainWindow.closeEvent(self, event)
+        self.saveSettings(False)
+        return super().closeEvent(event)
 
     def noop(self):
         BasePopup(
@@ -97,6 +91,7 @@ class MainWindow(QMainWindow, BaseSettings):
             try:
                 self.tracker.filepath = filepath
                 self.explorer.setDirectory(filepath)
+                self.explorerPath = filepath
             except FileNotFoundError:
                 BasePopup(
                     "No images found in the directory",
@@ -152,25 +147,16 @@ class MainWindow(QMainWindow, BaseSettings):
 # ------------------------------ View Functions ------------------------------ #
 
     def toggleStylesheet(self):
-        config = "./utils/config.toml"
-        lightMode = "./assets/styles.qss"
-        darkMode = "./assets/styles-dark.qss"
-
-        data = toml.load(config)
-        if data["STYLES_DEFAULT"] == lightMode:
-            data["STYLES_DEFAULT"] = darkMode
-        elif data["STYLES_DEFAULT"] == darkMode:
-            data["STYLES_DEFAULT"] = lightMode
-        with open(config, 'w') as fh:
-            toml.dump(data, fh)
+        if self.stylesheetPath == STYLESHEET_LIGHT:
+            self.stylesheetPath = STYLESHEET_DARK
+        elif self.stylesheetPath == STYLESHEET_DARK:
+            self.stylesheetPath = STYLESHEET_LIGHT
 
         app = QApplication.instance()
         if app is None:
             raise RuntimeError("No Qt Application found.")
 
-        styles = data["STYLES_DEFAULT"]
-        self.config["STYLES_DEFAULT"] = data["STYLES_DEFAULT"]
-        with open(styles, 'r') as fh:
+        with open(self.stylesheetPath, 'r') as fh:
             app.setStyleSheet(fh.read())
 
     def modifyFontSettings(self):
@@ -182,7 +168,7 @@ class MainWindow(QMainWindow, BaseSettings):
             if app is None:
                 raise RuntimeError("No Qt Application found.")
 
-            with open(config["STYLES_DEFAULT"], 'r') as fh:
+            with open(self.stylesheetPath, 'r') as fh:
                 app.setStyleSheet(fh.read())
 
     def toggleSplitView(self):
