@@ -21,7 +21,7 @@ from PyQt5.QtCore import (Qt)
 from PyQt5.QtWidgets import (QGridLayout, QVBoxLayout, QWidget, QLabel, QCheckBox,
                              QLineEdit, QComboBox, QDialog, QDialogButtonBox, QMessageBox)
 
-from utils.config import (editSelectionConfig, editStylesheet)
+from utils.config import (editSelectionConfig)
 
 
 class MessagePopup(QMessageBox):
@@ -69,57 +69,6 @@ class BasePicker(QWidget):
             index = getattr(self, f"{selection}Index")
             self.parent.config["SELECTED_INDEX"][selection] = index
             editSelectionConfig(index, selection)
-
-
-class FontPicker(BasePicker):
-    def __init__(self, parent, tracker):
-        config = parent.config
-        listTop = config["FONT_STYLE"]
-        listBot = config["FONT_SIZE"]
-        optionLists = [listTop, listBot]
-
-        super().__init__(parent, tracker, optionLists)
-        self.pickTop.currentIndexChanged.connect(self.changeFontStyle)
-        self.pickTop.setCurrentIndex(config["SELECTED_INDEX"]["fontStyle"])
-        self.nameTop.setText("Font Style: ")
-        self.pickBot.currentIndexChanged.connect(self.changeFontSize)
-        self.pickBot.setCurrentIndex(config["SELECTED_INDEX"]["fontSize"])
-        self.nameBot.setText("Font Size: ")
-
-        self.persistText = QComboBox()
-        self.persistText.addItems(["Disabled", "Enabled"])
-        self.layout.addWidget(QLabel("Persist Text: "), 2, 0)
-        self.layout.addWidget(self.persistText, 2, 1)
-        self.persistText.setCurrentIndex(config["PERSIST_TEXT_MODE"])
-        self.persistText.currentIndexChanged.connect(self.changePersistText)
-
-        self.fontStyleText = f"  font-family: '{self.pickTop.currentText().strip()}';\n"
-        self.fontSizeText = f"  font-size: {self.pickBot.currentText().strip()}pt;\n"
-        self.fontStyleIndex = self.pickTop.currentIndex()
-        self.fontSizeIndex = self.pickBot.currentIndex()
-        self.persistTextIndex = self.persistText.currentIndex()
-
-    def changeFontStyle(self, i):
-        self.fontStyleIndex = i
-        selectedFontStyle = self.pickTop.currentText().strip()
-        replacementText = f"  font-family: '{selectedFontStyle}';\n"
-        self.fontStyleText = replacementText
-
-    def changeFontSize(self, i):
-        self.fontSizeIndex = i
-        selectedFontSize = int(self.pickBot.currentText().strip())
-        replacementText = f"  font-size: {selectedFontSize}pt;\n"
-        self.fontSizeText = replacementText
-    
-    def changePersistText(self, i):
-        self.persistTextIndex = i
-
-    def applyChanges(self):
-        self.applySelections(['fontStyle', 'fontSize'])
-        editStylesheet(41, self.fontStyleText)
-        editStylesheet(42, self.fontSizeText)
-        self.parent.config["PERSIST_TEXT_MODE"] = self.persistTextIndex
-        return True
 
 
 class ShortcutPicker(BasePicker):

@@ -1,5 +1,5 @@
 """
-Poricom Configuration Utilities
+Poricom Helper Functions
 
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
@@ -17,24 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import toml
-config = toml.load("./utils/config.toml")
+from ..constants import STYLESHEET_LIGHT, STYLESHEET_DARK
 
-
-def saveOnClose(data, config="utils/config.toml"):
-    with open(config, 'w', encoding='utf-8') as fh:
-        toml.dump(data, fh)
-
-
-def editConfig(index, replacementText, config="utils/config.toml"):
-    data = toml.load(config)
-    data[index] = replacementText
-    with open(config, 'w', encoding='utf-8') as fh:
-        toml.dump(data, fh)
-
-
-def editSelectionConfig(index, cBoxName, config="utils/config.toml"):
-    data = toml.load(config)
-    data["SELECTED_INDEX"][cBoxName] = index
-    with open(config, 'w', encoding='utf-8') as fh:
-        toml.dump(data, fh)
+def editStylesheet(index: int, style: str):
+    """
+    Replace stylesheet at line `index` with input `style`
+    """
+    with open(STYLESHEET_LIGHT, 'r') as slFh, open(STYLESHEET_DARK, 'r') as sdFh:
+        lineLight = slFh.readlines()
+        linesDark = sdFh.readlines()
+        lineLight[index] = style
+        linesDark[index] = style
+    with open(STYLESHEET_LIGHT, 'w') as slFh, open(STYLESHEET_DARK, 'w') as sdFh:
+        slFh.writelines(lineLight)
+        sdFh.writelines(linesDark)

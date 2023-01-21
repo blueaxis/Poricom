@@ -23,12 +23,20 @@ from .types import ButtonConfigDict
 IMAGE_EXTENSIONS = ["*.bmp", "*.gif", "*.jpeg", "*.jpg", "*.pbm", "*.pgm", "*.png", "*.ppm", "*.webp", "*.xbm", "*.xpm",]
 
 # Settings
+TOGGLE_CHOICES = [ " Disabled", " Enabled"]
+
 LANGUAGE = [ " Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"]
 ORIENTATION = [ " Vertical", " Horizontal"]
 
 IMAGE_SCALING = [ " Fit to Width", " Fit to Height", " Fit to Screen"]
 
+FONT_SIZE = [ " 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72"]
+FONT_STYLE = [ " Helvetica", " Poppins", " Arial", " Verdana", " Times New Roman"]
+
 # Paths
+STYLESHEET_LIGHT = './assets/styles.qss'
+STYLESHEET_DARK = './assets/styles-dark.qss'
+
 TESSERACT_LANGUAGES = "./assets/languages/"
 
 TOOLBAR_ICONS = './assets/images/icons/'
