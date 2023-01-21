@@ -20,13 +20,14 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QAbstractEventDispatcher
+from PyQt5.QtCore import QAbstractEventDispatcher, QSettings
 from pyqtkeybind import keybinder
 
 from components.services import WinEventFilter
 from MainWindow import MainWindow
 from Trackers import Tracker
 from utils.config import config
+from utils.constants import SETTINGS_FILE_DEFAULT
 
 if __name__ == '__main__':
 
@@ -41,10 +42,11 @@ if __name__ == '__main__':
     with open(styles, 'r') as fh:
         app.setStyleSheet(fh.read())
 
+    settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
+    shortcut = settings.value("captureExternalShortcut", "Alt+Q")
     keybinder.init()
-    previousShortcut = config["SHORTCUT"]["captureExternal"]
     keybinder.register_hotkey(
-        widget.winId(), config["SHORTCUT"]["captureExternal"], widget.captureExternal)
+        widget.winId(), shortcut, widget.captureExternal)
     winEventFilter = WinEventFilter(keybinder)
     eventDispatcher = QAbstractEventDispatcher.instance()
     eventDispatcher.installNativeEventFilter(winEventFilter)
@@ -53,5 +55,5 @@ if __name__ == '__main__':
     widget.loadModel()
     app.exec_()
 
-    # keybinder.unregister_hotkey(widget.winId(), previousShortcut)
+    # keybinder.unregister_hotkey(widget.winId(), shortcut)
     sys.exit()

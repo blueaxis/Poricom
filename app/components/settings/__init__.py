@@ -18,4 +18,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from .base import BaseSettings
-from .popups import ImageScalingOptions, OptionsContainer, PreviewOptions, TesseractOptions
+from .popups import ImageScalingOptions, OptionsContainer, PreviewOptions, ShortcutOptions, TesseractOptions
