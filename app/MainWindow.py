@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, 
                              QPushButton, QFileDialog)
 
 from components.services import BaseWorker
-from components.settings import FontOptions, ImageScalingOptions, OptionsContainer, TesseractOptions
+from components.settings import PreviewOptions, ImageScalingOptions, OptionsContainer, TesseractOptions
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView, FullScreenOCRView
 from Popups import (ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
@@ -169,7 +169,7 @@ class MainWindow(QMainWindow):
             app.setStyleSheet(fh.read())
 
     def modifyFontSettings(self):
-        confirmation = OptionsContainer(FontOptions(self))
+        confirmation = OptionsContainer(PreviewOptions(self))
         ret = confirmation.exec()
 
         if ret:
