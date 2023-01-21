@@ -26,6 +26,8 @@ IMAGE_EXTENSIONS = ["*.bmp", "*.gif", "*.jpeg", "*.jpg", "*.pbm", "*.pgm", "*.pn
 LANGUAGE = [ " Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"]
 ORIENTATION = [ " Vertical", " Horizontal"]
 
+IMAGE_SCALING = [ " Fit to Width", " Fit to Height", " Fit to Screen"]
+
 # Paths
 TESSERACT_LANGUAGES = "./assets/languages/"
 

@@ -122,28 +122,6 @@ class FontPicker(BasePicker):
         return True
 
 
-class ScaleImagePicker(BasePicker):
-    def __init__(self, parent, tracker):
-        config = parent.config
-        listTop = config["IMAGE_SCALING"]
-        optionLists = [listTop]
-
-        super().__init__(parent, tracker, optionLists)
-        self.pickTop.currentIndexChanged.connect(self.changeScaling)
-        self.pickTop.setCurrentIndex(config["SELECTED_INDEX"]["imageScaling"])
-        self.nameTop.setText("Image Scaling: ")
-
-        self.imageScalingIndex = self.pickTop.currentIndex()
-
-    def changeScaling(self, i):
-        self.imageScalingIndex = i
-
-    def applyChanges(self):
-        self.applySelections(['imageScaling'])
-        self.parent.canvas.setViewImageMode(self.imageScalingIndex)
-        return True
-
-
 class ShortcutPicker(BasePicker):
     def __init__(self, parent, tracker):
         config = parent.config
