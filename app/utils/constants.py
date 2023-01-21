@@ -59,7 +59,7 @@ LOAD_MODEL_MESSAGE = (
 
 # ------------------------------------ Settings ------------------------------------- #
 
-SETTINGS_FILE_DEFAULT = './utils/poricom-config.ini'
+SETTINGS_FILE_DEFAULT = './bin/poricom-config.ini'
 
 # Window
 MAIN_WINDOW_DEFAULTS = {
