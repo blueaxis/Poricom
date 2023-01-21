@@ -1,5 +1,5 @@
 """
-Cloe Popups
+Poricom Popups
 
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 

@@ -20,6 +20,9 @@ from .types import ButtonConfigDict
 
 # ------------------------------------- General ------------------------------------- #
 
+APP_NAME = "Poricom"
+APP_LOGO = "./assets/images/icons/logo.ico"
+
 IMAGE_EXTENSIONS = ["*.bmp", "*.gif", "*.jpeg", "*.jpg", "*.pbm", "*.pgm", "*.png", "*.ppm", "*.webp", "*.xbm", "*.xpm",]
 
 # Settings
@@ -57,6 +60,16 @@ LOAD_MODEL_MESSAGE = (
 # ------------------------------------ Settings ------------------------------------- #
 
 SETTINGS_FILE_DEFAULT = './utils/poricom-config.ini'
+
+# Window
+MAIN_WINDOW_DEFAULTS = {
+    "hasLoadModelPopup": "true",
+    "explorerPath": "./assets/images/",
+    "stylesheetPath": "./assets/styles.qss"
+}
+MAIN_WINDOW_TYPES = {
+    "hasLoadModelPopup": bool
+}
 
 # View
 IMAGE_VIEW_DEFAULT = {

@@ -15,5 +15,4 @@ dependencies:
     - pyqtkeybind
     - rarfile
     - pdf2image
-    - toml
     - huggingface-hub==0.7.0

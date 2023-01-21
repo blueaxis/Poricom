@@ -20,25 +20,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from os.path import isfile, join, splitext, normpath, abspath, exists, dirname
 from os import listdir
 
+from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QPixmap, QPainter
 
-from utils.config import config
+from utils.constants import EXPLORER_ROOT_DEFAULT, IMAGE_EXTENSIONS, SETTINGS_FILE_DEFAULT
 
+settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
+split = settings.value("splitViewMode").lower() == "true"
+explorerPath = settings.value("explorerPath", EXPLORER_ROOT_DEFAULT)
 
+# TODO: This needs refactoring
+# 1. Rename the module to `states`
+# 2. Instead of one object there should be several state objects i.e. image states, filepath states
+# 3. It might also be better if images states is an object tracked by WorkspaceView (parent)
+# then pass the references to its children
 class Tracker:
     def __init__(self):
         try:
-            self.filepath = abspath(config["NAV_ROOT"])
+            self.filepath = abspath(explorerPath)
         except FileNotFoundError:
-            self.filepath = abspath(config["DEFAULT_NAV_ROOT"])
+            self.filepath = abspath(explorerPath)
         try:
             filename, filenext, *_ = self._imageList
         except ValueError:
             filename, *_ = self._imageList
             filenext = None
-        if not config["SPLIT_VIEW_MODE"]:
+        if not split:
             self._pixImage = PImage(filename)
-        if config["SPLIT_VIEW_MODE"]:
+        if split:
             splitImage = self.twoFileToImage(filename, filenext)
             self._pixImage = PImage(splitImage, filename)
         self._pixMask = PImage(filename)
@@ -47,30 +56,8 @@ class Tracker:
 
         self._imageList = []
 
-        selectedLanguage = config["LANGUAGE"][config["SELECTED_INDEX"]["language"]]
-        self._language = self.selectionToLangCode(selectedLanguage.strip())
-        selectedOrientation = config["ORIENTATION"][config["SELECTED_INDEX"]["orientation"]]
-        self._orientation = self.selectionToOrientCode(selectedOrientation.strip())
-
         self._betterOCR = False
         self._ocrModel = None
-
-    def selectionToLangCode(self, selectedLanguage):
-        if selectedLanguage == "Japanese":
-            langCode = "jpn"
-        if selectedLanguage == "Korean":
-            langCode = "kor"
-        if selectedLanguage == "Chinese SIM":
-            langCode = "chi_sim"
-        if selectedLanguage == "Chinese TRA":
-            langCode = "chi_tra"
-        if selectedLanguage == "English":
-            langCode = "eng"
-        return langCode
-    
-    def selectionToOrientCode(self, selectedOrientation):
-        isVert = selectedOrientation == "Vertical"
-        return "_vert" if isVert else ""
 
     def twoFileToImage(self, fileLeft, fileRight):
         imageLeft, imageRight = PImage(fileRight), PImage(fileLeft)
@@ -132,28 +119,12 @@ class Tracker:
     def filepath(self, filepath):
         fileList = filter(lambda f: isfile(join(filepath, f)), listdir(filepath))
         imageList = list(map(lambda p: normpath(join(filepath, p)), filter(
-            (lambda f: ('*'+splitext(f)[1]) in config["IMAGE_EXTENSIONS"]), fileList)))
+            (lambda f: ('*'+splitext(f)[1]) in IMAGE_EXTENSIONS), fileList)))
         if len(imageList) <= 0:
             raise FileNotFoundError("Empty directory")
 
         self._filepath = filepath
         self._imageList = imageList
-
-    @property
-    def language(self):
-        return self._language
-
-    @language.setter
-    def language(self, language):
-        self._language = language
-
-    @property
-    def orientation(self):
-        return self._orientation
-
-    @orientation.setter
-    def orientation(self, orientation):
-        self._orientation = orientation
 
     @property
     def ocrModel(self):

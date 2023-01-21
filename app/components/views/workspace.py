@@ -1,5 +1,5 @@
 """
-Poricom Main Window Component
+Poricom Workspace View Component
 
 Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
 
@@ -22,9 +22,9 @@ from PyQt5.QtWidgets import (QInputDialog, QMainWindow, QSplitter)
 
 from .ocr import OCRView
 from components.explorers import ImageExplorer
-from utils.config import config
 from utils.constants import MAIN_VIEW_RATIO
 
+# TODO: Move view settings here
 class WorkspaceView(QSplitter):
     """
     Main view of the program. Includes the explorer and the view.
@@ -32,7 +32,6 @@ class WorkspaceView(QSplitter):
     def __init__(self, parent: QMainWindow, tracker=None):
         super().__init__(parent)
         self.tracker = tracker
-        self.config = config
 
         self.canvas = OCRView(self, self.tracker)
         self.explorer = ImageExplorer(self, self.tracker.filepath)

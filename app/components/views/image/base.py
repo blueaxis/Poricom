@@ -21,7 +21,7 @@ from time import sleep
 from typing import TYPE_CHECKING
 
 from PyQt5.QtCore import (Qt, QRect, QRectF, QSize, QThreadPool)
-from PyQt5.QtWidgets import (QApplication, QGraphicsScene, QGraphicsView, QSplitter)
+from PyQt5.QtWidgets import (QApplication, QGraphicsScene, QGraphicsView)
 
 from components.services import BaseWorker
 from components.settings import BaseSettings

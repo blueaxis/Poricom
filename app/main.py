@@ -26,23 +26,23 @@ from pyqtkeybind import keybinder
 from components.services import WinEventFilter
 from MainWindow import MainWindow
 from Trackers import Tracker
-from utils.config import config
-from utils.constants import SETTINGS_FILE_DEFAULT
+from utils.constants import APP_NAME, APP_LOGO, SETTINGS_FILE_DEFAULT, STYLESHEET_LIGHT
 
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    app.setApplicationName("Poricom")
-    app.setWindowIcon(QIcon(config["LOGO"]))
+    app.setApplicationName(APP_NAME)
+    app.setWindowIcon(QIcon(APP_LOGO))
 
     tracker = Tracker()
     widget = MainWindow(parent=None, tracker=tracker)
 
-    styles = config["STYLES_DEFAULT"]
+    settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
+
+    styles = settings.value("stylesheetPath", STYLESHEET_LIGHT)
     with open(styles, 'r') as fh:
         app.setStyleSheet(fh.read())
 
-    settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
     shortcut = settings.value("captureExternalShortcut", "Alt+Q")
     keybinder.init()
     keybinder.register_hotkey(
