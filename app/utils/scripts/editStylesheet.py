@@ -17,7 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .editStylesheet import editStylesheet
-from .logText import logText
-from .mangaFileToImageDir import mangaFileToImageDir
-from .pixmapToText import pixmapToText
+from ..constants import STYLESHEET_LIGHT, STYLESHEET_DARK
+
+def editStylesheet(index: int, style: str):
+    """
+    Replace stylesheet at line `index` with input `style`
+    """
+    with open(STYLESHEET_LIGHT, 'r') as slFh, open(STYLESHEET_DARK, 'r') as sdFh:
+        lineLight = slFh.readlines()
+        linesDark = sdFh.readlines()
+        lineLight[index] = style
+        linesDark[index] = style
+    with open(STYLESHEET_LIGHT, 'w') as slFh, open(STYLESHEET_DARK, 'w') as sdFh:
+        slFh.writelines(lineLight)
+        sdFh.writelines(linesDark)

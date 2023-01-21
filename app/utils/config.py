@@ -38,16 +38,3 @@ def editSelectionConfig(index, cBoxName, config="utils/config.toml"):
     data["SELECTED_INDEX"][cBoxName] = index
     with open(config, 'w') as fh:
         toml.dump(data, fh)
-
-
-def editStylesheet(index, replacementText):
-    sheetLight = './assets/styles.qss'
-    sheetDark = './assets/styles-dark.qss'
-    with open(sheetLight, 'r') as slFh, open(sheetDark, 'r') as sdFh:
-        lineLight = slFh.readlines()
-        linesDark = sdFh.readlines()
-        lineLight[index] = replacementText
-        linesDark[index] = replacementText
-    with open(sheetLight, 'w') as slFh, open(sheetDark, 'w') as sdFh:
-        slFh.writelines(lineLight)
-        sdFh.writelines(linesDark)

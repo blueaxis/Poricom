@@ -50,7 +50,7 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
         self.addDefaults(TESSERACT_DEFAULTS)
-        self.addProperty('persistTextMode', "false", bool)
+        self.addProperty('persistText', "true", bool)
 
     def handleTextResult(self, result):
         try:
@@ -96,7 +96,7 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         text = self.canvasText.text()
         logText(text, isLogFile=isLogFile, path=logPath)
         try:
-            if not self.persistTextMode:
+            if not self.persistText:
                 self.canvasText.hide()
         except AttributeError:
             pass
