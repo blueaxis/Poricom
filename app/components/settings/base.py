@@ -110,8 +110,10 @@ class BaseSettings(QWidget):
         if hasMessage:
             BasePopup("Save Settings", "Configuration has been saved.").exec()
 
-    def loadSettings(self):
-        for propName, propDefault in self._defaults.items():
+    def loadSettings(self, settings: dict[str, Any] = {}):
+        if not settings:
+            settings = self._defaults
+        for propName, propDefault in settings.items():
             prop = self.settings.value(f"{self._prefix}{propName}", propDefault)
             self.setProperty(propName, prop)
 
