@@ -17,17 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtWidgets import (QWidget)
+from PyQt5.QtWidgets import QWidget
 
 from utils.constants import LANGUAGE, ORIENTATION
 
 from .base import BaseOptions
 
+
 class TesseractOptions(BaseOptions):
     def __init__(self, parent: QWidget):
         super().__init__(parent, [LANGUAGE, ORIENTATION])
         # TODO: Use constants here
-        self.initializeProperties([("language", "jpn", str), ("orientation", "_vert", str)])
+        self.initializeProperties(
+            [("language", "jpn", str), ("orientation", "_vert", str)]
+        )
 
     def changeLanguage(self, i):
         self.languageIndex = i

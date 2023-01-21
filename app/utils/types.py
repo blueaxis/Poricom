@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from typing import TypedDict
 
+
 class ButtonConfig(TypedDict):
     title: str
     message: str
@@ -26,5 +27,6 @@ class ButtonConfig(TypedDict):
     align: str
     iconHeight: float
     iconWidth: float
+
 
 ButtonConfigDict = dict[str, ButtonConfig]

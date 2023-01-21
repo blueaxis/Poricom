@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtWidgets import (QApplication, QWidget)
+from PyQt5.QtWidgets import QApplication, QWidget
 
 
 class ScreenAwareWidget(QWidget):
     """
     Screen-aware widget. Allows retrieving desktop screen dimensions
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

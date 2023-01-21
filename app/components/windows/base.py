@@ -21,17 +21,36 @@ from shutil import rmtree
 from time import sleep
 
 from manga_ocr import MangaOcr
-from PyQt5.QtCore import (QThreadPool)
-from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QMainWindow, QApplication,
-                             QPushButton, QFileDialog)
+from PyQt5.QtCore import QThreadPool
+from PyQt5.QtWidgets import (
+    QVBoxLayout,
+    QWidget,
+    QMainWindow,
+    QApplication,
+    QPushButton,
+    QFileDialog,
+)
 
 from .external import ExternalWindow
 from components.popups import BasePopup, CheckboxPopup
 from components.services import BaseWorker
-from components.settings import BaseSettings, PreviewOptions, ImageScalingOptions, OptionsContainer, ShortcutOptions, TesseractOptions
+from components.settings import (
+    BaseSettings,
+    PreviewOptions,
+    ImageScalingOptions,
+    OptionsContainer,
+    ShortcutOptions,
+    TesseractOptions,
+)
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView
-from utils.constants import LOAD_MODEL_MESSAGE, MAIN_WINDOW_DEFAULTS, MAIN_WINDOW_TYPES, STYLESHEET_DARK, STYLESHEET_LIGHT
+from utils.constants import (
+    LOAD_MODEL_MESSAGE,
+    MAIN_WINDOW_DEFAULTS,
+    MAIN_WINDOW_TYPES,
+    STYLESHEET_DARK,
+    STYLESHEET_LIGHT,
+)
 from utils.scripts import mangaFileToImageDir
 
 
@@ -60,7 +79,7 @@ class MainWindow(QMainWindow, BaseSettings):
     @property
     def canvas(self):
         return self.mainView.canvas
-    
+
     @property
     def explorer(self):
         return self.mainView.explorer
@@ -74,18 +93,15 @@ class MainWindow(QMainWindow, BaseSettings):
         return super().closeEvent(event)
 
     def noop(self):
-        BasePopup(
-            "Not Implemented",
-            "This function is not yet implemented."
-        ).exec()
+        BasePopup("Not Implemented", "This function is not yet implemented.").exec()
 
-# ------------------------------ File Functions ------------------------------ #
+    # ------------------------------ File Functions ------------------------------ #
 
     def openDir(self):
         filepath = QFileDialog.getExistingDirectory(
             self,
             "Open Directory",
-            self.tracker.filepath  # , QFileDialog.DontUseNativeDialog
+            self.tracker.filepath,  # , QFileDialog.DontUseNativeDialog
         )
 
         if filepath:
@@ -96,7 +112,7 @@ class MainWindow(QMainWindow, BaseSettings):
             except FileNotFoundError:
                 BasePopup(
                     "No images found in the directory",
-                    "Please select a directory with images."
+                    "Please select a directory with images.",
                 ).exec()
 
     def openManga(self):
@@ -104,21 +120,20 @@ class MainWindow(QMainWindow, BaseSettings):
             self,
             "Open Manga File",
             self.tracker.filepath,
-            "Manga (*.cbz *.cbr *.zip *.rar *.pdf)"
+            "Manga (*.cbz *.cbr *.zip *.rar *.pdf)",
         )
 
         if filename:
+
             def setDirectory(filepath):
                 self.tracker.filepath = filepath
                 self.explorer.setDirectory(filepath)
 
-            openMangaButton = self.toolbar.findChild(
-                QPushButton, "openManga")
+            openMangaButton = self.toolbar.findChild(QPushButton, "openManga")
 
             worker = BaseWorker(mangaFileToImageDir, filename)
             worker.signals.result.connect(setDirectory)
-            worker.signals.finished.connect(
-                lambda: openMangaButton.setEnabled(True))
+            worker.signals.finished.connect(lambda: openMangaButton.setEnabled(True))
 
             self.threadpool.start(worker)
             openMangaButton.setEnabled(False)
@@ -132,7 +147,7 @@ class MainWindow(QMainWindow, BaseSettings):
     def captureExternal(self):
         ExternalWindow(self).showFullScreen()
 
-# ------------------------------ View Functions ------------------------------ #
+    # ------------------------------ View Functions ------------------------------ #
 
     def toggleStylesheet(self):
         if self.stylesheetPath == STYLESHEET_LIGHT:
@@ -144,7 +159,7 @@ class MainWindow(QMainWindow, BaseSettings):
         if app is None:
             raise RuntimeError("No Qt Application found.")
 
-        with open(self.stylesheetPath, 'r') as fh:
+        with open(self.stylesheetPath, "r") as fh:
             app.setStyleSheet(fh.read())
 
     def modifyFontSettings(self):
@@ -156,7 +171,7 @@ class MainWindow(QMainWindow, BaseSettings):
             if app is None:
                 raise RuntimeError("No Qt Application found.")
 
-            with open(self.stylesheetPath, 'r') as fh:
+            with open(self.stylesheetPath, "r") as fh:
                 app.setStyleSheet(fh.read())
 
     def toggleSplitView(self):
@@ -176,7 +191,7 @@ class MainWindow(QMainWindow, BaseSettings):
     def hideExplorer(self):
         self.explorer.setVisible(not self.explorer.isVisible())
 
-# ----------------------------- Control Functions ---------------------------- #
+    # ----------------------------- Control Functions ---------------------------- #
 
     def toggleMouseMode(self):
         self.canvas.toggleZoomPanMode()
@@ -184,7 +199,7 @@ class MainWindow(QMainWindow, BaseSettings):
     def modifyHotkeys(self):
         OptionsContainer(ShortcutOptions(self)).exec()
 
-# ------------------------------ Misc Functions ------------------------------ #
+    # ------------------------------ Misc Functions ------------------------------ #
 
     def loadModel(self):
         loadModelButton = self.toolbar.findChild(QPushButton, "loadModel")
@@ -195,9 +210,9 @@ class MainWindow(QMainWindow, BaseSettings):
                 "hasLoadModelPopup",
                 "Load the MangaOCR model?",
                 LOAD_MODEL_MESSAGE,
-                CheckboxPopup.Ok | CheckboxPopup.Cancel
+                CheckboxPopup.Ok | CheckboxPopup.Cancel,
             ).exec()
-            if (ret == CheckboxPopup.Ok):
+            if ret == CheckboxPopup.Ok:
                 pass
             else:
                 loadModelButton.setChecked(False)
@@ -221,7 +236,7 @@ class MainWindow(QMainWindow, BaseSettings):
             if message == "success":
                 BasePopup(
                     f"{modelName} model loaded",
-                    f"You are now using the {modelName} model for Japanese text detection."
+                    f"You are now using the {modelName} model for Japanese text detection.",
                 ).exec()
             else:
                 BasePopup("Load Model Error", message).exec()
@@ -229,8 +244,7 @@ class MainWindow(QMainWindow, BaseSettings):
 
         worker = BaseWorker(loadModelHelper, self.tracker)
         worker.signals.result.connect(loadModelConfirm)
-        worker.signals.finished.connect(lambda:
-                                        loadModelButton.setEnabled(True))
+        worker.signals.finished.connect(lambda: loadModelButton.setEnabled(True))
 
         self.threadpool.start(worker)
         loadModelButton.setEnabled(False)

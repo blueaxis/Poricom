@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtWidgets import (QGridLayout, QMainWindow)
+from PyQt5.QtWidgets import QGridLayout, QMainWindow
 
 from .base import BaseToolbarContainer
 from utils.constants import NAVIGATION_FUNCTIONS
+
 
 class NavigateToolbarContainer(BaseToolbarContainer):
     """Widget that contains the toolbar navigation functions

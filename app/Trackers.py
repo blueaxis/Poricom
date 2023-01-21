@@ -23,7 +23,11 @@ from os import listdir
 from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QPixmap, QPainter
 
-from utils.constants import EXPLORER_ROOT_DEFAULT, IMAGE_EXTENSIONS, SETTINGS_FILE_DEFAULT
+from utils.constants import (
+    EXPLORER_ROOT_DEFAULT,
+    IMAGE_EXTENSIONS,
+    SETTINGS_FILE_DEFAULT,
+)
 
 settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
 split = settings.value("splitViewMode", "false").lower() == "true"
@@ -71,10 +75,10 @@ class Tracker:
             h = imageLeft.height()
         splitImage = QPixmap(w, h)
         painter = QPainter(splitImage)
-        painter.drawPixmap(0, 0, imageLeft.width(), imageLeft.height(),
-                           imageLeft)
-        painter.drawPixmap(imageLeft.width(), 0, imageRight.width(),
-                           imageRight.height(), imageRight)
+        painter.drawPixmap(0, 0, imageLeft.width(), imageLeft.height(), imageLeft)
+        painter.drawPixmap(
+            imageLeft.width(), 0, imageRight.width(), imageRight.height(), imageRight
+        )
         painter.end()
 
         return splitImage
@@ -85,11 +89,11 @@ class Tracker:
 
     @pixImage.setter
     def pixImage(self, image):
-        if (type(image) is str and PImage(image).isValid()):
+        if type(image) is str and PImage(image).isValid():
             self._pixImage = PImage(image)
             self._pixImage.filename = abspath(image)
             self._filepath = abspath(dirname(image))
-        if (type(image) is tuple):
+        if type(image) is tuple:
             fileLeft, fileRight = image
             if not fileRight:
                 if fileLeft:
@@ -118,8 +122,14 @@ class Tracker:
     @filepath.setter
     def filepath(self, filepath):
         fileList = filter(lambda f: isfile(join(filepath, f)), listdir(filepath))
-        imageList = list(map(lambda p: normpath(join(filepath, p)), filter(
-            (lambda f: ('*'+splitext(f)[1]) in IMAGE_EXTENSIONS), fileList)))
+        imageList = list(
+            map(
+                lambda p: normpath(join(filepath, p)),
+                filter(
+                    (lambda f: ("*" + splitext(f)[1]) in IMAGE_EXTENSIONS), fileList
+                ),
+            )
+        )
         if len(imageList) <= 0:
             raise FileNotFoundError("Empty directory")
 
@@ -152,7 +162,6 @@ class Tracker:
 
 
 class PImage(QPixmap):
-
     def __init__(self, *args):
         super(QPixmap, self).__init__(args[0])
 

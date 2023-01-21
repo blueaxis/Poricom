@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtWidgets import (QHBoxLayout, QMainWindow)
+from PyQt5.QtWidgets import QHBoxLayout, QMainWindow
 
 from .containers import BaseToolbarContainer
 from utils.types import ButtonConfigDict
+
 
 class BaseToolbarTab(BaseToolbarContainer):
     """Tab widget to arrange toolbar tab containers
@@ -29,7 +30,8 @@ class BaseToolbarTab(BaseToolbarContainer):
         parent (QMainWindow): Toolbar tab parent. Set to main window.
         funcs (ButtonConfigDict, optional): Toolbar function configuration. Defaults to {}.
     """
-    def __init__(self, parent: QMainWindow, funcs: ButtonConfigDict={}):
+
+    def __init__(self, parent: QMainWindow, funcs: ButtonConfigDict = {}):
         super().__init__(parent)
 
         self.initializeButtons(funcs)

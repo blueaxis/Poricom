@@ -35,7 +35,9 @@ class BaseSettings(QWidget):
         prefix (str, optional): Text added to the saved property. Defaults to "".
     """
 
-    def __init__(self, parent: QWidget, file: str = SETTINGS_FILE_DEFAULT, prefix: str = ""):
+    def __init__(
+        self, parent: QWidget, file: str = SETTINGS_FILE_DEFAULT, prefix: str = ""
+    ):
         super().__init__(parent)
         self.settings = QSettings(file, QSettings.IniFormat)
 
@@ -71,7 +73,7 @@ class BaseSettings(QWidget):
         Use `self._types` to set the correct property type.
         """
         self._types = types
-    
+
     def addTypes(self, types: dict[str, Callable]):
         """
         Extends the types dictionary, if it exists
