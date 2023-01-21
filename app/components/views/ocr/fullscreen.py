@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtCore import (Qt, QRectF)
-from PyQt5.QtWidgets import (QApplication, QGraphicsScene, QMainWindow)
+from PyQt5.QtCore import Qt, QRectF
+from PyQt5.QtWidgets import QApplication, QGraphicsScene, QMainWindow
 from PyQt5.QtGui import QCursor, QMouseEvent
 
 from .base import BaseOCRView
@@ -29,6 +29,7 @@ class FullScreenOCRView(BaseOCRView):
     """
     Fullscreen view with OCR capabilities
     """
+
     def __init__(self, parent: QMainWindow, tracker=None):
         super().__init__(parent, tracker)
         self.externalWindow = parent
@@ -42,8 +43,9 @@ class FullScreenOCRView(BaseOCRView):
     def takeScreenshot(self, screenIndex: int):
         screen = QApplication.screens()[screenIndex]
         s = screen.size()
-        self.pixmap = self.scene().addPixmap(screen.grabWindow(
-            0).scaled(s.width(), s.height()))
+        self.pixmap = self.scene().addPixmap(
+            screen.grabWindow(0).scaled(s.width(), s.height())
+        )
         self.scene().setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
     def getActiveScreenIndex(self):

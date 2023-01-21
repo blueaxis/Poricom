@@ -19,9 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from typing import Callable
 
-from PyQt5.QtCore import (pyqtSlot, QRunnable)
+from PyQt5.QtCore import pyqtSlot, QRunnable
 
 from .signal import BaseWorkerSignal
+
 
 class BaseWorker(QRunnable):
     """Runnable object to support multithreading

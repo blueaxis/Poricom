@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtCore import (Qt)
-from PyQt5.QtWidgets import (QInputDialog, QMainWindow, QSplitter)
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QInputDialog, QMainWindow, QSplitter
 
 from .ocr import OCRView
 from components.explorers import ImageExplorer
@@ -29,6 +29,7 @@ class WorkspaceView(QSplitter):
     """
     Main view of the program. Includes the explorer and the view.
     """
+
     def __init__(self, parent: QMainWindow, tracker=None):
         super().__init__(parent)
         self.tracker = tracker
@@ -62,7 +63,7 @@ class WorkspaceView(QSplitter):
             tempIndex = self.explorer.indexAbove(index)
             if tempIndex.isValid():
                 index = tempIndex
-        if (not index.isValid()):
+        if not index.isValid():
             return
         self.explorer.setCurrentIndex(index)
 
@@ -72,7 +73,7 @@ class WorkspaceView(QSplitter):
             tempIndex = self.explorer.indexBelow(index)
             if tempIndex.isValid():
                 index = tempIndex
-        if (not index.isValid()):
+        if not index.isValid():
             return
         self.explorer.setCurrentIndex(index)
 
@@ -80,16 +81,17 @@ class WorkspaceView(QSplitter):
         rowCount = self.explorer.model().rowCount(self.explorer.rootIndex())
         i, _ = QInputDialog.getInt(
             self,
-            'Jump to',
-            f'Enter page number: (max is {rowCount})',
+            "Jump to",
+            f"Enter page number: (max is {rowCount})",
             value=-1,
             min=1,
             max=rowCount,
-            flags=Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-        if (i == -1):
+            flags=Qt.CustomizeWindowHint | Qt.WindowTitleHint,
+        )
+        if i == -1:
             return
 
-        index = self.explorer.model().index(i-1, 0, self.explorer.rootIndex())
+        index = self.explorer.model().index(i - 1, 0, self.explorer.rootIndex())
         self.explorer.setCurrentIndex(index)
 
     def zoomIn(self):
@@ -99,6 +101,6 @@ class WorkspaceView(QSplitter):
         self.canvas.zoomView(False, usingButton=True)
 
     def resizeEvent(self, event):
-        self.explorer.setMinimumWidth(0.1*self.width())
-        self.canvas.setMinimumWidth(0.6*self.width())
+        self.explorer.setMinimumWidth(0.1 * self.width())
+        self.canvas.setMinimumWidth(0.6 * self.width())
         return super().resizeEvent(event)

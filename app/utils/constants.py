@@ -23,31 +23,52 @@ from .types import ButtonConfigDict
 APP_NAME = "Poricom"
 APP_LOGO = "./assets/images/icons/logo.ico"
 
-IMAGE_EXTENSIONS = ["*.bmp", "*.gif", "*.jpeg", "*.jpg", "*.pbm", "*.pgm", "*.png", "*.ppm", "*.webp", "*.xbm", "*.xpm",]
+IMAGE_EXTENSIONS = [
+    "*.bmp",
+    "*.gif",
+    "*.jpeg",
+    "*.jpg",
+    "*.pbm",
+    "*.pgm",
+    "*.png",
+    "*.ppm",
+    "*.webp",
+    "*.xbm",
+    "*.xpm",
+]
 
 # Settings
-TOGGLE_CHOICES = [ " Disabled", " Enabled"]
+TOGGLE_CHOICES = [" Disabled", " Enabled"]
 
-LANGUAGE = [ " Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"]
-ORIENTATION = [ " Vertical", " Horizontal"]
+LANGUAGE = [" Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"]
+ORIENTATION = [" Vertical", " Horizontal"]
 
-IMAGE_SCALING = [ " Fit to Width", " Fit to Height", " Fit to Screen"]
+IMAGE_SCALING = [" Fit to Width", " Fit to Height", " Fit to Screen"]
 
-FONT_SIZE = [ " 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72"]
-FONT_STYLE = [ " Helvetica", " Poppins", " Arial", " Verdana", " Times New Roman"]
+FONT_SIZE = [" 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72"]
+FONT_STYLE = [" Helvetica", " Poppins", " Arial", " Verdana", " Times New Roman"]
 
-MODIFIER = [ " Ctrl", " Shift", " Alt", " Ctrl+Alt", " Shift+Alt", " Shift+Ctrl", " Shift+Alt+Ctrl", " No Modifier"]
+MODIFIER = [
+    " Ctrl",
+    " Shift",
+    " Alt",
+    " Ctrl+Alt",
+    " Shift+Alt",
+    " Shift+Ctrl",
+    " Shift+Alt+Ctrl",
+    " No Modifier",
+]
 
 # Paths
-STYLESHEET_LIGHT = './assets/styles.qss'
-STYLESHEET_DARK = './assets/styles-dark.qss'
+STYLESHEET_LIGHT = "./assets/styles.qss"
+STYLESHEET_DARK = "./assets/styles-dark.qss"
 
 TESSERACT_LANGUAGES = "./assets/languages/"
 
-TOOLBAR_ICONS = './assets/images/icons/'
-TOOLBAR_ICON_DEFAULT = './assets/images/icons/default_icon.png'
+TOOLBAR_ICONS = "./assets/images/icons/"
+TOOLBAR_ICON_DEFAULT = "./assets/images/icons/default_icon.png"
 
-EXPLORER_ROOT_DEFAULT = './assets/images/'
+EXPLORER_ROOT_DEFAULT = "./assets/images/"
 
 # Messages
 LOAD_MODEL_MESSAGE = (
@@ -59,35 +80,26 @@ LOAD_MODEL_MESSAGE = (
 
 # ------------------------------------ Settings ------------------------------------- #
 
-SETTINGS_FILE_DEFAULT = './bin/poricom-config.ini'
+SETTINGS_FILE_DEFAULT = "./bin/poricom-config.ini"
 
 # Window
 MAIN_WINDOW_DEFAULTS = {
     "hasLoadModelPopup": "true",
     "explorerPath": "./assets/images/",
-    "stylesheetPath": "./assets/styles.qss"
+    "stylesheetPath": "./assets/styles.qss",
 }
-MAIN_WINDOW_TYPES = {
-    "hasLoadModelPopup": bool
-}
+MAIN_WINDOW_TYPES = {"hasLoadModelPopup": bool}
 
 # View
 IMAGE_VIEW_DEFAULT = {
     "viewImageMode": 0,
     "splitViewMode": "false",
-    "zoomPanMode": "false"
+    "zoomPanMode": "false",
 }
-IMAGE_VIEW_TYPES = {
-    "viewImageMode": int,
-    "splitViewMode": bool,
-    "zoomPanMode": bool
-}
+IMAGE_VIEW_TYPES = {"viewImageMode": int, "splitViewMode": bool, "zoomPanMode": bool}
 
 # Tesseract
-TESSERACT_DEFAULTS = {
-    "language": "jpn",
-    "orientation": "_vert"
-}
+TESSERACT_DEFAULTS = {"language": "jpn", "orientation": "_vert"}
 
 # --------------------------------------- UI ---------------------------------------- #
 
@@ -105,7 +117,7 @@ NAVIGATION_FUNCTIONS: ButtonConfigDict = {
         "toggle": False,
         "align": "AlignRight",
         "iconHeight": 0.45,
-        "iconWidth": 0.45
+        "iconWidth": 0.45,
     },
     "zoomOut": {
         "title": "Zoom out",
@@ -114,7 +126,7 @@ NAVIGATION_FUNCTIONS: ButtonConfigDict = {
         "toggle": False,
         "align": "AlignRight",
         "iconHeight": 0.45,
-        "iconWidth": 0.45
+        "iconWidth": 0.45,
     },
     "loadImageAtIndex": {
         "title": "",
@@ -123,7 +135,7 @@ NAVIGATION_FUNCTIONS: ButtonConfigDict = {
         "toggle": False,
         "align": "AlignRight",
         "iconHeight": 0.45,
-        "iconWidth": 1.3
+        "iconWidth": 1.3,
     },
     "loadPrevImage": {
         "title": "",
@@ -132,7 +144,7 @@ NAVIGATION_FUNCTIONS: ButtonConfigDict = {
         "toggle": False,
         "align": "AlignRight",
         "iconHeight": 0.45,
-        "iconWidth": 0.6
+        "iconWidth": 0.6,
     },
     "loadNextImage": {
         "title": "",
@@ -141,8 +153,8 @@ NAVIGATION_FUNCTIONS: ButtonConfigDict = {
         "toggle": False,
         "align": "AlignRight",
         "iconHeight": 0.45,
-        "iconWidth": 0.6
-    }
+        "iconWidth": 0.6,
+    },
 }
 TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
     "file": {
@@ -153,7 +165,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
+            "iconWidth": 1.0,
         },
         "openManga": {
             "title": "Open manga file",
@@ -162,7 +174,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
+            "iconWidth": 1.0,
         },
         "captureExternalHelper": {
             "title": "External capture",
@@ -171,8 +183,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
-        }
+            "iconWidth": 1.0,
+        },
     },
     "view": {
         "toggleStylesheet": {
@@ -182,7 +194,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
+            "iconWidth": 1.0,
         },
         "hideExplorer": {
             "title": "Hide explorer",
@@ -191,7 +203,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": True,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
+            "iconWidth": 1.0,
         },
         "modifyFontSettings": {
             "title": "Modify preview text",
@@ -200,7 +212,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
+            "iconWidth": 1.0,
         },
         "toggleSplitView": {
             "title": "Turn on split view",
@@ -209,7 +221,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": True,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
+            "iconWidth": 1.0,
         },
         "scaleImage": {
             "title": "Adjust image scaling",
@@ -218,8 +230,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
-        }
+            "iconWidth": 1.0,
+        },
     },
     "controls": {
         "toggleMouseMode": {
@@ -229,7 +241,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": True,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
+            "iconWidth": 1.0,
         },
         "modifyHotkeys": {
             "title": "Remap hotkeys",
@@ -238,8 +250,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
-        }
+            "iconWidth": 1.0,
+        },
     },
     "misc": {
         "loadModel": {
@@ -249,7 +261,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": True,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
+            "iconWidth": 1.0,
         },
         "modifyTesseract": {
             "title": "Tesseract settings",
@@ -258,7 +270,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
+            "iconWidth": 1.0,
         },
         "toggleLogging": {
             "title": "Enable text logging",
@@ -267,7 +279,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "toggle": True,
             "align": "AlignLeft",
             "iconHeight": 1.0,
-            "iconWidth": 1.0
-        }
-    }
+            "iconWidth": 1.0,
+        },
+    },
 }

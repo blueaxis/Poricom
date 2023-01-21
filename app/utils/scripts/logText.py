@@ -19,7 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt5.QtGui import QGuiApplication
 
-def logText(text: str, isLogFile: bool=False, path: str="."):
+
+def logText(text: str, isLogFile: bool = False, path: str = "."):
     """Log text by copying to clipboard
 
     Args:
@@ -31,5 +32,5 @@ def logText(text: str, isLogFile: bool=False, path: str="."):
     clipboard.setText(text)
 
     if isLogFile:
-        with open(path, 'a', encoding="utf-8") as fh:
+        with open(path, "a", encoding="utf-8") as fh:
             fh.write(text + "\n")

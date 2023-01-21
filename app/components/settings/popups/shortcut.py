@@ -17,21 +17,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtWidgets import (QLabel, QLineEdit, QWidget)
+from PyQt5.QtWidgets import QLabel, QLineEdit, QWidget
 
 from .base import BaseOptions
 from components.popups import BasePopup
 from utils.constants import MODIFIER
+
 
 class ShortcutOptions(BaseOptions):
     def __init__(self, parent: QWidget):
         super().__init__(parent, [MODIFIER])
         self.initializeProperties([("modifier", "Alt", str)])
         self.setOptionIndex("modifier", 2)
-        self.addDefaults({
-            "captureExternalKey": "Q",
-            "captureExternalShortcut": "Alt+Q"
-        })
+        self.addDefaults(
+            {"captureExternalKey": "Q", "captureExternalShortcut": "Alt+Q"}
+        )
         self.loadSettings()
 
         self.keyLineEdit = QLineEdit(self.captureExternalKey)

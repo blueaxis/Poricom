@@ -16,11 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtCore import (Qt)
-from PyQt5.QtWidgets import (QMainWindow, QTreeView)
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMainWindow, QTreeView
 
 from .models import ImageModel
 from utils.constants import EXPLORER_ROOT_DEFAULT
+
 
 class ImageExplorer(QTreeView):
     """View to allow exploring images
@@ -29,6 +30,7 @@ class ImageExplorer(QTreeView):
         parent (QMainWindow): Image explorer parent. Set to main window.
         initialDir (str, optional): Initial directory. Defaults to EXPLORER_ROOT_DEFAULT.
     """
+
     def __init__(self, parent: QMainWindow, initialDir: str = EXPLORER_ROOT_DEFAULT):
         super().__init__(parent)
         # TODO: It might be better if the parent is set to the QSplitter

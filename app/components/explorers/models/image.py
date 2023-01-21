@@ -16,15 +16,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtCore import (QModelIndex)
-from PyQt5.QtWidgets import (QFileSystemModel)
+from PyQt5.QtCore import QModelIndex
+from PyQt5.QtWidgets import QFileSystemModel
 
 from utils.constants import IMAGE_EXTENSIONS
+
 
 class ImageModel(QFileSystemModel):
     """
     Image model based on the native file system
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setNameFilterDisables(False)

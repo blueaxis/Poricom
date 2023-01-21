@@ -29,7 +29,9 @@ from tesserocr import PyTessBaseAPI
 from ..constants import TESSERACT_LANGUAGES
 
 
-def pixmapToText(pixmap: QPixmap, language: str = "jpn_vert", model: Optional[MangaOcr] = None) -> str:
+def pixmapToText(
+    pixmap: QPixmap, language: str = "jpn_vert", model: Optional[MangaOcr] = None
+) -> str:
     """
     Convert QPixmap object to text using the model
     """
@@ -47,12 +49,14 @@ def pixmapToText(pixmap: QPixmap, language: str = "jpn_vert", model: Optional[Ma
 
     if model is not None:
         text = model(pillowImage)
-    
+
     # PSM = 1 works most of the time except on smaller bounding boxes.
     # By smaller, we mean textboxes with less text. Usually these
     # boxes have at most one vertical line of text.
     else:
-        with PyTessBaseAPI(path=TESSERACT_LANGUAGES, lang=language, oem=1, psm=1) as api:
+        with PyTessBaseAPI(
+            path=TESSERACT_LANGUAGES, lang=language, oem=1, psm=1
+        ) as api:
             api.SetImage(pillowImage)
             text = api.GetUTF8Text()
 

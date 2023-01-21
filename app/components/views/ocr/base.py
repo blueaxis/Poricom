@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtCore import (pyqtSlot, Qt, QThreadPool, QTimer)
-from PyQt5.QtWidgets import (QGraphicsView, QLabel, QMainWindow)
+from PyQt5.QtCore import pyqtSlot, Qt, QThreadPool, QTimer
+from PyQt5.QtWidgets import QGraphicsView, QLabel, QMainWindow
 
 from components.services import BaseWorker
 from components.settings import BaseSettings
 from utils.constants import TESSERACT_DEFAULTS
 from utils.scripts import logText, pixmapToText
+
 
 class BaseOCRView(QGraphicsView, BaseSettings):
     """Base view with OCR capabilities
@@ -32,6 +33,7 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         parent (QMainWindow): View parent. Set to main window
         tracker (Any, optional): State tracker. Defaults to None.
     """
+
     def __init__(self, parent: QMainWindow, tracker=None):
         # TODO: Remove references to tracker
         super().__init__(parent)
@@ -50,14 +52,14 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
         self.addDefaults(TESSERACT_DEFAULTS)
-        self.addProperty('persistText', "true", bool)
+        self.addProperty("persistText", "true", bool)
 
     def handleTextResult(self, result):
         try:
             self.canvasText.setText(result)
         except RuntimeError:
             pass
-    
+
     def handleTextFinished(self):
         try:
             self.canvasText.adjustSize()
@@ -70,7 +72,7 @@ class BaseOCRView(QGraphicsView, BaseSettings):
 
     @pyqtSlot()
     def rubberBandStopped(self):
-        if (self.canvasText.isHidden()):
+        if self.canvasText.isHidden():
             self.canvasText.setText("")
             self.canvasText.adjustSize()
             self.canvasText.show()

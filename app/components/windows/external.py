@@ -33,6 +33,7 @@ class ExternalWindow(QMainWindow):
     """
     External window widget to enclose FullScreenOCRView
     """
+
     def __init__(self, parent: "MainWindow"):
         super().__init__()
         self.mainWindow = parent
@@ -41,7 +42,7 @@ class ExternalWindow(QMainWindow):
         # we ensure that the whole screen is captured.
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setStyleSheet("border:0px; margin:0px")
-        
+
         # Delete external window on close
         self.setAttribute(Qt.WA_DeleteOnClose)
 

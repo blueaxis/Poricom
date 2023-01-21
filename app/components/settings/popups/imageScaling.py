@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtWidgets import (QWidget)
+from PyQt5.QtWidgets import QWidget
 
 from .base import BaseOptions
 from utils.constants import IMAGE_SCALING

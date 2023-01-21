@@ -21,7 +21,7 @@ from typing import Any, Callable
 
 from stringcase import titlecase, capitalcase
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QComboBox, QGridLayout, QLabel, QWidget)
+from PyQt5.QtWidgets import QComboBox, QGridLayout, QLabel, QWidget
 
 from ..base import BaseSettings
 
@@ -30,7 +30,8 @@ class BaseOptions(BaseSettings):
     """
     Allows saving/selecting options
     """
-    def __init__(self, parent: QWidget, optionLists:list[list[str]]=[]):
+
+    def __init__(self, parent: QWidget, optionLists: list[list[str]] = []):
         super().__init__(parent)
         self.mainWindow = parent
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -80,11 +81,13 @@ class BaseOptions(BaseSettings):
 
             # Label
             self.labelList[i].setText(f"{titlecase(prop)}: ")
-            
+
             # Combo Box
             comboBox = self.comboBoxList[i]
             self.setProperty(f"{prop}ComboBox", comboBox)
 
             # Child classes must implement change{PropName} method
-            comboBox.currentIndexChanged.connect(self.getProperty(f"change{capitalcase(prop)}"))
+            comboBox.currentIndexChanged.connect(
+                self.getProperty(f"change{capitalcase(prop)}")
+            )
             self.setOptionIndex(prop)

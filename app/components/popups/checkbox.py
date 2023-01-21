@@ -18,10 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from PyQt5.QtCore import QSettings
-from PyQt5.QtWidgets import (QCheckBox)
+from PyQt5.QtWidgets import QCheckBox
 
 from components.popups import BasePopup
 from utils.constants import SETTINGS_FILE_DEFAULT
+
 
 class CheckboxPopup(BasePopup):
     """Popup message with a checkbox
@@ -31,9 +32,15 @@ class CheckboxPopup(BasePopup):
         checkboxMessage (str, optional): Checkbox label.
         Defaults to "Don't show this dialog again".
     """
-    def __init__(self, prop: str, title: str, message: str,
-            buttons: BasePopup.StandardButtons = BasePopup.Ok,
-            checkboxMessage="Don't show this dialog again"):
+
+    def __init__(
+        self,
+        prop: str,
+        title: str,
+        message: str,
+        buttons: BasePopup.StandardButtons = BasePopup.Ok,
+        checkboxMessage="Don't show this dialog again",
+    ):
         super().__init__(title, message, buttons)
 
         self.setCheckBox(QCheckBox(checkboxMessage, self))

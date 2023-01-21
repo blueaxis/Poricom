@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtCore import (pyqtSlot)
-from PyQt5.QtWidgets import (QMainWindow)
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QMainWindow
 
 from ..image import BaseImageView
 from .base import BaseOCRView

@@ -19,13 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os.path import exists
 
-from PyQt5.QtCore import (QSize)
-from PyQt5.QtGui import (QIcon)
-from PyQt5.QtWidgets import (QMainWindow, QPushButton)
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QPushButton
 
 from components.misc import ScreenAwareWidget
 from utils.constants import TOOLBAR_ICON_DEFAULT, TOOLBAR_ICON_SIZE, TOOLBAR_ICONS
 from utils.types import ButtonConfig
+
 
 class BaseToolbarContainer(ScreenAwareWidget):
     """Widget that contains the toolbar functions
@@ -33,6 +34,7 @@ class BaseToolbarContainer(ScreenAwareWidget):
     Args:
         parent (QMainWindow): Container parent. Set to main window.
     """
+
     def __init__(self, parent: QMainWindow):
         super().__init__(parent)
 
@@ -57,13 +59,13 @@ class BaseToolbarContainer(ScreenAwareWidget):
 
         # Set button icon and size
         path = TOOLBAR_ICONS + config["path"]
-        if (exists(path)):
+        if exists(path):
             icon = QIcon(path)
         else:
             icon = QIcon(TOOLBAR_ICON_DEFAULT)
         button.setIcon(icon)
-        w = self.primaryScreenHeight()*TOOLBAR_ICON_SIZE*config["iconWidth"]
-        h = self.primaryScreenHeight()*TOOLBAR_ICON_SIZE*config["iconHeight"]
+        w = self.primaryScreenHeight() * TOOLBAR_ICON_SIZE * config["iconWidth"]
+        h = self.primaryScreenHeight() * TOOLBAR_ICON_SIZE * config["iconHeight"]
         button.setIconSize(QSize(w, h))
 
         tooltip = f"\
@@ -76,12 +78,9 @@ class BaseToolbarContainer(ScreenAwareWidget):
 
         # Connect button to main window function
         try:
-            button.clicked.connect(
-                getattr(self.mainWindow, name))
+            button.clicked.connect(getattr(self.mainWindow, name))
         except AttributeError:
             try:
-                button.clicked.connect(
-                    getattr(self.mainWindow.mainView, name))
+                button.clicked.connect(getattr(self.mainWindow.mainView, name))
             except AttributeError:
-                button.clicked.connect(
-                    getattr(self.mainWindow, 'noop'))
+                button.clicked.connect(getattr(self.mainWindow, "noop"))

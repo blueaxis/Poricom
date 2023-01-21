@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtCore import (Qt)
-from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout)
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout
 
 from .base import BaseOptions
+
 
 class OptionsContainer(QDialog):
     """Dialog to contain option widgets
@@ -28,15 +29,18 @@ class OptionsContainer(QDialog):
     Args:
         options (BaseOptions): Child option widget
     """
+
     def __init__(self, options: BaseOptions):
-        super().__init__(None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
+        super().__init__(
+            None,
+            Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint | Qt.WindowTitleHint,
+        )
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.options = options
         self.setLayout(QVBoxLayout())
         self.layout().addWidget(options)
-        self.buttonBox = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.layout().addWidget(self.buttonBox)
 
         self.buttonBox.rejected.connect(self.cancelClickedEvent)
@@ -49,7 +53,7 @@ class OptionsContainer(QDialog):
 
     def cancelClickedEvent(self):
         self.close()
-    
+
     def closeEvent(self, event):
         self.options.close()
         return super().closeEvent(event)

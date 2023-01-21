@@ -24,6 +24,7 @@ import zipfile
 import rarfile
 import pdf2image
 
+
 def mangaFileToImageDir(filepath: str):
     """Converts a manga file to a directory of images
 
@@ -37,7 +38,7 @@ def mangaFileToImageDir(filepath: str):
     cachePath = f"./poricom_cache/{basename(extractPath)}"
 
     if extension in [".cbz", ".zip"]:
-        with zipfile.ZipFile(filepath, 'r') as zipRef:
+        with zipfile.ZipFile(filepath, "r") as zipRef:
             zipRef.extractall(cachePath)
 
     rarfile.UNRAR_TOOL = "bin/unrar.exe"
@@ -50,11 +51,11 @@ def mangaFileToImageDir(filepath: str):
             images = pdf2image.convert_from_path(filepath)
         except pdf2image.exceptions.PDFInfoNotInstalledError:
             images = pdf2image.convert_from_path(
-                filepath, poppler_path="poppler/Library/bin")
+                filepath, poppler_path="poppler/Library/bin"
+            )
         for i in range(len(images)):
             filename = basename(extractPath)
             Path(cachePath).mkdir(parents=True, exist_ok=True)
-            images[i].save(
-                f"{cachePath}/{i+1}_{filename}.png", 'PNG')
+            images[i].save(f"{cachePath}/{i+1}_{filename}.png", "PNG")
 
     return cachePath

@@ -28,7 +28,7 @@ from components.windows import MainWindow
 from Trackers import Tracker
 from utils.constants import APP_NAME, APP_LOGO, SETTINGS_FILE_DEFAULT, STYLESHEET_LIGHT
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     app = QApplication(sys.argv)
     app.setApplicationName(APP_NAME)
@@ -40,13 +40,12 @@ if __name__ == '__main__':
     settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
 
     styles = settings.value("stylesheetPath", STYLESHEET_LIGHT)
-    with open(styles, 'r') as fh:
+    with open(styles, "r") as fh:
         app.setStyleSheet(fh.read())
 
     shortcut = settings.value("captureExternalShortcut", "Alt+Q")
     keybinder.init()
-    keybinder.register_hotkey(
-        widget.winId(), shortcut, widget.captureExternal)
+    keybinder.register_hotkey(widget.winId(), shortcut, widget.captureExternal)
     winEventFilter = WinEventFilter(keybinder)
     eventDispatcher = QAbstractEventDispatcher.instance()
     eventDispatcher.installNativeEventFilter(winEventFilter)
