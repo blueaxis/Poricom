@@ -21,15 +21,16 @@ from shutil import rmtree
 from time import sleep
 
 from manga_ocr import MangaOcr
-from PyQt5.QtCore import (Qt, QThreadPool)
-from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, QApplication,
+from PyQt5.QtCore import (QThreadPool)
+from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QMainWindow, QApplication,
                              QPushButton, QFileDialog)
 
+from .external import ExternalWindow
 from components.popups import BasePopup, CheckboxPopup
 from components.services import BaseWorker
 from components.settings import BaseSettings, PreviewOptions, ImageScalingOptions, OptionsContainer, ShortcutOptions, TesseractOptions
 from components.toolbar import BaseToolbar
-from components.views import WorkspaceView, FullScreenOCRView
+from components.views import WorkspaceView
 from utils.constants import LOAD_MODEL_MESSAGE, MAIN_WINDOW_DEFAULTS, MAIN_WINDOW_TYPES, STYLESHEET_DARK, STYLESHEET_LIGHT
 from utils.scripts import mangaFileToImageDir
 
@@ -129,20 +130,7 @@ class MainWindow(QMainWindow, BaseSettings):
             self.captureExternal()
 
     def captureExternal(self):
-        externalWindow = QMainWindow()
-        externalWindow.layout().setContentsMargins(0, 0, 0, 0)
-        externalWindow.setStyleSheet("border:0px; margin:0px")
-        externalWindow.setAttribute(Qt.WA_DeleteOnClose)
-
-        externalWindow.setCentralWidget(
-            FullScreenOCRView(externalWindow, self.tracker))
-        fullScreen = externalWindow.centralWidget()
-
-        screenIndex = fullScreen.getActiveScreenIndex()
-        screen = QDesktopWidget().screenGeometry(screenIndex)
-        fullScreen.takeScreenshot(screenIndex)
-        externalWindow.move(screen.left(), screen.top())
-        externalWindow.showFullScreen()
+        ExternalWindow(self).showFullScreen()
 
 # ------------------------------ View Functions ------------------------------ #
 
