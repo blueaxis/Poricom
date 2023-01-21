@@ -23,8 +23,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QAbstractEventDispatcher, QSettings
 from pyqtkeybind import keybinder
 
-from components.services import WinEventFilter
 from components.windows import MainWindow
+from services import WinEventFilter
 from Trackers import Tracker
 from utils.constants import APP_NAME, APP_LOGO, SETTINGS_FILE_DEFAULT, STYLESHEET_LIGHT
 

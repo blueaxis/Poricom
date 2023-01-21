@@ -33,7 +33,6 @@ from PyQt5.QtWidgets import (
 
 from .external import ExternalWindow
 from components.popups import BasePopup, CheckboxPopup
-from components.services import BaseWorker
 from components.settings import (
     BaseSettings,
     PreviewOptions,
@@ -44,6 +43,7 @@ from components.settings import (
 )
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView
+from services import BaseWorker
 from utils.constants import (
     LOAD_MODEL_MESSAGE,
     MAIN_WINDOW_DEFAULTS,

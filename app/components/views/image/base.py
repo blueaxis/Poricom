@@ -23,8 +23,8 @@ from typing import TYPE_CHECKING
 from PyQt5.QtCore import Qt, QRect, QRectF, QSize, QThreadPool
 from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
-from components.services import BaseWorker
 from components.settings import BaseSettings
+from services import BaseWorker
 from utils.constants import IMAGE_VIEW_DEFAULT, IMAGE_VIEW_TYPES
 
 if TYPE_CHECKING:
