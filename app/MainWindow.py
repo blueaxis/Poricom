@@ -27,11 +27,10 @@ from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, 
                              QPushButton, QFileDialog)
 
 from components.services import BaseWorker
-from components.settings import OptionsContainer, TesseractOptions
+from components.settings import ImageScalingOptions, OptionsContainer, TesseractOptions
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView, FullScreenOCRView
-from Popups import (FontPicker, ScaleImagePicker,
-                    ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
+from Popups import (FontPicker, ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
 from utils.config import config, saveOnClose
 from utils.constants import LOAD_MODEL_MESSAGE
 from utils.scripts import mangaFileToImageDir
@@ -192,7 +191,7 @@ class MainWindow(QMainWindow):
             self.explorer.currentChanged(index, index)
 
     def scaleImage(self):
-        confirmation = PickerPopup(ScaleImagePicker(self, self.tracker))
+        confirmation = OptionsContainer(ImageScalingOptions(self))
         confirmation.exec()
 
     def hideExplorer(self):

@@ -32,6 +32,7 @@ class BaseOptions(BaseSettings):
     """
     def __init__(self, parent: QWidget, optionLists:list[list[str]]=[]):
         super().__init__(parent)
+        self.mainWindow = parent
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.setLayout(QGridLayout())
