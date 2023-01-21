@@ -28,6 +28,7 @@ class OCRView(BaseImageView, BaseOCRView):
     def __init__(self, parent: QMainWindow, tracker=None):
         # TODO: Remove references to tracker
         super().__init__(parent, tracker)
+        self.loadSettings()
 
     @pyqtSlot()
     def rubberBandStopped(self):
