@@ -26,7 +26,7 @@ from PyQt5.QtGui import QPixmap, QPainter
 from utils.constants import EXPLORER_ROOT_DEFAULT, IMAGE_EXTENSIONS, SETTINGS_FILE_DEFAULT
 
 settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
-split = settings.value("splitViewMode").lower() == "true"
+split = settings.value("splitViewMode", "false").lower() == "true"
 explorerPath = settings.value("explorerPath", EXPLORER_ROOT_DEFAULT)
 
 # TODO: This needs refactoring
