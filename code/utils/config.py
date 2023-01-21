@@ -22,7 +22,7 @@ config = toml.load("./utils/config.toml")
 
 
 def saveOnClose(data, config="utils/config.toml"):
-    with open(config, 'w') as fh:
+    with open(config, 'w', encoding='utf-8') as fh:
         toml.dump(data, fh)
 
 
