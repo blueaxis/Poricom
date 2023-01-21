@@ -84,4 +84,4 @@ class BaseToolbarContainer(ScreenAwareWidget):
                     getattr(self.mainWindow.mainView, name))
             except AttributeError:
                 button.clicked.connect(
-                    getattr(self.mainWindow, 'poricomNoop'))
+                    getattr(self.mainWindow, 'noop'))

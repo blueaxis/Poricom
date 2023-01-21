@@ -26,33 +26,38 @@ from PyQt5.QtCore import (Qt, QThreadPool)
 from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, QApplication,
                              QPushButton, QFileDialog)
 
+from components.popups import BasePopup, CheckboxPopup
 from components.services import BaseWorker
-from components.settings import PreviewOptions, ImageScalingOptions, OptionsContainer, ShortcutOptions, TesseractOptions
+from components.settings import BaseSettings, PreviewOptions, ImageScalingOptions, OptionsContainer, ShortcutOptions, TesseractOptions
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView, FullScreenOCRView
-from Popups import (MessagePopup, CheckboxPopup)
 from utils.config import config, saveOnClose
 from utils.constants import LOAD_MODEL_MESSAGE
 from utils.scripts import mangaFileToImageDir
 
 
-class MainWindow(QMainWindow):
-
+class MainWindow(QMainWindow, BaseSettings):
     def __init__(self, parent=None, tracker=None):
-        super(QWidget, self).__init__(parent)
+        super().__init__(parent)
         self.tracker = tracker
         self.config = config
 
         self.vLayout = QVBoxLayout()
 
         self.mainView = WorkspaceView(self, self.tracker)
-        self.ribbon = BaseToolbar(self)
-        self.vLayout.addWidget(self.ribbon)
+        self.toolbar = BaseToolbar(self)
+        self.vLayout.addWidget(self.toolbar)
 
         self.vLayout.addWidget(self.mainView)
-        _mainWidget = QWidget()
-        _mainWidget.setLayout(self.vLayout)
-        self.setCentralWidget(_mainWidget)
+        mainWidget = QWidget()
+        mainWidget.setLayout(self.vLayout)
+        self.setCentralWidget(mainWidget)
+
+        self.setDefaults({"hasLoadModelPopup": "true"})
+        self.setTypes({"hasLoadModelPopup": bool})
+        self.loadSettings()
+        print(self.hasLoadModelPopup)
+
 
         self.threadpool = QThreadPool()
 
@@ -73,9 +78,9 @@ class MainWindow(QMainWindow):
         saveOnClose(self.config)
         return QMainWindow.closeEvent(self, event)
 
-    def poricomNoop(self):
-        MessagePopup(
-            "WIP",
+    def noop(self):
+        BasePopup(
+            "Not Implemented",
             "This function is not yet implemented."
         ).exec()
 
@@ -93,9 +98,9 @@ class MainWindow(QMainWindow):
                 self.tracker.filepath = filepath
                 self.explorer.setDirectory(filepath)
             except FileNotFoundError:
-                MessagePopup(
-                    f"No images found in the directory",
-                    f"Please select a directory with images."
+                BasePopup(
+                    "No images found in the directory",
+                    "Please select a directory with images."
                 ).exec()
 
     def openManga(self):
@@ -111,7 +116,7 @@ class MainWindow(QMainWindow):
                 self.tracker.filepath = filepath
                 self.explorer.setDirectory(filepath)
 
-            openMangaButton = self.ribbon.findChild(
+            openMangaButton = self.toolbar.findChild(
                 QPushButton, "openManga")
 
             worker = BaseWorker(mangaFileToImageDir, filename)
@@ -208,18 +213,17 @@ class MainWindow(QMainWindow):
 # ------------------------------ Misc Functions ------------------------------ #
 
     def loadModel(self):
-        loadModelButton = self.ribbon.findChild(QPushButton, "loadModel")
+        loadModelButton = self.toolbar.findChild(QPushButton, "loadModel")
         loadModelButton.setChecked(not self.tracker.ocrModel)
 
-        if loadModelButton.isChecked() and self.config["LOAD_MODEL_POPUP"]:
-            confirmation = CheckboxPopup(
+        if loadModelButton.isChecked() and self.hasLoadModelPopup:
+            ret = CheckboxPopup(
+                "hasLoadModelPopup",
                 "Load the MangaOCR model?",
                 LOAD_MODEL_MESSAGE,
-                MessagePopup.Ok | MessagePopup.Cancel
-            )
-            ret = confirmation.exec()
-            self.config["LOAD_MODEL_POPUP"] = not confirmation.checkBox().isChecked()
-            if (ret == MessagePopup.Ok):
+                CheckboxPopup.Ok | CheckboxPopup.Cancel
+            ).exec()
+            if (ret == CheckboxPopup.Ok):
                 pass
             else:
                 loadModelButton.setChecked(False)
@@ -241,12 +245,12 @@ class MainWindow(QMainWindow):
         def loadModelConfirm(message: str):
             modelName = "MangaOCR" if self.tracker.ocrModel else "Tesseract"
             if message == "success":
-                MessagePopup(
+                BasePopup(
                     f"{modelName} model loaded",
                     f"You are now using the {modelName} model for Japanese text detection."
                 ).exec()
             else:
-                MessagePopup("Load Model Error", message).exec()
+                BasePopup("Load Model Error", message).exec()
                 loadModelButton.setChecked(False)
 
         worker = BaseWorker(loadModelHelper, self.tracker)
