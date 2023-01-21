@@ -33,6 +33,8 @@ IMAGE_SCALING = [ " Fit to Width", " Fit to Height", " Fit to Screen"]
 FONT_SIZE = [ " 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72"]
 FONT_STYLE = [ " Helvetica", " Poppins", " Arial", " Verdana", " Times New Roman"]
 
+MODIFIER = [ " Ctrl", " Shift", " Alt", " Ctrl+Alt", " Shift+Alt", " Shift+Ctrl", " Shift+Alt+Ctrl", " No Modifier"]
+
 # Paths
 STYLESHEET_LIGHT = './assets/styles.qss'
 STYLESHEET_DARK = './assets/styles-dark.qss'
@@ -151,7 +153,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
         },
         "captureExternalHelper": {
             "title": "External capture",
-            "message": "This will minimize the app and perform OCR on the current screen. Alternatively, you may use the shortcut Alt+Q.",
+            "message": "This will minimize the app and perform OCR on the current screen. Alternatively, you may use the shortcut Alt+Q (default).",
             "path": "captureExternalHelper.png",
             "toggle": False,
             "align": "AlignLeft",

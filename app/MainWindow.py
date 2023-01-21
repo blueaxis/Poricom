@@ -27,10 +27,10 @@ from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, 
                              QPushButton, QFileDialog)
 
 from components.services import BaseWorker
-from components.settings import PreviewOptions, ImageScalingOptions, OptionsContainer, TesseractOptions
+from components.settings import PreviewOptions, ImageScalingOptions, OptionsContainer, ShortcutOptions, TesseractOptions
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView, FullScreenOCRView
-from Popups import (ShortcutPicker, PickerPopup, MessagePopup, CheckboxPopup)
+from Popups import (MessagePopup, CheckboxPopup)
 from utils.config import config, saveOnClose
 from utils.constants import LOAD_MODEL_MESSAGE
 from utils.scripts import mangaFileToImageDir
@@ -203,13 +203,7 @@ class MainWindow(QMainWindow):
         self.canvas.toggleZoomPanMode()
 
     def modifyHotkeys(self):
-        confirmation = PickerPopup(ShortcutPicker(self, self.tracker))
-        ret = confirmation.exec()
-        if ret:
-            MessagePopup(
-                "Shortcut Remapped",
-                "Close the app to apply changes."
-            ).exec()
+        OptionsContainer(ShortcutOptions(self)).exec()
 
 # ------------------------------ Misc Functions ------------------------------ #
 

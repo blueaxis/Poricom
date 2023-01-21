@@ -71,58 +71,6 @@ class BasePicker(QWidget):
             editSelectionConfig(index, selection)
 
 
-class ShortcutPicker(BasePicker):
-    def __init__(self, parent, tracker):
-        config = parent.config
-        listTop = config["MODIFIER"]
-        optionLists = [listTop]
-
-        super().__init__(parent, tracker, optionLists)
-        self.pickTop.currentIndexChanged.connect(self.changeModifier)
-        self.pickTop.setCurrentIndex(config["SELECTED_INDEX"]["modifier"])
-        self.nameTop.setText("Modifier: ")
-
-        self.pickBot = QLineEdit(config["SHORTCUT"]["captureExternalKey"])
-        self.layout.addWidget(self.pickBot, 1, 1)
-        self.nameBot = QLabel("Key: ")
-        self.layout.addWidget(self.nameBot, 1, 0)
-
-        self.modifierIndex = self.pickTop.currentIndex()
-
-    def keyInvalidError(self):
-        MessagePopup(
-            "Invalid Key",
-            "Please select an alphanumeric key."
-        ).exec()
-
-    def changeModifier(self, i):
-        self.modifierIndex = i
-
-    def setShortcut(self, keyName, modifierText, keyText):
-
-        tooltip = f"{self.parent.config['SHORTCUT'][f'{keyName}Tip']}{modifierText}{keyText}."
-        self.parent.config["SHORTCUT"][keyName] = f"{modifierText}{keyText}"
-        self.parent.config["SHORTCUT"][f"{keyName}Key"] = keyText
-        self.parent.config["TBAR_FUNCS"]["FILE"][f"{keyName}Helper"]["helpMsg"] = tooltip
-
-    def applyChanges(self):
-        selectedModifier = self.pickTop.currentText().strip() + "+"
-        if selectedModifier == "No Modifier+":
-            selectedModifier = ""
-
-        if not self.pickBot.text().isalnum():
-            self.keyInvalidError()
-            return False
-        if len(self.pickBot.text()) != 1:
-            self.keyInvalidError()
-            return False
-
-        self.setShortcut('captureExternal', selectedModifier,
-                         self.pickBot.text())
-        self.applySelections(['modifier'])
-        return True
-
-
 class PickerPopup(QDialog):
     def __init__(self, widget):
         super(QDialog, self).__init__(None,
