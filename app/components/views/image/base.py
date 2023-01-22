@@ -24,7 +24,7 @@ from PyQt5.QtCore import Qt, QRect, QRectF, QSize, QThreadPool
 from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
 from components.settings import BaseSettings
-from services import BaseWorker
+from services import BaseWorker, State
 from utils.constants import IMAGE_VIEW_DEFAULTS, IMAGE_VIEW_TYPES
 
 if TYPE_CHECKING:
@@ -36,9 +36,9 @@ class BaseImageView(QGraphicsView, BaseSettings):
     Base image view to allow view/zoom/pan functions
     """
 
-    def __init__(self, parent: "WorkspaceView", tracker=None):
+    def __init__(self, parent: "WorkspaceView", state: State = None):
         super().__init__(parent)
-        self.tracker = tracker
+        self.state = state
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -78,11 +78,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
 
     def initializePixmapItem(self):
         self.setScene(QGraphicsScene())
-        self.pixmap = self.scene().addPixmap(
-            self.tracker.pixImage.scaledToWidth(
-                self.viewport().geometry().width(), Qt.SmoothTransformation
-            )
-        )
+        self.pixmap = self.scene().addPixmap(self.state.baseImage)
 
     def viewImage(self, factor=1):
         # self.verticalScrollBar().setSliderPosition(0)
@@ -91,15 +87,15 @@ class BaseImageView(QGraphicsView, BaseSettings):
         h = factor * self.viewport().geometry().height()
         if self.viewImageMode == 0:
             self.pixmap.setPixmap(
-                self.tracker.pixImage.scaledToWidth(w, Qt.SmoothTransformation)
+                self.state.baseImage.scaledToWidth(w, Qt.SmoothTransformation)
             )
         elif self.viewImageMode == 1:
             self.pixmap.setPixmap(
-                self.tracker.pixImage.scaledToHeight(h, Qt.SmoothTransformation)
+                self.state.baseImage.scaledToHeight(h, Qt.SmoothTransformation)
             )
         elif self.viewImageMode == 2:
             self.pixmap.setPixmap(
-                self.tracker.pixImage.scaled(
+                self.state.baseImage.scaled(
                     w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation
                 )
             )

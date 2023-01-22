@@ -24,7 +24,7 @@ from .ocr import OCRView
 from components.explorers import ImageExplorer
 from components.popups import BasePopup
 from components.settings import BaseSettings, ImageScalingOptions, OptionsContainer
-from services import BaseWorker
+from services import BaseWorker, State
 from utils.constants import EXPLORER_ROOT_DEFAULT, MAIN_VIEW_DEFAULTS, MAIN_VIEW_RATIO
 from utils.scripts import mangaFileToImageDir
 
@@ -34,15 +34,15 @@ class WorkspaceView(QSplitter, BaseSettings):
     Main view of the program. Includes the explorer and the view.
     """
 
-    def __init__(self, parent: QMainWindow, tracker=None):
+    def __init__(self, parent: QMainWindow, state: State):
         super().__init__(parent)
         self.mainWindow = parent
-        self.tracker = tracker
+        self.state = state
 
         self.setDefaults(MAIN_VIEW_DEFAULTS)
         self.loadSettings()
 
-        self.canvas = OCRView(self, self.tracker)
+        self.canvas = OCRView(self, self.state)
         self.explorer = ImageExplorer(self, self.explorerPath)
         self.addWidget(self.explorer)
         self.addWidget(self.canvas)
@@ -63,7 +63,7 @@ class WorkspaceView(QSplitter, BaseSettings):
         if filepath:
             self.explorer.setDirectory(filepath)
             self.explorerPath = filepath
-        else:
+        elif filepath == None:
             BasePopup(
                 "No images found",
                 "Please select a directory with images.",
@@ -86,10 +86,10 @@ class WorkspaceView(QSplitter, BaseSettings):
 
     def viewImageFromExplorer(self, filename, filenext):
         if not self.canvas.splitViewMode:
-            self.tracker.pixImage = filename
+            self.state.baseImage = filename
         if self.canvas.splitViewMode:
-            self.tracker.pixImage = (filename, filenext)
-        if not self.tracker.pixImage.isValid():
+            self.state.baseImage = (filename, filenext)
+        if not self.state.baseImage.isValid():
             return False
         self.canvas.resetTransform()
         self.canvas.currentScale = 1

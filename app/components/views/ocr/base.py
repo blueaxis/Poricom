@@ -23,7 +23,7 @@ from PyQt5.QtCore import pyqtSlot, Qt, QThreadPool, QTimer
 from PyQt5.QtWidgets import QGraphicsView, QLabel, QMainWindow
 
 from components.settings import BaseSettings
-from services import BaseWorker
+from services import BaseWorker, State
 from utils.constants import (
     TESSERACT_DEFAULTS,
     TEXT_LOGGING_DEFAULTS,
@@ -33,17 +33,13 @@ from utils.scripts import logText, pixmapToText
 
 
 class BaseOCRView(QGraphicsView, BaseSettings):
-    """Base view with OCR capabilities
-
-    Args:
-        parent (QMainWindow): View parent. Set to main window
-        tracker (Any, optional): State tracker. Defaults to None.
+    """
+    Base view with OCR capabilities
     """
 
-    def __init__(self, parent: QMainWindow, tracker=None):
-        # TODO: Remove references to tracker
+    def __init__(self, parent: QMainWindow, state: State = None):
         super().__init__(parent)
-        self.tracker = tracker
+        self.state = state
 
         self.timer = QTimer()
         self.timer.setInterval(300)
@@ -88,7 +84,7 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         language = self.language + self.orientation
         pixmap = self.grab(self.rubberBandRect())
 
-        worker = BaseWorker(pixmapToText, pixmap, language, self.tracker.ocrModel)
+        worker = BaseWorker(pixmapToText, pixmap, language, self.state.ocrModel)
         worker.signals.result.connect(self.handleTextResult)
         worker.signals.finished.connect(self.handleTextFinished)
         self.timer.timeout.disconnect(self.rubberBandStopped)

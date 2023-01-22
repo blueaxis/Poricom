@@ -49,7 +49,7 @@ class ExternalWindow(QMainWindow):
         # WindowStaysOnTopHint & Popup flags ensures that the widget is the top window.
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.Popup)
 
-        self.setCentralWidget(FullScreenOCRView(self, parent.tracker))
+        self.setCentralWidget(FullScreenOCRView(self, parent.state))
         # self.ocrModel = parent.ocrModel
 
     def showFullScreen(self):

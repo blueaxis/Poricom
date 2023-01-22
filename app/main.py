@@ -25,7 +25,6 @@ from pyqtkeybind import keybinder
 
 from components.windows import MainWindow
 from services import WinEventFilter
-from Trackers import Tracker
 from utils.constants import APP_NAME, APP_LOGO, SETTINGS_FILE_DEFAULT, STYLESHEET_LIGHT
 
 if __name__ == "__main__":
@@ -34,8 +33,7 @@ if __name__ == "__main__":
     app.setApplicationName(APP_NAME)
     app.setWindowIcon(QIcon(APP_LOGO))
 
-    tracker = Tracker()
-    widget = MainWindow(parent=None, tracker=tracker)
+    widget = MainWindow()
 
     settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
 

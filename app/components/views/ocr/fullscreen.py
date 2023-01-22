@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import QApplication, QGraphicsScene, QMainWindow
 from PyQt5.QtGui import QCursor, QMouseEvent
 
 from .base import BaseOCRView
+from services import State
 from utils.constants import TESSERACT_DEFAULTS, TEXT_LOGGING_DEFAULTS
 
 
@@ -30,8 +31,8 @@ class FullScreenOCRView(BaseOCRView):
     Fullscreen view with OCR capabilities
     """
 
-    def __init__(self, parent: QMainWindow, tracker=None):
-        super().__init__(parent, tracker)
+    def __init__(self, parent: QMainWindow, state: State = None):
+        super().__init__(parent, state)
         self.externalWindow = parent
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

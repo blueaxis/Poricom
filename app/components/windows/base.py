@@ -35,7 +35,7 @@ from components.settings import (
 )
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView
-from services import BaseWorker
+from services import BaseWorker, State
 from utils.constants import (
     LOAD_MODEL_MESSAGE,
     MAIN_WINDOW_DEFAULTS,
@@ -46,13 +46,13 @@ from utils.constants import (
 
 
 class MainWindow(QMainWindow, BaseSettings):
-    def __init__(self, parent=None, tracker=None):
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent)
-        self.tracker = tracker
+        self.state = State()
 
         self.vLayout = QVBoxLayout()
 
-        self.mainView = WorkspaceView(self, self.tracker)
+        self.mainView = WorkspaceView(self, self.state)
         self.toolbar = BaseToolbar(self)
         self.vLayout.addWidget(self.toolbar)
 
@@ -134,7 +134,7 @@ class MainWindow(QMainWindow, BaseSettings):
 
     def loadModel(self):
         loadModelButton = self.toolbar.findChild(QPushButton, "loadModel")
-        loadModelButton.setChecked(not self.tracker.ocrModel)
+        loadModelButton.setChecked(not self.state.ocrModel)
 
         if loadModelButton.isChecked() and self.hasLoadModelPopup:
             ret = CheckboxPopup(
@@ -147,21 +147,21 @@ class MainWindow(QMainWindow, BaseSettings):
                 loadModelButton.setChecked(False)
                 return
 
-        def loadModelHelper(tracker):
-            betterOCR = tracker.switchOCRMode()
+        def loadModelHelper(state):
+            betterOCR = state.switchOCRMode()
             if betterOCR:
                 try:
-                    tracker.ocrModel = MangaOcr()
+                    state.ocrModel = MangaOcr()
                     return "success"
                 except Exception as e:
-                    tracker.switchOCRMode()
+                    state.switchOCRMode()
                     return str(e)
             else:
-                tracker.ocrModel = None
+                state.ocrModel = None
                 return "success"
 
         def loadModelConfirm(message: str):
-            modelName = "MangaOCR" if self.tracker.ocrModel else "Tesseract"
+            modelName = "MangaOCR" if self.state.ocrModel else "Tesseract"
             if message == "success":
                 BasePopup(
                     f"{modelName} model loaded",
@@ -171,7 +171,7 @@ class MainWindow(QMainWindow, BaseSettings):
                 BasePopup("Load Model Error", message).exec()
                 loadModelButton.setChecked(False)
 
-        worker = BaseWorker(loadModelHelper, self.tracker)
+        worker = BaseWorker(loadModelHelper, self.state)
         worker.signals.result.connect(loadModelConfirm)
         worker.signals.finished.connect(lambda: loadModelButton.setEnabled(True))
 
