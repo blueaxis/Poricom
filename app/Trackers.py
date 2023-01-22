@@ -40,10 +40,7 @@ explorerPath = settings.value("explorerPath", EXPLORER_ROOT_DEFAULT)
 # then pass the references to its children
 class Tracker:
     def __init__(self):
-        try:
-            self.filepath = abspath(explorerPath)
-        except FileNotFoundError:
-            self.filepath = abspath(explorerPath)
+        self.filepath = explorerPath
         try:
             filename, filenext, *_ = self._imageList
         except ValueError:

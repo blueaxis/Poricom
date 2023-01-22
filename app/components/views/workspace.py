@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from PyQt5.QtCore import Qt, QThreadPool
-from PyQt5.QtWidgets import QFileDialog, QInputDialog, QMainWindow, QSplitter
+from PyQt5.QtWidgets import QInputDialog, QMainWindow, QSplitter
 
 from .ocr import OCRView
 from components.explorers import ImageExplorer
@@ -58,36 +58,25 @@ class WorkspaceView(QSplitter, BaseSettings):
     # ------------------------------------ Explorer ------------------------------------- #
 
     def openDir(self):
-        filepath = QFileDialog.getExistingDirectory(
-            self, "Open Directory", self.explorerPath
-        )
+        filepath = self.explorer.getDirectory(self.explorerPath)
 
         if filepath:
-            try:
-                self.explorer.setDirectory(filepath)
-                self.explorerPath = filepath
-            except FileNotFoundError:
-                BasePopup(
-                    "No images found in the directory",
-                    "Please select a directory with images.",
-                ).exec()
+            self.explorer.setDirectory(filepath)
+            self.explorerPath = filepath
+        else:
+            BasePopup(
+                "No images found",
+                "Please select a directory with images.",
+            ).exec()
 
     def openManga(self):
-        filename, _ = QFileDialog.getOpenFileName(
-            self,
-            "Open Manga File",
-            self.explorerPath,
-            "Manga (*.cbz *.cbr *.zip *.rar *.pdf)",
-        )
+        filename = self.explorer.getDirectory(self.explorerPath, True)
 
         if filename:
-            def setDirectory(filepath):
-                self.explorer.setDirectory(filepath)
-                self.explorerPath = EXPLORER_ROOT_DEFAULT
+            self.explorerPath = EXPLORER_ROOT_DEFAULT
 
             worker = BaseWorker(mangaFileToImageDir, filename)
-            worker.signals.result.connect(setDirectory)
-
+            worker.signals.result.connect(self.explorer.setDirectory)
             QThreadPool.globalInstance().start(worker)
 
     def hideExplorer(self):
@@ -118,7 +107,7 @@ class WorkspaceView(QSplitter, BaseSettings):
             index = self.explorer.currentIndex()
             self.explorer.currentChanged(index, index)
 
-    def scaleImage(self):
+    def modifyImageScaling(self):
         OptionsContainer(ImageScalingOptions(self)).exec()
 
     # -------------------------------------- Zoom --------------------------------------- #
