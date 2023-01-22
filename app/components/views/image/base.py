@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
 from components.settings import BaseSettings
 from services import BaseWorker
-from utils.constants import IMAGE_VIEW_DEFAULT, IMAGE_VIEW_TYPES
+from utils.constants import IMAGE_VIEW_DEFAULTS, IMAGE_VIEW_TYPES
 
 if TYPE_CHECKING:
     from ..workspace import WorkspaceView
@@ -51,7 +51,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
         self._trackPadAtMax = 0
         self._scrollSuppressed = False
 
-        self.addDefaults(IMAGE_VIEW_DEFAULT)
+        self.addDefaults(IMAGE_VIEW_DEFAULTS)
         self.addTypes(IMAGE_VIEW_TYPES)
         self.loadSettings()
 
@@ -59,9 +59,10 @@ class BaseImageView(QGraphicsView, BaseSettings):
 
     # ------------------------------------ Settings ------------------------------------- #
 
-    def setViewImageMode(self, mode: int):
+    def modifyViewImageMode(self, mode: int):
         # TODO: This should be an enum not an int
         self.setProperty("viewImageMode", mode)
+        self.setProperty("imageScalingIndex", mode)
         self.saveSettings(hasMessage=False)
         self.viewImage()
 

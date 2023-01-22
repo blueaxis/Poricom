@@ -85,14 +85,15 @@ SETTINGS_FILE_DEFAULT = "./bin/poricom-config.ini"
 # Window
 MAIN_WINDOW_DEFAULTS = {
     "hasLoadModelPopup": "true",
-    "explorerPath": "./assets/images/",
     "stylesheetPath": "./assets/styles.qss",
 }
 MAIN_WINDOW_TYPES = {"hasLoadModelPopup": bool}
 
 # View
-IMAGE_VIEW_DEFAULT = {
+MAIN_VIEW_DEFAULTS = {"explorerPath": "./assets/images/"}
+IMAGE_VIEW_DEFAULTS = {
     "viewImageMode": 0,
+    "imageScalingIndex": 0,
     "splitViewMode": "false",
     "zoomPanMode": "false",
 }
@@ -223,10 +224,10 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconHeight": 1.0,
             "iconWidth": 1.0,
         },
-        "scaleImage": {
+        "modifyImageScaling": {
             "title": "Adjust image scaling",
             "message": "Fit an image according to the available options: fit to width, fit to height, fit to screen",
-            "path": "scaleImage.png",
+            "path": "modifyImageScaling.png",
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
