@@ -22,21 +22,13 @@ from time import sleep
 
 from manga_ocr import MangaOcr
 from PyQt5.QtCore import QThreadPool
-from PyQt5.QtWidgets import (
-    QVBoxLayout,
-    QWidget,
-    QMainWindow,
-    QApplication,
-    QPushButton,
-    QFileDialog,
-)
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QMainWindow, QApplication, QPushButton
 
 from .external import ExternalWindow
 from components.popups import BasePopup, CheckboxPopup
 from components.settings import (
     BaseSettings,
     PreviewOptions,
-    ImageScalingOptions,
     OptionsContainer,
     ShortcutOptions,
     TesseractOptions,
@@ -51,7 +43,6 @@ from utils.constants import (
     STYLESHEET_DARK,
     STYLESHEET_LIGHT,
 )
-from utils.scripts import mangaFileToImageDir
 
 
 class MainWindow(QMainWindow, BaseSettings):
@@ -90,53 +81,13 @@ class MainWindow(QMainWindow, BaseSettings):
         except FileNotFoundError:
             pass
         self.saveSettings(False)
+        self.mainView.saveSettings(False)
         return super().closeEvent(event)
 
     def noop(self):
         BasePopup("Not Implemented", "This function is not yet implemented.").exec()
 
     # ------------------------------ File Functions ------------------------------ #
-
-    def openDir(self):
-        filepath = QFileDialog.getExistingDirectory(
-            self,
-            "Open Directory",
-            self.tracker.filepath,  # , QFileDialog.DontUseNativeDialog
-        )
-
-        if filepath:
-            try:
-                self.tracker.filepath = filepath
-                self.explorer.setDirectory(filepath)
-                self.explorerPath = filepath
-            except FileNotFoundError:
-                BasePopup(
-                    "No images found in the directory",
-                    "Please select a directory with images.",
-                ).exec()
-
-    def openManga(self):
-        filename, _ = QFileDialog.getOpenFileName(
-            self,
-            "Open Manga File",
-            self.tracker.filepath,
-            "Manga (*.cbz *.cbr *.zip *.rar *.pdf)",
-        )
-
-        if filename:
-
-            def setDirectory(filepath):
-                self.tracker.filepath = filepath
-                self.explorer.setDirectory(filepath)
-
-            openMangaButton = self.toolbar.findChild(QPushButton, "openManga")
-
-            worker = BaseWorker(mangaFileToImageDir, filename)
-            worker.signals.result.connect(setDirectory)
-            worker.signals.finished.connect(lambda: openMangaButton.setEnabled(True))
-
-            self.threadpool.start(worker)
-            openMangaButton.setEnabled(False)
 
     def captureExternalHelper(self):
         self.showMinimized()
@@ -174,27 +125,7 @@ class MainWindow(QMainWindow, BaseSettings):
             with open(self.stylesheetPath, "r") as fh:
                 app.setStyleSheet(fh.read())
 
-    def toggleSplitView(self):
-        self.canvas.toggleSplitView()
-        if self.canvas.splitViewMode:
-            self.canvas.setViewImageMode(2)
-            index = self.explorer.currentIndex()
-            self.explorer.currentChanged(index, index)
-        elif not self.canvas.splitViewMode:
-            index = self.explorer.currentIndex()
-            self.explorer.currentChanged(index, index)
-
-    def scaleImage(self):
-        confirmation = OptionsContainer(ImageScalingOptions(self))
-        confirmation.exec()
-
-    def hideExplorer(self):
-        self.explorer.setVisible(not self.explorer.isVisible())
-
     # ----------------------------- Control Functions ---------------------------- #
-
-    def toggleMouseMode(self):
-        self.canvas.toggleZoomPanMode()
 
     def modifyHotkeys(self):
         OptionsContainer(ShortcutOptions(self)).exec()
@@ -212,9 +143,7 @@ class MainWindow(QMainWindow, BaseSettings):
                 LOAD_MODEL_MESSAGE,
                 CheckboxPopup.Ok | CheckboxPopup.Cancel,
             ).exec()
-            if ret == CheckboxPopup.Ok:
-                pass
-            else:
+            if ret == CheckboxPopup.Cancel:
                 loadModelButton.setChecked(False)
                 return
 

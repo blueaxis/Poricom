@@ -17,31 +17,83 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QInputDialog, QMainWindow, QSplitter
+from PyQt5.QtCore import Qt, QThreadPool
+from PyQt5.QtWidgets import QFileDialog, QInputDialog, QMainWindow, QSplitter
 
 from .ocr import OCRView
 from components.explorers import ImageExplorer
-from utils.constants import MAIN_VIEW_RATIO
+from components.popups import BasePopup
+from components.settings import BaseSettings, ImageScalingOptions, OptionsContainer
+from services import BaseWorker
+from utils.constants import EXPLORER_ROOT_DEFAULT, MAIN_VIEW_DEFAULTS, MAIN_VIEW_RATIO
+from utils.scripts import mangaFileToImageDir
 
-# TODO: Move view settings here
-class WorkspaceView(QSplitter):
+
+class WorkspaceView(QSplitter, BaseSettings):
     """
     Main view of the program. Includes the explorer and the view.
     """
 
     def __init__(self, parent: QMainWindow, tracker=None):
         super().__init__(parent)
+        self.mainWindow = parent
         self.tracker = tracker
 
-        self.canvas = OCRView(self, self.tracker)
-        self.explorer = ImageExplorer(self, self.tracker.filepath)
+        self.setDefaults(MAIN_VIEW_DEFAULTS)
+        self.loadSettings()
 
+        self.canvas = OCRView(self, self.tracker)
+        self.explorer = ImageExplorer(self, self.explorerPath)
         self.addWidget(self.explorer)
         self.addWidget(self.canvas)
         self.setChildrenCollapsible(False)
         for i, s in enumerate(MAIN_VIEW_RATIO):
             self.setStretchFactor(i, s)
+
+    def resizeEvent(self, event):
+        self.explorer.setMinimumWidth(0.1 * self.width())
+        self.canvas.setMinimumWidth(0.7 * self.width())
+        return super().resizeEvent(event)
+
+    # ------------------------------------ Explorer ------------------------------------- #
+
+    def openDir(self):
+        filepath = QFileDialog.getExistingDirectory(
+            self, "Open Directory", self.explorerPath
+        )
+
+        if filepath:
+            try:
+                self.explorer.setDirectory(filepath)
+                self.explorerPath = filepath
+            except FileNotFoundError:
+                BasePopup(
+                    "No images found in the directory",
+                    "Please select a directory with images.",
+                ).exec()
+
+    def openManga(self):
+        filename, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Manga File",
+            self.explorerPath,
+            "Manga (*.cbz *.cbr *.zip *.rar *.pdf)",
+        )
+
+        if filename:
+            def setDirectory(filepath):
+                self.explorer.setDirectory(filepath)
+                self.explorerPath = EXPLORER_ROOT_DEFAULT
+
+            worker = BaseWorker(mangaFileToImageDir, filename)
+            worker.signals.result.connect(setDirectory)
+
+            QThreadPool.globalInstance().start(worker)
+
+    def hideExplorer(self):
+        self.explorer.setVisible(not self.explorer.isVisible())
+
+    # -------------------------------------- View --------------------------------------- #
 
     def viewImageFromExplorer(self, filename, filenext):
         if not self.canvas.splitViewMode:
@@ -54,8 +106,33 @@ class WorkspaceView(QSplitter):
         self.canvas.currentScale = 1
         self.canvas.verticalScrollBar().setSliderPosition(0)
         self.canvas.viewImage()
-        # self.canvas.setFocus()
         return True
+
+    def toggleSplitView(self):
+        self.canvas.toggleSplitView()
+        if self.canvas.splitViewMode:
+            self.canvas.modifyViewImageMode(2)
+            index = self.explorer.currentIndex()
+            self.explorer.currentChanged(index, index)
+        elif not self.canvas.splitViewMode:
+            index = self.explorer.currentIndex()
+            self.explorer.currentChanged(index, index)
+
+    def scaleImage(self):
+        OptionsContainer(ImageScalingOptions(self)).exec()
+
+    # -------------------------------------- Zoom --------------------------------------- #
+
+    def toggleMouseMode(self):
+        self.canvas.toggleZoomPanMode()
+
+    def zoomIn(self):
+        self.canvas.zoomView(True, usingButton=True)
+
+    def zoomOut(self):
+        self.canvas.zoomView(False, usingButton=True)
+
+    # ----------------------------------- Navigation ------------------------------------ #
 
     def loadPrevImage(self):
         index = self.explorer.indexAbove(self.explorer.currentIndex())
@@ -93,14 +170,3 @@ class WorkspaceView(QSplitter):
 
         index = self.explorer.model().index(i - 1, 0, self.explorer.rootIndex())
         self.explorer.setCurrentIndex(index)
-
-    def zoomIn(self):
-        self.canvas.zoomView(True, usingButton=True)
-
-    def zoomOut(self):
-        self.canvas.zoomView(False, usingButton=True)
-
-    def resizeEvent(self, event):
-        self.explorer.setMinimumWidth(0.1 * self.width())
-        self.canvas.setMinimumWidth(0.6 * self.width())
-        return super().resizeEvent(event)
