@@ -185,4 +185,5 @@ class MainWindow(QMainWindow, BaseSettings):
             self.canvas.loadSettings()
 
     def toggleLogging(self):
-        self.tracker.switchWriteMode()
+        self.logToFile = not self.logToFile
+        self.canvas.loadSettings()

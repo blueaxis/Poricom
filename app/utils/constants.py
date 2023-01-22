@@ -85,12 +85,13 @@ SETTINGS_FILE_DEFAULT = "./bin/poricom-config.ini"
 # Window
 MAIN_WINDOW_DEFAULTS = {
     "hasLoadModelPopup": "true",
+    "logToFile": "false",
     "stylesheetPath": "./assets/styles.qss",
 }
-MAIN_WINDOW_TYPES = {"hasLoadModelPopup": bool}
+MAIN_WINDOW_TYPES = {"hasLoadModelPopup": bool, "logToFile": bool}
 
 # View
-MAIN_VIEW_DEFAULTS = {"explorerPath": "./assets/images/"}
+MAIN_VIEW_DEFAULTS = {"explorerPath": EXPLORER_ROOT_DEFAULT}
 IMAGE_VIEW_DEFAULTS = {
     "viewImageMode": 0,
     "imageScalingIndex": 0,
@@ -101,6 +102,11 @@ IMAGE_VIEW_TYPES = {"viewImageMode": int, "splitViewMode": bool, "zoomPanMode": 
 
 # Tesseract
 TESSERACT_DEFAULTS = {"language": "jpn", "orientation": "_vert"}
+
+# Text Logging
+TEXT_LOGGING_DEFAULTS = {"explorerPath": EXPLORER_ROOT_DEFAULT, "logToFile": "false"}
+TEXT_LOGGING_TYPES = {"logToFile": bool}
+
 
 # --------------------------------------- UI ---------------------------------------- #
 

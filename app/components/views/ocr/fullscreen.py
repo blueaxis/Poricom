@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import QApplication, QGraphicsScene, QMainWindow
 from PyQt5.QtGui import QCursor, QMouseEvent
 
 from .base import BaseOCRView
-from utils.constants import TESSERACT_DEFAULTS
+from utils.constants import TESSERACT_DEFAULTS, TEXT_LOGGING_DEFAULTS
 
 
 class FullScreenOCRView(BaseOCRView):
@@ -38,7 +38,7 @@ class FullScreenOCRView(BaseOCRView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.setScene(QGraphicsScene())
-        self.loadSettings(TESSERACT_DEFAULTS)
+        self.loadSettings({**TESSERACT_DEFAULTS, **TEXT_LOGGING_DEFAULTS})
 
     def takeScreenshot(self, screenIndex: int):
         screen = QApplication.screens()[screenIndex]

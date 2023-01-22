@@ -17,12 +17,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from os.path import join
+
 from PyQt5.QtCore import pyqtSlot, Qt, QThreadPool, QTimer
 from PyQt5.QtWidgets import QGraphicsView, QLabel, QMainWindow
 
 from components.settings import BaseSettings
 from services import BaseWorker
-from utils.constants import TESSERACT_DEFAULTS
+from utils.constants import (
+    TESSERACT_DEFAULTS,
+    TEXT_LOGGING_DEFAULTS,
+    TEXT_LOGGING_TYPES,
+)
 from utils.scripts import logText, pixmapToText
 
 
@@ -52,6 +58,8 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
         self.addDefaults(TESSERACT_DEFAULTS)
+        self.addDefaults(TEXT_LOGGING_DEFAULTS)
+        self.addTypes(TEXT_LOGGING_TYPES)
         self.addProperty("persistText", "true", bool)
 
     def handleTextResult(self, result):
@@ -93,10 +101,9 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
-        logPath = self.tracker.filepath + "/text-log.txt"
-        isLogFile = self.tracker.writeMode
+        logPath = join(self.explorerPath, "text-log.txt")
         text = self.canvasText.text()
-        logText(text, isLogFile=isLogFile, path=logPath)
+        logText(text, isLogFile=self.logToFile, path=logPath)
         try:
             if not self.persistText:
                 self.canvasText.hide()
