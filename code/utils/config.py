@@ -22,21 +22,21 @@ config = toml.load("./utils/config.toml")
 
 
 def saveOnClose(data, config="utils/config.toml"):
-    with open(config, 'w') as fh:
+    with open(config, 'w', encoding='utf-8') as fh:
         toml.dump(data, fh)
 
 
 def editConfig(index, replacementText, config="utils/config.toml"):
     data = toml.load(config)
     data[index] = replacementText
-    with open(config, 'w') as fh:
+    with open(config, 'w', encoding='utf-8') as fh:
         toml.dump(data, fh)
 
 
 def editSelectionConfig(index, cBoxName, config="utils/config.toml"):
     data = toml.load(config)
     data["SELECTED_INDEX"][cBoxName] = index
-    with open(config, 'w') as fh:
+    with open(config, 'w', encoding='utf-8') as fh:
         toml.dump(data, fh)
 
 
