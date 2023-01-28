@@ -20,7 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from time import sleep
 from typing import TYPE_CHECKING
 
-from PyQt5.QtCore import Qt, QRect, QRectF, QSize, QThreadPool
+from PyQt5.QtCore import Qt, QRectF, QThreadPool
+from PyQt5.QtGui import QTransform
 from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
 from components.settings import BaseSettings
@@ -122,7 +123,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
         pressedKey = QApplication.keyboardModifiers()
         zoomMode = pressedKey == Qt.ControlModifier or self.zoomPanMode
 
-        # self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         # TODO: Rewrite individual event handlers as separate functions
         if zoomMode:
             if event.angleDelta().y() > 0:
@@ -135,11 +136,9 @@ class BaseImageView(QGraphicsView, BaseSettings):
             return
 
         if not zoomMode:
-
             mouseScrollLimit = 3
             trackpadScrollLimit = 36
             wheelDelta = 120
-
             def suppressScroll():
                 self._scrollSuppressed = True
                 worker = BaseWorker(sleep, 0.3)
@@ -205,8 +204,9 @@ class BaseImageView(QGraphicsView, BaseSettings):
         super().mouseMoveEvent(event)
 
     def mouseDoubleClickEvent(self, event):
-        self.currentScale = 1
-        self.viewImage(self.currentScale)
+        self.setTransform(QTransform())
+        self.viewImage()
+        self.verticalScrollBar().setSliderPosition(0)
         super().mouseDoubleClickEvent(event)
 
     # ------------------------------------ Shortcut ------------------------------------- #
