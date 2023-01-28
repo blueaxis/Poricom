@@ -25,6 +25,7 @@ from PyQt5.QtWidgets import (
     QApplication, QGraphicsView, QGraphicsScene, QLabel)
 from PyQt5.QtGui import QCursor, QTransform
 
+from Popups import MessagePopup
 from Workers import BaseWorker
 from utils.image_io import logText, pixboxToText
 
@@ -72,6 +73,12 @@ class BaseCanvas(QGraphicsView):
         super().mouseReleaseEvent(event)
 
     def handleTextResult(self, result):
+        if result == None:
+            MessagePopup(
+                "Tesseract not loaded",
+                "Tesseract model cannot be loaded in your machine, please use the MangaOcr instead."
+            ).exec()
+            return
         try:
             self.canvasText.setText(result)
         except RuntimeError:

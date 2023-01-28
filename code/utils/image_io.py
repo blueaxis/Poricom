@@ -23,11 +23,15 @@ from pathlib import Path
 
 from PyQt5.QtCore import QBuffer
 from PyQt5.QtGui import QGuiApplication
-from tesserocr import PyTessBaseAPI
 from PIL import Image
 import zipfile
 import rarfile
 import pdf2image
+try:
+    from tesserocr import PyTessBaseAPI
+except UnicodeDecodeError:
+    pass
+
 
 from utils.config import config
 
@@ -80,9 +84,13 @@ def pixboxToText(pixmap, lang="jpn_vert", model=None):
     # By smaller, we mean textboxes with less text. Usually these
     # boxes have at most one vertical line of text.
     else:
-        with PyTessBaseAPI(path=config["LANG_PATH"], lang=lang, oem=1, psm=1) as api:
-            api.SetImage(pillowImage)
-            text = api.GetUTF8Text()
+        try:
+            with PyTessBaseAPI(path=config["LANG_PATH"], lang=lang, oem=1, psm=1) as api:
+                api.SetImage(pillowImage)
+                text = api.GetUTF8Text()
+        except NameError:
+            # PyTessBaseAPI is undefined and there is no fallback model
+            return None
 
     return text.strip()
 
