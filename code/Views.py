@@ -23,7 +23,7 @@ from PyQt5.QtCore import (Qt, QRect, QRectF, QSize,
                           QTimer, QThreadPool, pyqtSlot)
 from PyQt5.QtWidgets import (
     QApplication, QGraphicsView, QGraphicsScene, QLabel)
-from PyQt5.QtGui import QCursor
+from PyQt5.QtGui import QCursor, QTransform
 
 from Workers import BaseWorker
 from utils.image_io import logText, pixboxToText
@@ -137,7 +137,7 @@ class OCRCanvas(BaseCanvas):
         self._viewImageMode = parent.config["VIEW_IMAGE_MODE"]
         self._splitViewMode = parent.config["SPLIT_VIEW_MODE"]
         self._zoomPanMode = False
-        self.currentScale = 1
+        self.currentScale = 0
 
         self._scrollAtMin = 0
         self._scrollAtMax = 0
@@ -150,11 +150,11 @@ class OCRCanvas(BaseCanvas):
         self.pixmap = self.scene.addPixmap(self.tracker.pixImage.scaledToWidth(
             self.viewport().geometry().width(), Qt.SmoothTransformation))
 
-    def viewImage(self, factor=1):
+    def viewImage(self):
         # self.verticalScrollBar().setSliderPosition(0)
-        factor = self.currentScale
-        w = factor*self.viewport().geometry().width()
-        h = factor*self.viewport().geometry().height()
+        self.currentScale = 0
+        w = self.viewport().geometry().width()
+        h = self.viewport().geometry().height()
         if self._viewImageMode == 0:
             self.pixmap.setPixmap(
                 self.tracker.pixImage.scaledToWidth(w, Qt.SmoothTransformation))
@@ -179,40 +179,34 @@ class OCRCanvas(BaseCanvas):
         self._splitViewMode = not self._splitViewMode
         self.parent.config["SPLIT_VIEW_MODE"] = self._splitViewMode
 
-    def zoomView(self, isZoomIn, usingButton=False):
-        factor = 1.1
-        if usingButton:
-            factor = 1.4
-
-        if isZoomIn and self.currentScale < 15:
-            #self.scale(factor, factor)
-            self.currentScale *= factor
-            self.viewImage(self.currentScale)
-        elif not isZoomIn and self.currentScale > 0.35:
-            #self.scale(1/factor, 1/factor)
-            self.currentScale /= factor
-            self.viewImage(self.currentScale)
+    def zoomView(self, isZoomIn):
+        if isZoomIn and self.currentScale < 8:
+            factor = 1.25
+            self.currentScale += 1
+            self.scale(factor, factor)
+        elif not isZoomIn and self.currentScale > -8:
+            factor = 0.8
+            self.currentScale -= 1
+            self.scale(factor, factor)
 
     def toggleZoomPanMode(self):
         self._zoomPanMode = not self._zoomPanMode
 
     def resizeEvent(self, event):
         self.viewImage()
-        QGraphicsView.resizeEvent(self, event)
+        super().resizeEvent(event)
 
     def wheelEvent(self, event):
         pressedKey = QApplication.keyboardModifiers()
         zoomMode = pressedKey == Qt.ControlModifier or self._zoomPanMode
 
-        # self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setResizeAnchor(QGraphicsView.NoAnchor)
         if zoomMode:
             if event.angleDelta().y() > 0:
                 isZoomIn = True
             elif event.angleDelta().y() < 0:
                 isZoomIn = False
-            scenePos = self.mapToScene(event.pos())
-            truePos = QRect(scenePos.toPoint(), QSize(2, 2)).center()
-            self.centerOn(truePos)
             self.zoomView(isZoomIn)
 
         if self._scrollSuppressed:
@@ -268,7 +262,7 @@ class OCRCanvas(BaseCanvas):
                         return
                     else:
                         self._scrollAtMin += 1
-            QGraphicsView.wheelEvent(self, event)
+            super().wheelEvent(event)
 
     def mouseMoveEvent(self, event):
         pressedKey = QApplication.keyboardModifiers()
@@ -282,9 +276,10 @@ class OCRCanvas(BaseCanvas):
         BaseCanvas.mouseMoveEvent(self, event)
 
     def mouseDoubleClickEvent(self, event):
-        self.currentScale = 1
-        self.viewImage(self.currentScale)
-        QGraphicsView.mouseDoubleClickEvent(self, event)
+        self.setTransform(QTransform())
+        self.viewImage()
+        self.verticalScrollBar().setSliderPosition(0)
+        super().mouseDoubleClickEvent(event)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Left:
@@ -294,9 +289,9 @@ class OCRCanvas(BaseCanvas):
             self.parent.loadNextImage()
             return
         if event.key() == Qt.Key_Minus:
-            self.zoomView(isZoomIn=False, usingButton=True)
+            self.zoomView(isZoomIn=False)
             return
         if event.key() == Qt.Key_Plus:
-            self.zoomView(isZoomIn=True, usingButton=True)
+            self.zoomView(isZoomIn=True)
             return
         super().keyPressEvent(event)
