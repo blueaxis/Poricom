@@ -24,7 +24,11 @@ from manga_ocr import MangaOcr
 from PIL import Image
 from PyQt5.QtCore import QBuffer
 from PyQt5.QtGui import QPixmap
-from tesserocr import PyTessBaseAPI
+
+try:
+    from tesserocr import PyTessBaseAPI
+except UnicodeDecodeError:
+    pass
 
 from ..constants import TESSERACT_LANGUAGES
 
@@ -54,10 +58,13 @@ def pixmapToText(
     # By smaller, we mean textboxes with less text. Usually these
     # boxes have at most one vertical line of text.
     else:
-        with PyTessBaseAPI(
-            path=TESSERACT_LANGUAGES, lang=language, oem=1, psm=1
-        ) as api:
-            api.SetImage(pillowImage)
-            text = api.GetUTF8Text()
+        try:
+            with PyTessBaseAPI(
+                path=TESSERACT_LANGUAGES, lang=language, oem=1, psm=1
+            ) as api:
+                api.SetImage(pillowImage)
+                text = api.GetUTF8Text()
+        except NameError:
+            return None
 
     return text.strip()

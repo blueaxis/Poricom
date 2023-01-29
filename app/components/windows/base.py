@@ -147,7 +147,7 @@ class MainWindow(QMainWindow, BaseSettings):
                 loadModelButton.setChecked(False)
                 return
 
-        def loadModelHelper(state):
+        def loadModelHelper(state: State):
             betterOCR = state.switchOCRMode()
             if betterOCR:
                 try:

@@ -20,7 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from time import sleep
 from typing import TYPE_CHECKING
 
-from PyQt5.QtCore import Qt, QRect, QRectF, QSize, QThreadPool
+from PyQt5.QtCore import Qt, QRectF, QThreadPool
+from PyQt5.QtGui import QTransform
 from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
 from components.settings import BaseSettings
@@ -43,7 +44,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
-        self.currentScale = 1
+        self.currentScale = 0
 
         self._scrollAtMin = 0
         self._scrollAtMax = 0
@@ -80,40 +81,36 @@ class BaseImageView(QGraphicsView, BaseSettings):
         self.setScene(QGraphicsScene())
         self.pixmap = self.scene().addPixmap(self.state.baseImage)
 
-    def viewImage(self, factor=1):
+    def viewImage(self):
         # self.verticalScrollBar().setSliderPosition(0)
-        factor = self.currentScale
-        w = factor * self.viewport().geometry().width()
-        h = factor * self.viewport().geometry().height()
+        self.currentScale = 0
+        w = self.viewport().geometry().width()
+        h = self.viewport().geometry().height()
         if self.viewImageMode == 0:
             self.pixmap.setPixmap(
-                self.state.baseImage.scaledToWidth(w, Qt.SmoothTransformation)
+                self.tracker.pixImage.scaledToWidth(w, Qt.SmoothTransformation)
             )
         elif self.viewImageMode == 1:
             self.pixmap.setPixmap(
-                self.state.baseImage.scaledToHeight(h, Qt.SmoothTransformation)
+                self.tracker.pixImage.scaledToHeight(h, Qt.SmoothTransformation)
             )
         elif self.viewImageMode == 2:
             self.pixmap.setPixmap(
-                self.state.baseImage.scaled(
+                self.tracker.pixImage.scaled(
                     w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation
                 )
             )
         self.scene().setSceneRect(QRectF(self.pixmap.pixmap().rect()))
 
-    def zoomView(self, isZoomIn, usingButton=False):
-        factor = 1.1
-        if usingButton:
-            factor = 1.4
-
-        if isZoomIn and self.currentScale < 15:
-            # self.scale(factor, factor)
-            self.currentScale *= factor
-            self.viewImage(self.currentScale)
-        elif not isZoomIn and self.currentScale > 0.35:
-            # self.scale(1/factor, 1/factor)
-            self.currentScale /= factor
-            self.viewImage(self.currentScale)
+    def zoomView(self, isZoomIn):
+        if isZoomIn and self.currentScale < 8:
+            factor = 1.25
+            self.currentScale += 1
+            self.scale(factor, factor)
+        elif not isZoomIn and self.currentScale > -8:
+            factor = 0.8
+            self.currentScale -= 1
+            self.scale(factor, factor)
 
     def resizeEvent(self, event):
         self.viewImage()
@@ -123,27 +120,22 @@ class BaseImageView(QGraphicsView, BaseSettings):
         pressedKey = QApplication.keyboardModifiers()
         zoomMode = pressedKey == Qt.ControlModifier or self.zoomPanMode
 
-        # self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         # TODO: Rewrite individual event handlers as separate functions
         if zoomMode:
             if event.angleDelta().y() > 0:
                 isZoomIn = True
             elif event.angleDelta().y() < 0:
                 isZoomIn = False
-            scenePos = self.mapToScene(event.pos())
-            truePos = QRect(scenePos.toPoint(), QSize(2, 2)).center()
-            self.centerOn(truePos)
             self.zoomView(isZoomIn)
 
         if self._scrollSuppressed:
             return
 
         if not zoomMode:
-
             mouseScrollLimit = 3
             trackpadScrollLimit = 36
             wheelDelta = 120
-
             def suppressScroll():
                 self._scrollSuppressed = True
                 worker = BaseWorker(sleep, 0.3)
@@ -209,8 +201,9 @@ class BaseImageView(QGraphicsView, BaseSettings):
         super().mouseMoveEvent(event)
 
     def mouseDoubleClickEvent(self, event):
-        self.currentScale = 1
-        self.viewImage(self.currentScale)
+        self.setTransform(QTransform())
+        self.viewImage()
+        self.verticalScrollBar().setSliderPosition(0)
         super().mouseDoubleClickEvent(event)
 
     # ------------------------------------ Shortcut ------------------------------------- #
@@ -224,9 +217,9 @@ class BaseImageView(QGraphicsView, BaseSettings):
             self.parent().loadNextImage()
             return
         if event.key() == Qt.Key_Minus:
-            self.zoomView(isZoomIn=False, usingButton=True)
+            self.zoomView(isZoomIn=False)
             return
         if event.key() == Qt.Key_Plus:
-            self.zoomView(isZoomIn=True, usingButton=True)
+            self.zoomView(isZoomIn=True)
             return
         super().keyPressEvent(event)

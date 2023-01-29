@@ -20,8 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from typing import TYPE_CHECKING
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QCloseEvent, QCursor
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QMainWindow
+from PyQt5.QtGui import QCloseEvent
+from PyQt5.QtWidgets import QDesktopWidget, QMainWindow
 
 from components.views import FullScreenOCRView
 

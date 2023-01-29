@@ -53,8 +53,7 @@ class BaseOCRView(QGraphicsView, BaseSettings):
 
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
-        self.addDefaults(TESSERACT_DEFAULTS)
-        self.addDefaults(TEXT_LOGGING_DEFAULTS)
+        self.addDefaults({**TESSERACT_DEFAULTS, **TEXT_LOGGING_DEFAULTS})
         self.addTypes(TEXT_LOGGING_TYPES)
         self.addProperty("persistText", "true", bool)
 
