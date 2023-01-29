@@ -88,15 +88,15 @@ class BaseImageView(QGraphicsView, BaseSettings):
         h = self.viewport().geometry().height()
         if self.viewImageMode == 0:
             self.pixmap.setPixmap(
-                self.tracker.pixImage.scaledToWidth(w, Qt.SmoothTransformation)
+                self.state.baseImage.scaledToWidth(w, Qt.SmoothTransformation)
             )
         elif self.viewImageMode == 1:
             self.pixmap.setPixmap(
-                self.tracker.pixImage.scaledToHeight(h, Qt.SmoothTransformation)
+                self.state.baseImage.scaledToHeight(h, Qt.SmoothTransformation)
             )
         elif self.viewImageMode == 2:
             self.pixmap.setPixmap(
-                self.tracker.pixImage.scaled(
+                self.state.baseImage.scaled(
                     w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation
                 )
             )
