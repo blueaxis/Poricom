@@ -34,5 +34,5 @@ class ImageScalingOptions(BaseOptions):
         self.imageScalingIndex = i
 
     def saveSettings(self, hasMessage=False):
-        self.mainWindow.canvas.setViewImageMode(self.imageScalingIndex)
+        self.mainWindow.canvas.modifyViewImageMode(self.imageScalingIndex)
         return super().saveSettings(hasMessage)

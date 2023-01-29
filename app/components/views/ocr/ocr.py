@@ -22,12 +22,12 @@ from PyQt5.QtWidgets import QMainWindow
 
 from ..image import BaseImageView
 from .base import BaseOCRView
+from services import State
 
 
 class OCRView(BaseImageView, BaseOCRView):
-    def __init__(self, parent: QMainWindow, tracker=None):
-        # TODO: Remove references to tracker
-        super().__init__(parent, tracker)
+    def __init__(self, parent: QMainWindow, state: State = None):
+        super().__init__(parent, state)
         self.loadSettings()
 
     @pyqtSlot()

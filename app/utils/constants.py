@@ -85,14 +85,16 @@ SETTINGS_FILE_DEFAULT = "./bin/poricom-config.ini"
 # Window
 MAIN_WINDOW_DEFAULTS = {
     "hasLoadModelPopup": "true",
-    "explorerPath": "./assets/images/",
+    "logToFile": "false",
     "stylesheetPath": "./assets/styles.qss",
 }
-MAIN_WINDOW_TYPES = {"hasLoadModelPopup": bool}
+MAIN_WINDOW_TYPES = {"hasLoadModelPopup": bool, "logToFile": bool}
 
 # View
-IMAGE_VIEW_DEFAULT = {
+MAIN_VIEW_DEFAULTS = {"explorerPath": EXPLORER_ROOT_DEFAULT}
+IMAGE_VIEW_DEFAULTS = {
     "viewImageMode": 0,
+    "imageScalingIndex": 0,
     "splitViewMode": "false",
     "zoomPanMode": "false",
 }
@@ -100,6 +102,11 @@ IMAGE_VIEW_TYPES = {"viewImageMode": int, "splitViewMode": bool, "zoomPanMode": 
 
 # Tesseract
 TESSERACT_DEFAULTS = {"language": "jpn", "orientation": "_vert"}
+
+# Text Logging
+TEXT_LOGGING_DEFAULTS = {"explorerPath": EXPLORER_ROOT_DEFAULT, "logToFile": "false"}
+TEXT_LOGGING_TYPES = {"logToFile": bool}
+
 
 # --------------------------------------- UI ---------------------------------------- #
 
@@ -223,10 +230,10 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconHeight": 1.0,
             "iconWidth": 1.0,
         },
-        "scaleImage": {
+        "modifyImageScaling": {
             "title": "Adjust image scaling",
             "message": "Fit an image according to the available options: fit to width, fit to height, fit to screen",
-            "path": "scaleImage.png",
+            "path": "modifyImageScaling.png",
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,

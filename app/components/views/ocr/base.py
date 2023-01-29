@@ -17,27 +17,29 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from os.path import join
+
 from PyQt5.QtCore import pyqtSlot, Qt, QThreadPool, QTimer
 from PyQt5.QtWidgets import QGraphicsView, QLabel, QMainWindow
 
 from components.settings import BaseSettings
-from services import BaseWorker
-from utils.constants import TESSERACT_DEFAULTS
+from services import BaseWorker, State
+from utils.constants import (
+    TESSERACT_DEFAULTS,
+    TEXT_LOGGING_DEFAULTS,
+    TEXT_LOGGING_TYPES,
+)
 from utils.scripts import logText, pixmapToText
 
 
 class BaseOCRView(QGraphicsView, BaseSettings):
-    """Base view with OCR capabilities
-
-    Args:
-        parent (QMainWindow): View parent. Set to main window
-        tracker (Any, optional): State tracker. Defaults to None.
+    """
+    Base view with OCR capabilities
     """
 
-    def __init__(self, parent: QMainWindow, tracker=None):
-        # TODO: Remove references to tracker
+    def __init__(self, parent: QMainWindow, state: State = None):
         super().__init__(parent)
-        self.tracker = tracker
+        self.state = state
 
         self.timer = QTimer()
         self.timer.setInterval(300)
@@ -51,7 +53,8 @@ class BaseOCRView(QGraphicsView, BaseSettings):
 
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
-        self.addDefaults(TESSERACT_DEFAULTS)
+        self.addDefaults({**TESSERACT_DEFAULTS, **TEXT_LOGGING_DEFAULTS})
+        self.addTypes(TEXT_LOGGING_TYPES)
         self.addProperty("persistText", "true", bool)
 
     def handleTextResult(self, result):
@@ -80,7 +83,7 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         language = self.language + self.orientation
         pixmap = self.grab(self.rubberBandRect())
 
-        worker = BaseWorker(pixmapToText, pixmap, language, self.tracker.ocrModel)
+        worker = BaseWorker(pixmapToText, pixmap, language, self.state.ocrModel)
         worker.signals.result.connect(self.handleTextResult)
         worker.signals.finished.connect(self.handleTextFinished)
         self.timer.timeout.disconnect(self.rubberBandStopped)
@@ -93,10 +96,9 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
-        logPath = self.tracker.filepath + "/text-log.txt"
-        isLogFile = self.tracker.writeMode
+        logPath = join(self.explorerPath, "text-log.txt")
         text = self.canvasText.text()
-        logText(text, isLogFile=isLogFile, path=logPath)
+        logText(text, isLogFile=self.logToFile, path=logPath)
         try:
             if not self.persistText:
                 self.canvasText.hide()

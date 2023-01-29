@@ -22,28 +22,20 @@ from time import sleep
 
 from manga_ocr import MangaOcr
 from PyQt5.QtCore import QThreadPool
-from PyQt5.QtWidgets import (
-    QVBoxLayout,
-    QWidget,
-    QMainWindow,
-    QApplication,
-    QPushButton,
-    QFileDialog,
-)
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QMainWindow, QApplication, QPushButton
 
 from .external import ExternalWindow
 from components.popups import BasePopup, CheckboxPopup
 from components.settings import (
     BaseSettings,
     PreviewOptions,
-    ImageScalingOptions,
     OptionsContainer,
     ShortcutOptions,
     TesseractOptions,
 )
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView
-from services import BaseWorker
+from services import BaseWorker, State
 from utils.constants import (
     LOAD_MODEL_MESSAGE,
     MAIN_WINDOW_DEFAULTS,
@@ -51,17 +43,16 @@ from utils.constants import (
     STYLESHEET_DARK,
     STYLESHEET_LIGHT,
 )
-from utils.scripts import mangaFileToImageDir
 
 
 class MainWindow(QMainWindow, BaseSettings):
-    def __init__(self, parent=None, tracker=None):
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent)
-        self.tracker = tracker
+        self.state = State()
 
         self.vLayout = QVBoxLayout()
 
-        self.mainView = WorkspaceView(self, self.tracker)
+        self.mainView = WorkspaceView(self, self.state)
         self.toolbar = BaseToolbar(self)
         self.vLayout.addWidget(self.toolbar)
 
@@ -90,53 +81,13 @@ class MainWindow(QMainWindow, BaseSettings):
         except FileNotFoundError:
             pass
         self.saveSettings(False)
+        self.mainView.saveSettings(False)
         return super().closeEvent(event)
 
     def noop(self):
         BasePopup("Not Implemented", "This function is not yet implemented.").exec()
 
     # ------------------------------ File Functions ------------------------------ #
-
-    def openDir(self):
-        filepath = QFileDialog.getExistingDirectory(
-            self,
-            "Open Directory",
-            self.tracker.filepath,  # , QFileDialog.DontUseNativeDialog
-        )
-
-        if filepath:
-            try:
-                self.tracker.filepath = filepath
-                self.explorer.setDirectory(filepath)
-                self.explorerPath = filepath
-            except FileNotFoundError:
-                BasePopup(
-                    "No images found in the directory",
-                    "Please select a directory with images.",
-                ).exec()
-
-    def openManga(self):
-        filename, _ = QFileDialog.getOpenFileName(
-            self,
-            "Open Manga File",
-            self.tracker.filepath,
-            "Manga (*.cbz *.cbr *.zip *.rar *.pdf)",
-        )
-
-        if filename:
-
-            def setDirectory(filepath):
-                self.tracker.filepath = filepath
-                self.explorer.setDirectory(filepath)
-
-            openMangaButton = self.toolbar.findChild(QPushButton, "openManga")
-
-            worker = BaseWorker(mangaFileToImageDir, filename)
-            worker.signals.result.connect(setDirectory)
-            worker.signals.finished.connect(lambda: openMangaButton.setEnabled(True))
-
-            self.threadpool.start(worker)
-            openMangaButton.setEnabled(False)
 
     def captureExternalHelper(self):
         self.showMinimized()
@@ -174,27 +125,7 @@ class MainWindow(QMainWindow, BaseSettings):
             with open(self.stylesheetPath, "r") as fh:
                 app.setStyleSheet(fh.read())
 
-    def toggleSplitView(self):
-        self.canvas.toggleSplitView()
-        if self.canvas.splitViewMode:
-            self.canvas.setViewImageMode(2)
-            index = self.explorer.currentIndex()
-            self.explorer.currentChanged(index, index)
-        elif not self.canvas.splitViewMode:
-            index = self.explorer.currentIndex()
-            self.explorer.currentChanged(index, index)
-
-    def scaleImage(self):
-        confirmation = OptionsContainer(ImageScalingOptions(self))
-        confirmation.exec()
-
-    def hideExplorer(self):
-        self.explorer.setVisible(not self.explorer.isVisible())
-
     # ----------------------------- Control Functions ---------------------------- #
-
-    def toggleMouseMode(self):
-        self.canvas.toggleZoomPanMode()
 
     def modifyHotkeys(self):
         OptionsContainer(ShortcutOptions(self)).exec()
@@ -203,7 +134,7 @@ class MainWindow(QMainWindow, BaseSettings):
 
     def loadModel(self):
         loadModelButton = self.toolbar.findChild(QPushButton, "loadModel")
-        loadModelButton.setChecked(not self.tracker.ocrModel)
+        loadModelButton.setChecked(not self.state.ocrModel)
 
         if loadModelButton.isChecked() and self.hasLoadModelPopup:
             ret = CheckboxPopup(
@@ -212,27 +143,25 @@ class MainWindow(QMainWindow, BaseSettings):
                 LOAD_MODEL_MESSAGE,
                 CheckboxPopup.Ok | CheckboxPopup.Cancel,
             ).exec()
-            if ret == CheckboxPopup.Ok:
-                pass
-            else:
+            if ret == CheckboxPopup.Cancel:
                 loadModelButton.setChecked(False)
                 return
 
-        def loadModelHelper(tracker):
-            betterOCR = tracker.switchOCRMode()
+        def loadModelHelper(state: State):
+            betterOCR = state.switchOCRMode()
             if betterOCR:
                 try:
-                    tracker.ocrModel = MangaOcr()
+                    state.ocrModel = MangaOcr()
                     return "success"
                 except Exception as e:
-                    tracker.switchOCRMode()
+                    state.switchOCRMode()
                     return str(e)
             else:
-                tracker.ocrModel = None
+                state.ocrModel = None
                 return "success"
 
         def loadModelConfirm(message: str):
-            modelName = "MangaOCR" if self.tracker.ocrModel else "Tesseract"
+            modelName = "MangaOCR" if self.state.ocrModel else "Tesseract"
             if message == "success":
                 BasePopup(
                     f"{modelName} model loaded",
@@ -242,7 +171,7 @@ class MainWindow(QMainWindow, BaseSettings):
                 BasePopup("Load Model Error", message).exec()
                 loadModelButton.setChecked(False)
 
-        worker = BaseWorker(loadModelHelper, self.tracker)
+        worker = BaseWorker(loadModelHelper, self.state)
         worker.signals.result.connect(loadModelConfirm)
         worker.signals.finished.connect(lambda: loadModelButton.setEnabled(True))
 
@@ -256,4 +185,5 @@ class MainWindow(QMainWindow, BaseSettings):
             self.canvas.loadSettings()
 
     def toggleLogging(self):
-        self.tracker.switchWriteMode()
+        self.logToFile = not self.logToFile
+        self.canvas.loadSettings()

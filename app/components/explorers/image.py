@@ -16,28 +16,31 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from os import listdir, path as ospath
+from typing import TYPE_CHECKING
+
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMainWindow, QTreeView
+from PyQt5.QtWidgets import QFileDialog, QTreeView
 
 from .models import ImageModel
-from utils.constants import EXPLORER_ROOT_DEFAULT
+from utils.constants import EXPLORER_ROOT_DEFAULT, IMAGE_EXTENSIONS
+
+if TYPE_CHECKING:
+    from components.views import WorkspaceView
 
 
 class ImageExplorer(QTreeView):
     """View to allow exploring images
 
     Args:
-        parent (QMainWindow): Image explorer parent. Set to main window.
+        parent (WorkspaceView): Image explorer parent. Set to workspace view.
         initialDir (str, optional): Initial directory. Defaults to EXPLORER_ROOT_DEFAULT.
     """
 
-    def __init__(self, parent: QMainWindow, initialDir: str = EXPLORER_ROOT_DEFAULT):
+    def __init__(
+        self, parent: "WorkspaceView", initialDir: str = EXPLORER_ROOT_DEFAULT
+    ):
         super().__init__(parent)
-        # TODO: It might be better if the parent is set to the QSplitter
-        # Then add property getter methods to main window to access its children
-        # Manually set parent since `addWidget` method will reparent the widget
-        self.mainWindow = parent
-
         self.setModel(ImageModel())
 
         for i in range(1, 4):
@@ -45,9 +48,38 @@ class ImageExplorer(QTreeView):
         self.setIndentation(0)
 
         self.layoutCheck = False
+        if not ospath.exists(initialDir):
+            initialDir = EXPLORER_ROOT_DEFAULT
         self.setDirectory(initialDir)
 
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+    def setDirectory(self, path: str):
+        self.setRootIndex(self.model().setRootPath(path))
+        self.setTopIndex()
+
+    def getDirectory(self, startPath: str, isManga=False):
+        if isManga:
+            filename, _ = QFileDialog.getOpenFileName(
+                self.parent(),
+                "Open Manga File",
+                startPath,
+                "Manga (*.cbz *.cbr *.zip *.rar *.pdf)",
+            )
+            return filename
+        filepath = QFileDialog.getExistingDirectory(
+            self.parent(), "Open Directory", startPath
+        )
+        if not filepath:
+            return filepath
+        for file in listdir(filepath):
+            try:
+                _, extension = file.split(".")
+                if "*." + extension in IMAGE_EXTENSIONS:
+                    return filepath
+            except ValueError:
+                continue
+        return None
 
     def currentChanged(self, current, previous):
         if not current.isValid():
@@ -55,7 +87,7 @@ class ImageExplorer(QTreeView):
         filename = self.model().fileInfo(current).absoluteFilePath()
         nextIndex = self.indexBelow(current)
         filenext = self.model().fileInfo(nextIndex).absoluteFilePath()
-        self.mainWindow.viewImageFromExplorer(filename, filenext)
+        self.parent().viewImageFromExplorer(filename, filenext)
         super().currentChanged(current, previous)
 
     def getTopIndex(self):
@@ -72,7 +104,3 @@ class ImageExplorer(QTreeView):
             if not self.layoutCheck:
                 self.model().layoutChanged.connect(self.setTopIndex)
                 self.layoutCheck = True
-
-    def setDirectory(self, path: str):
-        self.setRootIndex(self.model().setRootPath(path))
-        self.setTopIndex()

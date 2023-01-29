@@ -25,8 +25,8 @@ from PyQt5.QtGui import QTransform
 from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
 from components.settings import BaseSettings
-from services import BaseWorker
-from utils.constants import IMAGE_VIEW_DEFAULT, IMAGE_VIEW_TYPES
+from services import BaseWorker, State
+from utils.constants import IMAGE_VIEW_DEFAULTS, IMAGE_VIEW_TYPES
 
 if TYPE_CHECKING:
     from ..workspace import WorkspaceView
@@ -37,9 +37,9 @@ class BaseImageView(QGraphicsView, BaseSettings):
     Base image view to allow view/zoom/pan functions
     """
 
-    def __init__(self, parent: "WorkspaceView", tracker=None):
+    def __init__(self, parent: "WorkspaceView", state: State = None):
         super().__init__(parent)
-        self.tracker = tracker
+        self.state = state
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -52,7 +52,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
         self._trackPadAtMax = 0
         self._scrollSuppressed = False
 
-        self.addDefaults(IMAGE_VIEW_DEFAULT)
+        self.addDefaults(IMAGE_VIEW_DEFAULTS)
         self.addTypes(IMAGE_VIEW_TYPES)
         self.loadSettings()
 
@@ -60,9 +60,10 @@ class BaseImageView(QGraphicsView, BaseSettings):
 
     # ------------------------------------ Settings ------------------------------------- #
 
-    def setViewImageMode(self, mode: int):
+    def modifyViewImageMode(self, mode: int):
         # TODO: This should be an enum not an int
         self.setProperty("viewImageMode", mode)
+        self.setProperty("imageScalingIndex", mode)
         self.saveSettings(hasMessage=False)
         self.viewImage()
 
@@ -78,11 +79,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
 
     def initializePixmapItem(self):
         self.setScene(QGraphicsScene())
-        self.pixmap = self.scene().addPixmap(
-            self.tracker.pixImage.scaledToWidth(
-                self.viewport().geometry().width(), Qt.SmoothTransformation
-            )
-        )
+        self.pixmap = self.scene().addPixmap(self.state.baseImage)
 
     def viewImage(self):
         # self.verticalScrollBar().setSliderPosition(0)
@@ -91,15 +88,15 @@ class BaseImageView(QGraphicsView, BaseSettings):
         h = self.viewport().geometry().height()
         if self.viewImageMode == 0:
             self.pixmap.setPixmap(
-                self.tracker.pixImage.scaledToWidth(w, Qt.SmoothTransformation)
+                self.state.baseImage.scaledToWidth(w, Qt.SmoothTransformation)
             )
         elif self.viewImageMode == 1:
             self.pixmap.setPixmap(
-                self.tracker.pixImage.scaledToHeight(h, Qt.SmoothTransformation)
+                self.state.baseImage.scaledToHeight(h, Qt.SmoothTransformation)
             )
         elif self.viewImageMode == 2:
             self.pixmap.setPixmap(
-                self.tracker.pixImage.scaled(
+                self.state.baseImage.scaled(
                     w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation
                 )
             )
@@ -139,6 +136,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
             mouseScrollLimit = 3
             trackpadScrollLimit = 36
             wheelDelta = 120
+
             def suppressScroll():
                 self._scrollSuppressed = True
                 worker = BaseWorker(sleep, 0.3)
