@@ -136,6 +136,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
             mouseScrollLimit = 3
             trackpadScrollLimit = 36
             wheelDelta = 120
+
             def suppressScroll():
                 self._scrollSuppressed = True
                 worker = BaseWorker(sleep, 0.3)
