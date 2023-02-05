@@ -54,6 +54,7 @@ class State:
 
         self._betterOCR = False
         self._ocrModel = None
+        self._translationModel = None
 
     @property
     def baseImage(self):
@@ -84,3 +85,11 @@ class State:
     def switchOCRMode(self):
         self._betterOCR = not self._betterOCR
         return self._betterOCR
+
+    @property
+    def translationModel(self):
+        return self._translationModel
+
+    @translationModel.setter
+    def translationModel(self, translationModel):
+        self._translationModel = translationModel
