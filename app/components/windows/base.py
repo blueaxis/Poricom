@@ -87,10 +87,17 @@ class MainWindow(QMainWindow, BaseSettings):
         return super().closeEvent(event)
 
     def changeEvent(self, event):
-        if not self.isActiveWindow() and not self.canvas.textdiag.isActiveWindow():
-            self.canvas.textdiag.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowStaysOnTopHint)
+        if (
+            not self.isActiveWindow()
+            and not self.canvas.translationDialog.isActiveWindow()
+        ):
+            self.canvas.translationDialog.setWindowFlags(
+                self.windowFlags() & ~QtCore.Qt.WindowStaysOnTopHint
+            )
         else:
-            self.canvas.textdiag.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
+            self.canvas.translationDialog.setWindowFlags(
+                self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint
+            )
         return super().changeEvent(event)
 
     def noop(self):
