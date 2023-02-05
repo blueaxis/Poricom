@@ -23,13 +23,41 @@ from PyQt5.QtWidgets import QMainWindow
 from ..image import BaseImageView
 from .base import BaseOCRView
 from services import State
+from components.popups import TextDialog
+from os.path import join
+from utils.scripts import logText
+from PyQt5 import QtCore
 
 
 class OCRView(BaseImageView, BaseOCRView):
     def __init__(self, parent: QMainWindow, state: State = None):
         super().__init__(parent, state)
         self.loadSettings()
+        self.textdiag = TextDialog()
 
     @pyqtSlot()
     def rubberBandStopped(self):
         super().rubberBandStopped()
+        
+    def handleTextResult(self, result):
+        try:
+            self.canvasText.hide()
+            self.textdiag.setText(result)
+            self.textdiag.show()
+        except RuntimeError:
+            pass
+
+    def mouseReleaseEvent(self, event):
+        logPath = join(self.explorerPath, "text-log.txt")
+        text = self.textdiag.text
+        logText(text, isLogFile=self.logToFile, path=logPath)
+        try:
+            if not self.persistText:
+                self.canvasText.hide()
+        except AttributeError:
+            pass
+        super(BaseOCRView, self).mouseReleaseEvent(event)
+
+    def closeEvent(self, event):
+        self.textdiag.close()
+    

@@ -43,6 +43,7 @@ from utils.constants import (
     STYLESHEET_DARK,
     STYLESHEET_LIGHT,
 )
+from PyQt5 import QtCore
 
 
 class MainWindow(QMainWindow, BaseSettings):
@@ -82,7 +83,15 @@ class MainWindow(QMainWindow, BaseSettings):
             pass
         self.saveSettings(False)
         self.mainView.saveSettings(False)
+        self.canvas.close()
         return super().closeEvent(event)
+
+    def changeEvent(self, event):
+        if not self.isActiveWindow() and not self.canvas.textdiag.isActiveWindow():
+            self.canvas.textdiag.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowStaysOnTopHint)
+        else:
+            self.canvas.textdiag.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
+        return super().changeEvent(event)
 
     def noop(self):
         BasePopup("Not Implemented", "This function is not yet implemented.").exec()
