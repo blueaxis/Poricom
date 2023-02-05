@@ -59,6 +59,7 @@ class State:
 
         self._ocrModel = None
         self._ocrModelName: OCRModelNames = "Tesseract"
+        self._translationModel = None
 
     @property
     def baseImage(self):
@@ -102,3 +103,11 @@ class State:
             self._ocrModelName = "MangaOCR"
         elif self._ocrModelName == "MangaOCR":
             self._ocrModelName = "Tesseract"
+
+    @property
+    def translationModel(self):
+        return self._translationModel
+
+    @translationModel.setter
+    def translationModel(self, translationModel):
+        self._translationModel = translationModel
