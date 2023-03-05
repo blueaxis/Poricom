@@ -39,7 +39,7 @@ class TranslationDialog(QDialog):
         self.text = ""
         self.katakanaToRomaji = cutlet.Cutlet()
         self.state = State()
-        self.threadpool = QThreadPool()
+        self.threadpool = QThreadPool.globalInstance()
         self.loadTranslationModel()
 
     def loadTranslationModel(self):
@@ -73,11 +73,16 @@ class TranslationDialog(QDialog):
     def setText(self, text):
         self.text = text
         self.ocrLineEdit.setText(text)
-        self.romanjiLineEdit.setText(self.katakanaToRomaji.romaji(text))
-        argos_text = ""
+        romajiText = ""
+        argosText = ""
         try:
-            argos_text = self.state.translationModel.translate(text)
+            romajiText = self.katakanaToRomaji.romaji(text)
         except:
-            print("Caught error from argos_text")
-            argos_text = ""
-        self.translationLineEdit.setText(argos_text)
+            romajiText = ""
+        try:
+            argosText = self.state.translationModel.translate(text)
+        except:
+            argosText = ""
+        self.romanjiLineEdit.setText(romajiText)  
+        self.translationLineEdit.setText(argosText)
+    
