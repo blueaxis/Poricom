@@ -46,6 +46,8 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.rubberBandStopped)
 
+        self.previousSelection = self.rubberBandRect()
+
         self.canvasText = QLabel("", self, Qt.WindowStaysOnTopHint)
         self.canvasText.setWordWrap(True)
         self.canvasText.hide()
@@ -60,6 +62,9 @@ class BaseOCRView(QGraphicsView, BaseSettings):
     def handleTextResult(self, result):
         try:
             self.canvasText.setText(result)
+            self.canvasText.adjustSize()
+            if self.canvasText.isHidden():
+                self.canvasText.show()
         except RuntimeError:
             pass
 
@@ -75,13 +80,13 @@ class BaseOCRView(QGraphicsView, BaseSettings):
 
     @pyqtSlot()
     def rubberBandStopped(self):
-        if self.canvasText.isHidden():
-            self.canvasText.setText("")
-            self.canvasText.adjustSize()
-            self.canvasText.show()
-
         language = self.language + self.orientation
-        pixmap = self.grab(self.rubberBandRect())
+        selection = (
+            self.previousSelection
+            if self.rubberBandRect().isNull()
+            else self.rubberBandRect()
+        )
+        pixmap = self.grab(selection)
 
         worker = BaseWorker(pixmapToText, pixmap, language, self.state.ocrModel)
         worker.signals.result.connect(self.handleTextResult)
@@ -92,6 +97,7 @@ class BaseOCRView(QGraphicsView, BaseSettings):
     def mouseMoveEvent(self, event):
         rubberBandVisible = not self.rubberBandRect().isNull()
         if (event.buttons() & Qt.LeftButton) and rubberBandVisible:
+            self.previousSelection = self.rubberBandRect()
             self.timer.start()
         super().mouseMoveEvent(event)
 
