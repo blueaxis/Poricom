@@ -28,7 +28,8 @@ def combineTwoImages(fileLeft: Union[str, QPixmap], fileRight: Union[str, QPixma
     """
     imageLeft, imageRight = QPixmap(fileRight), QPixmap(fileLeft)
     if imageRight.isNull():
-        raise FileNotFoundError("The first file is null.")
+        # raise FileNotFoundError("The first file is null.")
+        pass
 
     w = imageLeft.width() + imageRight.width()
     h = max(imageLeft.height(), imageRight.height())
