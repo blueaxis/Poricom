@@ -22,6 +22,7 @@ from os.path import join
 from PyQt5.QtCore import pyqtSlot, Qt, QThreadPool, QTimer
 from PyQt5.QtWidgets import QGraphicsView, QLabel, QMainWindow
 
+from components.popups import BasePopup
 from components.settings import BaseSettings
 from services import BaseWorker, State
 from utils.constants import (
@@ -58,6 +59,12 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         self.addProperty("persistText", "true", bool)
 
     def handleTextResult(self, result):
+        if result == None and self.state.ocrModelName == "Tesseract":
+            BasePopup(
+                "Tesseract not loaded",
+                "Tesseract model cannot be loaded in your machine, please use the MangaOcr instead.",
+            ).exec()
+            return
         try:
             self.canvasText.setText(result)
         except RuntimeError:
