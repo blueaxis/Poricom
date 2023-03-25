@@ -15,8 +15,8 @@ datas += copy_metadata('numpy')
 datas += copy_metadata('tokenizers')
 
 added_files = [
-  ('./assets', './assets'),
-  ('./utils', './utils'),
+  ('../app/assets', './assets'),
+  ('../app/bin', './bin'),
   ('path\\to\\user\\.conda\\pkgs\\poppler-22.01.0-h24fffdf_2', './poppler')
 ]
 
@@ -24,11 +24,11 @@ added_files = [
 block_cipher = None
 
 
-a = Analysis(['main.py'],
-             pathex=[],
+a = Analysis(['../app/main.py'],
+             pathex=['../app'],
              binaries=[],
              datas=datas+added_files,
-             hiddenimports=['toml'],
+             hiddenimports=['stringcase'],
              hookspath=[],
              hooksconfig={},
              runtime_hooks=[],
@@ -41,7 +41,7 @@ pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 
 
-PATH_TO_TORCH_LIB = "path\\to\\env\\lib\\site-packages\\torch\\lib\\"
+PATH_TO_TORCH_LIB = "torch\\lib\\"
 excluded_files  = [
   'asmjit.lib', 
   'c10.lib',
@@ -72,9 +72,7 @@ excluded_files  = [
   '_C.lib'
 ]
 excluded_files = [PATH_TO_TORCH_LIB + x for x in excluded_files]
-a.datas = [x for x in a.datas if not 
-              os.path.abspath(x[1]) in excluded_files]
-
+a.datas = [x for x in a.datas if not x[0] in excluded_files]
 
 exe = EXE(pyz,
           a.scripts, 
@@ -90,7 +88,7 @@ exe = EXE(pyz,
           target_arch=None,
           codesign_identity=None,
           entitlements_file=None,
-          icon="./assets/images/icons/logo.ico")
+          icon="../app/assets/images/icons/logo.ico")
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
