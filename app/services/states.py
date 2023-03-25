@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from os.path import isfile, exists
+from typing import Literal
+
 
 from PyQt5.QtGui import QPixmap
 
@@ -48,12 +50,15 @@ class Pixmap(QPixmap):
         return exists(self._filename) and isfile(self._filename)
 
 
+OCRModelNames = Literal["Tesseract", "MangaOCR"]
+
+
 class State:
     def __init__(self):
         self._baseImage = Pixmap("")
 
-        self._betterOCR = False
         self._ocrModel = None
+        self._ocrModelName: OCRModelNames = "Tesseract"
 
     @property
     def baseImage(self):
@@ -81,6 +86,19 @@ class State:
     def ocrModel(self, ocrModel):
         self._ocrModel = ocrModel
 
-    def switchOCRMode(self):
-        self._betterOCR = not self._betterOCR
-        return self._betterOCR
+    @property
+    def ocrModelName(self):
+        return self._ocrModelName
+
+    def setOCRModelName(self, ocrModelName: OCRModelNames = None):
+        if ocrModelName:
+            self._ocrModelName = ocrModelName
+        else:
+            self.toggleOCRModelName()
+        return self._ocrModelName
+
+    def toggleOCRModelName(self):
+        if self._ocrModelName == "Tesseract":
+            self._ocrModelName = "MangaOCR"
+        elif self._ocrModelName == "MangaOCR":
+            self._ocrModelName = "Tesseract"
