@@ -61,9 +61,9 @@ class TranslationDialog(QDialog):
 
             # Set translation
             installedLanguages = argostranslate.translate.get_installed_languages()
-            from_lang = list(
-                filter(lambda x: x.code == from_code, installedLanguages)
-            )[0]
+            from_lang = list(filter(lambda x: x.code == from_code, installedLanguages))[
+                0
+            ]
             to_lang = list(filter(lambda x: x.code == to_code, installedLanguages))[0]
             state.translationModel = from_lang.get_translation(to_lang)
 
@@ -83,6 +83,5 @@ class TranslationDialog(QDialog):
             argosText = self.state.translationModel.translate(text)
         except:
             argosText = ""
-        self.romanjiLineEdit.setText(romajiText)  
+        self.romanjiLineEdit.setText(romajiText)
         self.translationLineEdit.setText(argosText)
-    
