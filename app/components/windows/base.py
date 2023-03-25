@@ -148,13 +148,13 @@ class MainWindow(QMainWindow, BaseSettings):
                 return
 
         def loadModelHelper(state: State):
-            betterOCR = state.switchOCRMode()
-            if betterOCR:
+            ocrModelName = state.setOCRModelName()
+            if ocrModelName == "MangaOCR":
                 try:
                     state.ocrModel = MangaOcr()
                     return "success"
                 except Exception as e:
-                    state.switchOCRMode()
+                    state.toggleOCRModelName()
                     return str(e)
             else:
                 state.ocrModel = None
