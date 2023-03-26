@@ -28,7 +28,6 @@ from services import WinEventFilter
 from utils.constants import APP_NAME, APP_LOGO, SETTINGS_FILE_DEFAULT, STYLESHEET_LIGHT
 
 if __name__ == "__main__":
-
     app = QApplication(sys.argv)
     app.setApplicationName(APP_NAME)
     app.setWindowIcon(QIcon(APP_LOGO))

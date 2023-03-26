@@ -151,7 +151,12 @@ class MainWindow(QMainWindow, BaseSettings):
             ocrModelName = state.setOCRModelName()
             if ocrModelName == "MangaOCR":
                 try:
-                    state.ocrModel = MangaOcr()
+                    if self.mangaOCRPath:
+                        state.ocrModel = MangaOcr(
+                            pretrained_model_name_or_path=self.mangaOCRPath
+                        )
+                    else:
+                        state.ocrModel = MangaOcr()
                     return "success"
                 except Exception as e:
                     state.toggleOCRModelName()
