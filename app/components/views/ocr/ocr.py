@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from os.path import join
+
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMainWindow
 
@@ -24,9 +26,7 @@ from ..image import BaseImageView
 from .base import BaseOCRView
 from services import State
 from components.popups import TranslationDialog
-from os.path import join
 from utils.scripts import logText
-from PyQt5 import QtCore
 
 
 class OCRView(BaseImageView, BaseOCRView):

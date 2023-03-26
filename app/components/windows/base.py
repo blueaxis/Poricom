@@ -21,7 +21,7 @@ from shutil import rmtree
 from time import sleep
 
 from manga_ocr import MangaOcr
-from PyQt5.QtCore import QThreadPool
+from PyQt5.QtCore import QThreadPool, Qt
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QMainWindow, QApplication, QPushButton
 
 from .external import ExternalWindow
@@ -43,7 +43,6 @@ from utils.constants import (
     STYLESHEET_DARK,
     STYLESHEET_LIGHT,
 )
-from PyQt5 import QtCore
 
 
 class MainWindow(QMainWindow, BaseSettings):
@@ -92,11 +91,11 @@ class MainWindow(QMainWindow, BaseSettings):
             and not self.canvas.translationDialog.isActiveWindow()
         ):
             self.canvas.translationDialog.setWindowFlags(
-                self.windowFlags() & ~QtCore.Qt.WindowStaysOnTopHint
+                self.windowFlags() & ~Qt.WindowStaysOnTopHint
             )
         else:
             self.canvas.translationDialog.setWindowFlags(
-                self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint
+                self.windowFlags() | Qt.WindowStaysOnTopHint
             )
         return super().changeEvent(event)
 

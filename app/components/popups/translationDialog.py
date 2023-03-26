@@ -1,10 +1,9 @@
-import cutlet
 import argostranslate.package as package
 import argostranslate.translate
-
-from PyQt5 import QtCore
+import cutlet
 from PyQt5.QtWidgets import QLabel, QTextEdit, QVBoxLayout, QDialog
-from PyQt5.QtCore import QThreadPool
+from PyQt5.QtCore import QThreadPool, Qt
+
 from services import BaseWorker, State
 
 
@@ -32,8 +31,8 @@ class TranslationDialog(QDialog):
         layout.addWidget(self.translationLineEdit)
 
         self.setLayout(layout)
-        self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-        self.setAttribute(QtCore.Qt.WA_X11NetWmWindowTypeUtility)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        self.setAttribute(Qt.WA_X11NetWmWindowTypeUtility)
         self.resize(500, 200)
 
         self.text = ""
