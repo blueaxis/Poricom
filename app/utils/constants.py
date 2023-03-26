@@ -72,9 +72,9 @@ EXPLORER_ROOT_DEFAULT = "./assets/images/"
 
 # Messages
 LOAD_MODEL_MESSAGE = (
-    "If you are running this for the first time, this will download the MangaOcr model"
-    "which is about 400 MB in size. This will improve the accuracy of Japanese text"
-    "detection in Poricom. If it is already in your cache, it will take a few seconds"
+    "If you are running this for the first time, this will download the MangaOcr model "
+    "which is about 400 MB in size. This will improve the accuracy of Japanese text "
+    "detection in Poricom. If it is already in your cache, it will take a few seconds "
     "to load the model."
 )
 
@@ -84,6 +84,7 @@ SETTINGS_FILE_DEFAULT = "./bin/poricom-config.ini"
 
 # Window
 MAIN_WINDOW_DEFAULTS = {
+    "mangaOCRPath": "",
     "hasLoadModelPopup": "true",
     "logToFile": "false",
     "stylesheetPath": "./assets/styles.qss",
