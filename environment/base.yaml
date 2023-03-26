@@ -10,6 +10,8 @@ dependencies:
   - poppler
   - tesserocr
   - pip:
+    - argostranslate
+    - cutlet
     - huggingface-hub==0.7.0
     - manga-ocr
     - pdf2image
@@ -17,4 +19,4 @@ dependencies:
     - pyqt5
     - pyqtkeybind
     - rarfile
-    - stringcase
+    - stringcase  

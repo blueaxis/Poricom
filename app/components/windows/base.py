@@ -21,7 +21,7 @@ import re
 from shutil import rmtree
 from time import sleep
 
-from PyQt5.QtCore import QThreadPool
+from PyQt5.QtCore import Qt, QThreadPool
 from PyQt5.QtWidgets import (
     QApplication,
     QFileDialog,
@@ -90,7 +90,22 @@ class MainWindow(QMainWindow, BaseSettings):
             pass
         self.saveSettings(False)
         self.mainView.saveSettings(False)
+        self.canvas.close()
         return super().closeEvent(event)
+
+    def changeEvent(self, event):
+        if (
+            not self.isActiveWindow()
+            and not self.canvas.translationDialog.isActiveWindow()
+        ):
+            self.canvas.translationDialog.setWindowFlags(
+                self.windowFlags() & ~Qt.WindowStaysOnTopHint
+            )
+        else:
+            self.canvas.translationDialog.setWindowFlags(
+                self.windowFlags() | Qt.WindowStaysOnTopHint
+            )
+        return super().changeEvent(event)
 
     def noop(self):
         BasePopup("Not Implemented", "This function is not yet implemented.").exec()

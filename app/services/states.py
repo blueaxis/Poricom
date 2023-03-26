@@ -64,6 +64,8 @@ class State:
         self._ocrModel = None
         self._ocrModelName: OCRModelNames = ocrModelName
 
+        self._translationModel = None
+
     # ------------------------------------ Image ------------------------------------ #
 
     @property
@@ -126,3 +128,11 @@ class State:
             except Exception as e:
                 self.setOCRModelName("Tesseract")
                 return str(e)
+
+    @property
+    def translationModel(self):
+        return self._translationModel
+
+    @translationModel.setter
+    def translationModel(self, translationModel):
+        self._translationModel = translationModel
