@@ -87,7 +87,7 @@ class MainWindow(QMainWindow, BaseSettings):
     def noop(self):
         BasePopup("Not Implemented", "This function is not yet implemented.").exec()
 
-    # ------------------------------ File Functions ------------------------------ #
+    # ------------------------------- File Functions -------------------------------- #
 
     def captureExternalHelper(self):
         self.showMinimized()
@@ -98,7 +98,7 @@ class MainWindow(QMainWindow, BaseSettings):
     def captureExternal(self):
         ExternalWindow(self).showFullScreen()
 
-    # ------------------------------ View Functions ------------------------------ #
+    # ------------------------------- View Functions -------------------------------- #
 
     def toggleStylesheet(self):
         if self.stylesheetPath == STYLESHEET_LIGHT:
@@ -125,16 +125,17 @@ class MainWindow(QMainWindow, BaseSettings):
             with open(self.stylesheetPath, "r") as fh:
                 app.setStyleSheet(fh.read())
 
-    # ----------------------------- Control Functions ---------------------------- #
+    # ------------------------------ Control Functions ------------------------------ #
 
     def modifyHotkeys(self):
         OptionsContainer(ShortcutOptions(self)).exec()
 
-    # ------------------------------ Misc Functions ------------------------------ #
+    # ------------------------------- Misc Functions -------------------------------- #
 
     def loadModel(self):
         loadModelButton = self.toolbar.findChild(QPushButton, "loadModel")
         loadModelButton.setChecked(not self.state.ocrModel)
+        self.state.ocrModelName
 
         if loadModelButton.isChecked() and self.hasLoadModelPopup:
             ret = CheckboxPopup(
