@@ -153,7 +153,11 @@ class MainWindow(QMainWindow, BaseSettings):
             )
             if ocrPath:
                 self.mangaOCRPath = ocrPath
-        self.loadModelAfterPopup()
+        elif not self.useOcrOffline:
+            self.mangaOCRPath = ""
+
+        if confirmation:
+            self.loadModelAfterPopup()
 
     def loadModelAfterPopup(self):
         loadModelButton = self.toolbar.findChild(QPushButton, "loadModel")
@@ -168,7 +172,7 @@ class MainWindow(QMainWindow, BaseSettings):
             ).exec()
             if ret == CheckboxPopup.Cancel:
                 return
-            self.loadSettings({"hasLoadModelPopup": "true"})            
+            self.loadSettings({"hasLoadModelPopup": "true"})
 
         def loadModelConfirm(message: str):
             modelName = self.state.ocrModelName
@@ -179,7 +183,9 @@ class MainWindow(QMainWindow, BaseSettings):
                 ).exec()
             else:
                 BasePopup("Load Model Error", message).exec()
-                if re.search("^unable to parse .* as a URL or as a local path$", message):
+                if re.search(
+                    "^unable to parse .* as a URL or as a local path$", message
+                ):
                     self.mangaOCRPath = ""
 
         worker = BaseWorker(self.state.loadOCRModel, self.mangaOCRPath)
