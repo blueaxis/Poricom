@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from shutil import rmtree
 from time import sleep
+from sys import platform
 
 from manga_ocr import MangaOcr
 from PyQt5.QtCore import QThreadPool
@@ -77,7 +78,10 @@ class MainWindow(QMainWindow, BaseSettings):
 
     def closeEvent(self, event):
         try:
-            rmtree("./poricom_cache")
+            if platform == "linux":
+                rmtree("/tmp/poricom_cache")
+            else:
+                rmtree("./poricom_cache")
         except FileNotFoundError:
             pass
         self.saveSettings(False)
