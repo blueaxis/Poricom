@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from os.path import isfile, exists
 from typing import Literal
 
-
+from manga_ocr import MangaOcr
 from PyQt5.QtGui import QPixmap
 
 from utils.scripts import combineTwoImages
@@ -60,6 +60,8 @@ class State:
         self._ocrModel = None
         self._ocrModelName: OCRModelNames = "Tesseract"
 
+    # ------------------------------------ Image ------------------------------------ #
+
     @property
     def baseImage(self):
         return self._baseImage
@@ -77,6 +79,8 @@ class State:
             splitImage = combineTwoImages(fileLeft, fileRight)
 
             self._baseImage = Pixmap(splitImage, fileLeft)
+
+    # ------------------------------------- OCR ------------------------------------- #
 
     @property
     def ocrModel(self):
@@ -102,3 +106,18 @@ class State:
             self._ocrModelName = "MangaOCR"
         elif self._ocrModelName == "MangaOCR":
             self._ocrModelName = "Tesseract"
+        return self._ocrModelName
+
+    def loadOCRModel(self, path: str = None):
+        if self._ocrModelName == "Tesseract":
+            return "success"
+        elif self._ocrModelName == "MangaOCR":
+            try:
+                if path:
+                    self.ocrModel = MangaOcr(pretrained_model_name_or_path=path)
+                else:
+                    self.ocrModel = MangaOcr()
+                return "success"
+            except Exception as e:
+                self.setOCRModelName("Tesseract")
+                return str(e)
