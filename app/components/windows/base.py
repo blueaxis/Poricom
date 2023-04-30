@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import re
 from shutil import rmtree
 from time import sleep
 
@@ -145,7 +146,7 @@ class MainWindow(QMainWindow, BaseSettings):
 
         if confirmation:
             self.loadSettings({"useOcrOffline": "false"})
-        if self.useOcrOffline:
+        if self.useOcrOffline and not self.mangaOCRPath:
             startPath = self.mainView.explorerPath or "."
             ocrPath = QFileDialog.getExistingDirectory(
                 self, "Set MangaOCR Directory", startPath
@@ -167,6 +168,7 @@ class MainWindow(QMainWindow, BaseSettings):
             ).exec()
             if ret == CheckboxPopup.Cancel:
                 return
+            self.loadSettings({"hasLoadModelPopup": "true"})            
 
         def loadModelConfirm(message: str):
             modelName = self.state.ocrModelName
@@ -177,6 +179,8 @@ class MainWindow(QMainWindow, BaseSettings):
                 ).exec()
             else:
                 BasePopup("Load Model Error", message).exec()
+                if re.search("^unable to parse .* as a URL or as a local path$", message):
+                    self.mangaOCRPath = ""
 
         worker = BaseWorker(self.state.loadOCRModel, self.mangaOCRPath)
         worker.signals.result.connect(loadModelConfirm)
