@@ -1,0 +1,20 @@
+[Desktop Entry]
+
+# The type of the thing this desktop file refers to (e.g. can be Link)
+Type=Application
+
+# The application name.
+Name=Poricom
+
+# Tooltip comment to show in menus.
+Comment=Manga OCR desktop application
+
+# The path (folder) in which the executable is run
+Path=/opt/poricom
+
+# The executable (can include arguments)
+Exec=/opt/poricom/Poricom
+
+# The icon for the entry, using the name from `hicolor/scalable` without the extension.
+# You can also use a full path to a file in /opt.
+Icon=poricom
