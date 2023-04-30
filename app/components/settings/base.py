@@ -90,7 +90,8 @@ class BaseSettings(QWidget):
         try:
             t = self._types[prop]
             if t == bool:
-                return setattr(self, prop, value.lower() == "true")
+                v = value if type(value) == bool else value.lower() == "true"
+                return setattr(self, prop, v)
             return setattr(self, prop, t(value))
         except KeyError:
             return setattr(self, prop, value)

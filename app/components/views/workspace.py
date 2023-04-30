@@ -55,7 +55,7 @@ class WorkspaceView(QSplitter, BaseSettings):
         self.canvas.setMinimumWidth(0.7 * self.width())
         return super().resizeEvent(event)
 
-    # ------------------------------------ Explorer ------------------------------------- #
+    # ---------------------------------- Explorer ----------------------------------- #
 
     def openDir(self):
         filepath = self.explorer.getDirectory(self.explorerPath)
@@ -82,7 +82,7 @@ class WorkspaceView(QSplitter, BaseSettings):
     def hideExplorer(self):
         self.explorer.setVisible(not self.explorer.isVisible())
 
-    # -------------------------------------- View --------------------------------------- #
+    # ------------------------------------ View ------------------------------------- #
 
     def viewImageFromExplorer(self, filename, filenext):
         if not self.canvas.splitViewMode:
@@ -110,7 +110,7 @@ class WorkspaceView(QSplitter, BaseSettings):
     def modifyImageScaling(self):
         OptionsContainer(ImageScalingOptions(self)).exec()
 
-    # -------------------------------------- Zoom --------------------------------------- #
+    # ------------------------------------ Zoom ------------------------------------- #
 
     def toggleMouseMode(self):
         self.canvas.toggleZoomPanMode()
@@ -121,7 +121,7 @@ class WorkspaceView(QSplitter, BaseSettings):
     def zoomOut(self):
         self.canvas.zoomView(False)
 
-    # ----------------------------------- Navigation ------------------------------------ #
+    # --------------------------------- Navigation ---------------------------------- #
 
     def loadPrevImage(self):
         index = self.explorer.indexAbove(self.explorer.currentIndex())

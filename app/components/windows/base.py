@@ -17,19 +17,27 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import re
 from shutil import rmtree
 from time import sleep
 
-from manga_ocr import MangaOcr
 from PyQt5.QtCore import QThreadPool
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QMainWindow, QApplication, QPushButton
+from PyQt5.QtWidgets import (
+    QApplication,
+    QFileDialog,
+    QMainWindow,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 from .external import ExternalWindow
 from components.popups import BasePopup, CheckboxPopup
 from components.settings import (
     BaseSettings,
-    PreviewOptions,
+    ModelOptions,
     OptionsContainer,
+    PreviewOptions,
     ShortcutOptions,
     TesseractOptions,
 )
@@ -87,7 +95,7 @@ class MainWindow(QMainWindow, BaseSettings):
     def noop(self):
         BasePopup("Not Implemented", "This function is not yet implemented.").exec()
 
-    # ------------------------------ File Functions ------------------------------ #
+    # ------------------------------- File Functions -------------------------------- #
 
     def captureExternalHelper(self):
         self.showMinimized()
@@ -98,7 +106,7 @@ class MainWindow(QMainWindow, BaseSettings):
     def captureExternal(self):
         ExternalWindow(self).showFullScreen()
 
-    # ------------------------------ View Functions ------------------------------ #
+    # ------------------------------- View Functions -------------------------------- #
 
     def toggleStylesheet(self):
         if self.stylesheetPath == STYLESHEET_LIGHT:
@@ -125,18 +133,37 @@ class MainWindow(QMainWindow, BaseSettings):
             with open(self.stylesheetPath, "r") as fh:
                 app.setStyleSheet(fh.read())
 
-    # ----------------------------- Control Functions ---------------------------- #
+    # ------------------------------ Control Functions ------------------------------ #
 
     def modifyHotkeys(self):
         OptionsContainer(ShortcutOptions(self)).exec()
 
-    # ------------------------------ Misc Functions ------------------------------ #
+    # ------------------------------- Misc Functions -------------------------------- #
 
     def loadModel(self):
-        loadModelButton = self.toolbar.findChild(QPushButton, "loadModel")
-        loadModelButton.setChecked(not self.state.ocrModel)
+        confirmation = OptionsContainer(ModelOptions(self))
+        confirmation.exec()
 
-        if loadModelButton.isChecked() and self.hasLoadModelPopup:
+        if confirmation:
+            self.loadSettings({"useOcrOffline": "false"})
+        if self.useOcrOffline and not self.mangaOCRPath:
+            startPath = self.mainView.explorerPath or "."
+            ocrPath = QFileDialog.getExistingDirectory(
+                self, "Set MangaOCR Directory", startPath
+            )
+            if ocrPath:
+                self.mangaOCRPath = ocrPath
+        elif not self.useOcrOffline:
+            self.mangaOCRPath = ""
+
+        if confirmation:
+            self.loadModelAfterPopup()
+
+    def loadModelAfterPopup(self):
+        loadModelButton = self.toolbar.findChild(QPushButton, "loadModel")
+        isMangaOCR = self.state.ocrModelName == "MangaOCR"
+
+        if isMangaOCR and self.hasLoadModelPopup:
             ret = CheckboxPopup(
                 "hasLoadModelPopup",
                 "Load the MangaOCR model?",
@@ -144,29 +171,11 @@ class MainWindow(QMainWindow, BaseSettings):
                 CheckboxPopup.Ok | CheckboxPopup.Cancel,
             ).exec()
             if ret == CheckboxPopup.Cancel:
-                loadModelButton.setChecked(False)
                 return
-
-        def loadModelHelper(state: State):
-            ocrModelName = state.setOCRModelName()
-            if ocrModelName == "MangaOCR":
-                try:
-                    if self.mangaOCRPath:
-                        state.ocrModel = MangaOcr(
-                            pretrained_model_name_or_path=self.mangaOCRPath
-                        )
-                    else:
-                        state.ocrModel = MangaOcr()
-                    return "success"
-                except Exception as e:
-                    state.toggleOCRModelName()
-                    return str(e)
-            else:
-                state.ocrModel = None
-                return "success"
+            self.loadSettings({"hasLoadModelPopup": "true"})
 
         def loadModelConfirm(message: str):
-            modelName = "MangaOCR" if self.state.ocrModel else "Tesseract"
+            modelName = self.state.ocrModelName
             if message == "success":
                 BasePopup(
                     f"{modelName} model loaded",
@@ -174,9 +183,12 @@ class MainWindow(QMainWindow, BaseSettings):
                 ).exec()
             else:
                 BasePopup("Load Model Error", message).exec()
-                loadModelButton.setChecked(False)
+                if re.search(
+                    "^unable to parse .* as a URL or as a local path$", message
+                ):
+                    self.mangaOCRPath = ""
 
-        worker = BaseWorker(loadModelHelper, self.state)
+        worker = BaseWorker(self.state.loadOCRModel, self.mangaOCRPath)
         worker.signals.result.connect(loadModelConfirm)
         worker.signals.finished.connect(lambda: loadModelButton.setEnabled(True))
 

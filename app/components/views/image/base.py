@@ -58,7 +58,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
 
         self.initializePixmapItem()
 
-    # ------------------------------------ Settings ------------------------------------- #
+    # ---------------------------------- Settings ----------------------------------- #
 
     def modifyViewImageMode(self, mode: int):
         # TODO: This should be an enum not an int
@@ -75,7 +75,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
         self.setProperty("zoomPanMode", "false" if self.zoomPanMode else "true")
         self.saveSettings(hasMessage=False)
 
-    # -------------------------------------- View --------------------------------------- #
+    # ------------------------------------ View ------------------------------------- #
 
     def initializePixmapItem(self):
         self.setScene(QGraphicsScene())
@@ -207,7 +207,7 @@ class BaseImageView(QGraphicsView, BaseSettings):
         self.verticalScrollBar().setSliderPosition(0)
         super().mouseDoubleClickEvent(event)
 
-    # ------------------------------------ Shortcut ------------------------------------- #
+    # ---------------------------------- Shortcut ----------------------------------- #
 
     # TODO: Keyboard shortcuts should be in another class
     def keyPressEvent(self, event):

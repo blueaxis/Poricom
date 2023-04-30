@@ -20,9 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from os.path import isfile, exists
 from typing import Literal
 
-
+from manga_ocr import MangaOcr
+from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QPixmap
 
+from utils.constants import SETTINGS_FILE_DEFAULT
 from utils.scripts import combineTwoImages
 
 
@@ -57,8 +59,12 @@ class State:
     def __init__(self):
         self._baseImage = Pixmap("")
 
+        settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
+        ocrModelName = settings.value("ocrModel", "MangaOCR")
         self._ocrModel = None
-        self._ocrModelName: OCRModelNames = "Tesseract"
+        self._ocrModelName: OCRModelNames = ocrModelName
+
+    # ------------------------------------ Image ------------------------------------ #
 
     @property
     def baseImage(self):
@@ -77,6 +83,8 @@ class State:
             splitImage = combineTwoImages(fileLeft, fileRight)
 
             self._baseImage = Pixmap(splitImage, fileLeft)
+
+    # ------------------------------------- OCR ------------------------------------- #
 
     @property
     def ocrModel(self):
@@ -102,3 +110,19 @@ class State:
             self._ocrModelName = "MangaOCR"
         elif self._ocrModelName == "MangaOCR":
             self._ocrModelName = "Tesseract"
+        return self._ocrModelName
+
+    def loadOCRModel(self, path: str = None):
+        if self._ocrModelName == "Tesseract":
+            self._ocrModel = None
+            return "success"
+        elif self._ocrModelName == "MangaOCR":
+            try:
+                if path:
+                    self.ocrModel = MangaOcr(pretrained_model_name_or_path=path)
+                else:
+                    self.ocrModel = MangaOcr()
+                return "success"
+            except Exception as e:
+                self.setOCRModelName("Tesseract")
+                return str(e)

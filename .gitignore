@@ -146,4 +146,7 @@ cython_debug/
 *.mp4
 
 # Settings
-*.ini
+**/bin/*.ini
+
+# Models
+**/bin/manga-ocr
