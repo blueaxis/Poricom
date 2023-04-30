@@ -113,8 +113,8 @@ class State:
         return self._ocrModelName
 
     def loadOCRModel(self, path: str = None):
-        if self._ocrModelName == "Tesseract" or self._ocrModel != None:
-            self.ocrModel = None
+        if self._ocrModelName == "Tesseract":
+            self._ocrModel = None
             return "success"
         elif self._ocrModelName == "MangaOCR":
             try:
