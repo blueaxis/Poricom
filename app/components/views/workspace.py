@@ -116,10 +116,10 @@ class WorkspaceView(QSplitter, BaseSettings):
         self.canvas.toggleZoomPanMode()
 
     def zoomIn(self):
-        self.canvas.zoomView(True, usingButton=True)
+        self.canvas.zoomView(True)
 
     def zoomOut(self):
-        self.canvas.zoomView(False, usingButton=True)
+        self.canvas.zoomView(False)
 
     # ----------------------------------- Navigation ------------------------------------ #
 
