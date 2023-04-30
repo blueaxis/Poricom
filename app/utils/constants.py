@@ -37,9 +37,10 @@ IMAGE_EXTENSIONS = [
     "*.xpm",
 ]
 
-# Settings
+# Settings Popup Choices
 TOGGLE_CHOICES = [" Disabled", " Enabled"]
 
+OCR_MODEL = ["MangaOCR", "Tesseract"]
 LANGUAGE = [" Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"]
 ORIENTATION = [" Vertical", " Horizontal"]
 
@@ -84,12 +85,17 @@ SETTINGS_FILE_DEFAULT = "./bin/poricom-config.ini"
 
 # Window
 MAIN_WINDOW_DEFAULTS = {
-    "mangaOCRPath": "",
+    "useOcrOffline": "false",
     "hasLoadModelPopup": "true",
     "logToFile": "false",
+    "mangaOCRPath": "",
     "stylesheetPath": "./assets/styles.qss",
 }
-MAIN_WINDOW_TYPES = {"hasLoadModelPopup": bool, "logToFile": bool}
+MAIN_WINDOW_TYPES = {
+    "useOcrOffline": bool,
+    "hasLoadModelPopup": bool,
+    "logToFile": bool,
+}
 
 # View
 MAIN_VIEW_DEFAULTS = {"explorerPath": EXPLORER_ROOT_DEFAULT}
@@ -266,7 +272,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "title": "Switch detection model",
             "message": "Switch between MangaOCR and Tesseract models.",
             "path": "loadModel.png",
-            "toggle": True,
+            "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
             "iconWidth": 1.0,
