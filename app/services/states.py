@@ -21,8 +21,10 @@ from os.path import isfile, exists
 from typing import Literal
 
 from manga_ocr import MangaOcr
+from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QPixmap
 
+from utils.constants import SETTINGS_FILE_DEFAULT
 from utils.scripts import combineTwoImages
 
 
@@ -57,8 +59,10 @@ class State:
     def __init__(self):
         self._baseImage = Pixmap("")
 
+        settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
+        ocrModelName = settings.value("ocrModel", "MangaOCR")
         self._ocrModel = None
-        self._ocrModelName: OCRModelNames = "Tesseract"
+        self._ocrModelName: OCRModelNames = ocrModelName
 
     # ------------------------------------ Image ------------------------------------ #
 
@@ -109,7 +113,8 @@ class State:
         return self._ocrModelName
 
     def loadOCRModel(self, path: str = None):
-        if self._ocrModelName == "Tesseract":
+        if self._ocrModelName == "Tesseract" or self._ocrModel != None:
+            self.ocrModel = None
             return "success"
         elif self._ocrModelName == "MangaOCR":
             try:
