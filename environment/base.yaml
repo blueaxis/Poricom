@@ -16,3 +16,5 @@ dependencies:
     - rarfile
     - pdf2image
     - huggingface-hub==0.7.0
+    - stringcase
+    - sacremoses
