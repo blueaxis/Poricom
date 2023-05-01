@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from .types import ButtonConfigDict
+from sys import platform
 
 # ------------------------------------- General ------------------------------------- #
 
@@ -60,6 +61,8 @@ MODIFIER = [
     " No Modifier",
 ]
 
+PLATFORM = platform
+
 # Paths
 STYLESHEET_LIGHT = "./assets/styles.qss"
 STYLESHEET_DARK = "./assets/styles-dark.qss"
@@ -70,6 +73,8 @@ TOOLBAR_ICONS = "./assets/images/icons/"
 TOOLBAR_ICON_DEFAULT = "./assets/images/icons/default_icon.png"
 
 EXPLORER_ROOT_DEFAULT = "./assets/images/"
+
+PORICOM_CACHE = "/tmp/poricom_cache" if PLATFORM == "linux" else "./poricom_cache"
 
 # Messages
 LOAD_MODEL_MESSAGE = (

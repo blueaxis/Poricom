@@ -17,4 +17,5 @@ dependencies:
     - pyqt5
     - pyqtkeybind
     - rarfile
+    - sacremoses
     - stringcase

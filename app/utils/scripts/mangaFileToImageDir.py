@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os.path import splitext, basename
 from pathlib import Path
-from sys import platform
+from utils.constants import PORICOM_CACHE
 
 import zipfile
 import rarfile
@@ -36,10 +36,7 @@ def mangaFileToImageDir(filepath: str):
         str: Path to directory of images.
     """
     extractPath, extension = splitext(filepath)
-    if platform == "linux":
-        cachePath = f"/tmp/poricom_cache/{basename(extractPath)}"
-    else:
-        cachePath = f"./poricom_cache/{basename(extractPath)}"
+    cachePath = f"{PORICOM_CACHE}/{basename(extractPath)}"
 
     if extension in [".cbz", ".zip"]:
         with zipfile.ZipFile(filepath, "r") as zipRef:
