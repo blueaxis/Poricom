@@ -1,5 +1,5 @@
 echo "Creating Poricom pyinstaller package"
-pyinstaller linux.spec
+pyinstaller main.spec
 
 echo "Bundle Poricom for distribution"
 mkdir -p package/opt
