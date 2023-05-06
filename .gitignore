@@ -9,8 +9,11 @@ code/__pycache__/
 
 # Distribution / packaging
 .Python
-build/dist
-build/build
+build/*
+!/build/linux/
+build/linux/*/
+!/build/windows/
+build/windows/*/
 develop-eggs/
 dist/
 downloads/
@@ -33,7 +36,7 @@ MANIFEST
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
-!linux.spec
+!build/**/main.spec
 
 # Installer logs
 pip-log.txt
