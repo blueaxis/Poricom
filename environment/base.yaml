@@ -7,13 +7,14 @@ channels:
 dependencies:
   - python=3.9
   - pip
-  - conda-forge:tesserocr
+  - poppler
+  - tesserocr
   - pip:
-    - pyqt5
-    - pillow
+    - huggingface-hub==0.7.0
     - manga-ocr
+    - pdf2image
+    - pillow
+    - pyqt5
     - pyqtkeybind
     - rarfile
-    - pdf2image
     - stringcase
-    - huggingface-hub==0.4.0

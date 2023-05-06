@@ -6,4 +6,4 @@ channels:
 
 dependencies:
   - pip:
-    - pyinstaller
+    - pyinstaller==4.10
