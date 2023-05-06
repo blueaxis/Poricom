@@ -19,11 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os.path import splitext, basename
 from pathlib import Path
-from utils.constants import PORICOM_CACHE
 
 import zipfile
 import rarfile
 import pdf2image
+
+from utils.constants import PORICOM_CACHE
 
 
 def mangaFileToImageDir(filepath: str):
