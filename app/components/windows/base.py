@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
 from shutil import rmtree
 from time import sleep
-from utils.constants import PORICOM_CACHE
 
 from PyQt5.QtCore import QThreadPool
 from PyQt5.QtWidgets import (
@@ -49,6 +48,7 @@ from utils.constants import (
     LOAD_MODEL_MESSAGE,
     MAIN_WINDOW_DEFAULTS,
     MAIN_WINDOW_TYPES,
+    PORICOM_CACHE,
     STYLESHEET_DARK,
     STYLESHEET_LIGHT,
 )
