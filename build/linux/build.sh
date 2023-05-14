@@ -8,7 +8,7 @@ mkdir -p package/usr/share/icons/hicolor/scalable/apps
 
 cp -r dist/app package/opt/poricom
 cp poricom.desktop package/usr/share/applications
-cp poricom.svg package/usr/share/icons/hicolor/scalable/apps/poricom.svg
+cp package/opt/poricom/assets/images/icons/logo.svg package/usr/share/icons/hicolor/scalable/apps/logo.svg
 
 find package/opt/poricom -type f -exec chmod 644 -- {} +
 find package/opt/poricom -type d -exec chmod 755 -- {} +

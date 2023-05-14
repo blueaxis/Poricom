@@ -16,8 +16,7 @@ datas += copy_metadata('tokenizers')
 
 added_files = [
   ('../../app/assets', './assets'),
-  ('../../app/bin', './bin'),
-  ('../../app/components', './components')
+  ('../../app/bin', './bin')
 ]
 
 block_cipher = None
@@ -72,7 +71,7 @@ exe = EXE(pyz,
           target_arch=None,
           codesign_identity=None,
           entitlements_file=None,
-          icon="poricom.svg")
+          icon="logo.svg")
 
 coll = COLLECT(exe,
                a.binaries,
@@ -87,7 +86,8 @@ excluded_files = [
   'libtorch_cuda_linalg.so',
   'libnccl.so.2',
   'libcufft.so.10',
-  'libcusparse.so.11'
+  'libcusparse.so.11',
+  'unrar.exe'
 ]
 
 for binary in excluded_files:

@@ -24,7 +24,7 @@ import zipfile
 import rarfile
 import pdf2image
 
-from utils.constants import PORICOM_CACHE
+from utils.constants import PORICOM_CACHE, PLATFORM
 
 
 def mangaFileToImageDir(filepath: str):
@@ -43,7 +43,9 @@ def mangaFileToImageDir(filepath: str):
         with zipfile.ZipFile(filepath, "r") as zipRef:
             zipRef.extractall(cachePath)
 
-    rarfile.UNRAR_TOOL = "bin/unrar.exe"
+    if "win" in PLATFORM.lower():
+        rarfile.UNRAR_TOOL = "bin/unrar.exe"
+
     if extension in [".cbr", ".rar"]:
         with rarfile.RarFile(filepath) as zipRef:
             zipRef.extractall(cachePath)
