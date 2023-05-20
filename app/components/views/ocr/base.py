@@ -30,7 +30,7 @@ from utils.constants import (
     TEXT_LOGGING_DEFAULTS,
     TEXT_LOGGING_TYPES,
 )
-from utils.scripts import logText, pixmapToText
+from utils.scripts import copyToClipboard, logText, pixmapToText
 
 
 class BaseOCRView(QGraphicsView, BaseSettings):
@@ -78,6 +78,7 @@ class BaseOCRView(QGraphicsView, BaseSettings):
     def handleTextFinished(self):
         try:
             self.canvasText.adjustSize()
+            copyToClipboard(self.canvasText.text())
         except RuntimeError:
             pass
         try:
@@ -111,7 +112,9 @@ class BaseOCRView(QGraphicsView, BaseSettings):
     def mouseReleaseEvent(self, event):
         logPath = join(self.explorerPath, "text-log.txt")
         text = self.canvasText.text()
-        logText(text, isLogFile=self.logToFile, path=logPath)
+        if self.logToFile:
+            logText(text, path=logPath)
+
         try:
             if not self.persistText:
                 self.canvasText.hide()

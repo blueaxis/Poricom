@@ -20,17 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from PyQt5.QtGui import QGuiApplication
 
 
-def logText(text: str, isLogFile: bool = False, path: str = "."):
-    """Log text by copying to clipboard
+def logText(text: str, path: str = "."):
+    """Log by appending text to log file
 
     Args:
         text (str): Text to log.
-        isLogFile (bool, optional): Set flag to save copied text to clipboard. Defaults to False.
         path (str, optional): Path to log file. Defaults to ".".
     """
-    clipboard = QGuiApplication.clipboard()
-    clipboard.setText(text)
-
-    if isLogFile:
-        with open(path, "a", encoding="utf-8") as fh:
-            fh.write(text + "\n")
+    with open(path, "a", encoding="utf-8") as fh:
+        fh.write(text + "\n")

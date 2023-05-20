@@ -17,9 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .combineTwoImages import combineTwoImages
-from .copyToClipboard import copyToClipboard
-from .editStylesheet import editStylesheet
-from .logText import logText
-from .mangaFileToImageDir import mangaFileToImageDir
-from .pixmapToText import pixmapToText
+from PyQt5.QtGui import QGuiApplication
+
+
+def copyToClipboard(text: str):
+    """
+    Copy input text to clipboard
+    """
+    clipboard = QGuiApplication.clipboard()
+    clipboard.setText(text)
