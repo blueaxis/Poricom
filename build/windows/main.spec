@@ -7,7 +7,6 @@ datas += collect_data_files('unidic_lite')
 datas += collect_data_files('manga_ocr')
 datas += copy_metadata('tqdm')
 datas += copy_metadata('regex')
-datas += copy_metadata('sacremoses')
 datas += copy_metadata('requests')
 datas += copy_metadata('packaging')
 datas += copy_metadata('filelock')
@@ -15,17 +14,17 @@ datas += copy_metadata('numpy')
 datas += copy_metadata('tokenizers')
 
 added_files = [
-  ('../app/assets', './assets'),
-  ('../app/bin', './bin'),
-  ('path\\to\\user\\.conda\\pkgs\\poppler-22.01.0-h24fffdf_2', './poppler')
+  ('../../app/assets', './assets'),
+  ('../../app/bin', './bin'),
+  ('path\\to\\user\\.conda\\pkgs\\poppler-version', './poppler')
 ]
 
 
 block_cipher = None
 
 
-a = Analysis(['../app/main.py'],
-             pathex=['../app'],
+a = Analysis(['../../app/main.py'],
+             pathex=['../../app'],
              binaries=[],
              datas=datas+added_files,
              hiddenimports=['stringcase'],
@@ -88,7 +87,7 @@ exe = EXE(pyz,
           target_arch=None,
           codesign_identity=None,
           entitlements_file=None,
-          icon="../app/assets/images/icons/logo.ico")
+          icon="../../app/assets/images/icons/logo.ico")
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

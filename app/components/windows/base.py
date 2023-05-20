@@ -48,6 +48,7 @@ from utils.constants import (
     LOAD_MODEL_MESSAGE,
     MAIN_WINDOW_DEFAULTS,
     MAIN_WINDOW_TYPES,
+    PORICOM_CACHE,
     STYLESHEET_DARK,
     STYLESHEET_LIGHT,
 )
@@ -85,7 +86,7 @@ class MainWindow(QMainWindow, BaseSettings):
 
     def closeEvent(self, event):
         try:
-            rmtree("./poricom_cache")
+            rmtree(PORICOM_CACHE)
         except FileNotFoundError:
             pass
         self.saveSettings(False)
