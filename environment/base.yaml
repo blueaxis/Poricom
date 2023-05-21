@@ -19,4 +19,4 @@ dependencies:
     - pyqt5
     - pyqtkeybind
     - rarfile
-    - stringcase  
+    - stringcase

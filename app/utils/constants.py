@@ -281,7 +281,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
         "loadTranslateModel": {
             "title": "Load translation model",
             "message": "Manage translation model settings and API keys.",
-            "path": "modifyTesseract.png",
+            "path": "loadTranslateModel.png",
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,

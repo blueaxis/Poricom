@@ -60,7 +60,6 @@ class TranslateOptions(BaseOptions):
 
     def changeTranslateModel(self, i):
         self.translateModelIndex = i
-        self.translateModel = i
         try:
             self.updateDisplay()
         # Handle case where extra widgets are still undefined
@@ -68,7 +67,7 @@ class TranslateOptions(BaseOptions):
             print(e)
 
     def saveSettings(self, hasMessage=True):
-        translateModelName = self.translateModelComboBox.currentText()
+        translateModelName = self.translateModelComboBox.currentText().strip()
         self.mainWindow.state.setTranslateModelName(translateModelName)
         self.mainWindow.setProperty(
             "enableTranslate", "true" if self.enableTranslate else "enableTranslate"
