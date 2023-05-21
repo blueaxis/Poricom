@@ -158,9 +158,9 @@ class MainWindow(QMainWindow, BaseSettings):
 
     def loadModel(self):
         confirmation = OptionsContainer(ModelOptions(self))
-        confirmation.exec()
+        confirmed = confirmation.exec()
 
-        if confirmation:
+        if confirmed:
             self.loadSettings({"useOcrOffline": "false"})
         if self.useOcrOffline and not self.mangaOCRPath:
             startPath = self.mainView.explorerPath or "."
@@ -172,7 +172,7 @@ class MainWindow(QMainWindow, BaseSettings):
         elif not self.useOcrOffline:
             self.mangaOCRPath = ""
 
-        if confirmation:
+        if confirmed:
             self.loadModelAfterPopup()
 
     def loadModelAfterPopup(self):
@@ -213,8 +213,8 @@ class MainWindow(QMainWindow, BaseSettings):
 
     def loadTranslateModel(self):
         confirmation = OptionsContainer(TranslateOptions(self))
-        confirmation.exec()
-        if confirmation:
+        confirmed = confirmation.exec()
+        if confirmed:
             self.loadSettings({"enableTranslate": "false"})
             self.loadTranslateAfterPopup()
 
@@ -240,8 +240,8 @@ class MainWindow(QMainWindow, BaseSettings):
 
     def modifyTesseract(self):
         confirmation = OptionsContainer(TesseractOptions(self))
-        confirmation.exec()
-        if confirmation:
+        confirmed = confirmation.exec()
+        if confirmed:
             self.canvas.loadSettings()
 
     def toggleLogging(self):
