@@ -41,6 +41,7 @@ IMAGE_EXTENSIONS = [
 TOGGLE_CHOICES = [" Disabled", " Enabled"]
 
 OCR_MODEL = ["MangaOCR", "Tesseract"]
+TRANSLATE_MODEL = ["ArgosTranslate", "ChatGPT", "DeepL"]
 LANGUAGE = [" Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"]
 ORIENTATION = [" Vertical", " Horizontal"]
 
@@ -269,9 +270,18 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
     },
     "misc": {
         "loadModel": {
-            "title": "Switch detection model",
-            "message": "Switch between MangaOCR and Tesseract models.",
+            "title": "Load detection model",
+            "message": "Manage translation model settings.",
             "path": "loadModel.png",
+            "toggle": False,
+            "align": "AlignLeft",
+            "iconHeight": 1.0,
+            "iconWidth": 1.0,
+        },
+        "loadTranslateModel": {
+            "title": "Load translation model",
+            "message": "Manage translation model settings and API keys.",
+            "path": "modifyTesseract.png",
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,

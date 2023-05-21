@@ -40,6 +40,7 @@ from components.settings import (
     PreviewOptions,
     ShortcutOptions,
     TesseractOptions,
+    TranslateOptions,
 )
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView
@@ -204,6 +205,33 @@ class MainWindow(QMainWindow, BaseSettings):
                     self.mangaOCRPath = ""
 
         worker = BaseWorker(self.state.loadOCRModel, self.mangaOCRPath)
+        worker.signals.result.connect(loadModelConfirm)
+        worker.signals.finished.connect(lambda: loadModelButton.setEnabled(True))
+
+        self.threadpool.start(worker)
+        loadModelButton.setEnabled(False)
+
+    def loadTranslateModel(self):
+        confirmation = OptionsContainer(TranslateOptions(self))
+        confirmation.exec()
+        if confirmation:
+            self.loadSettings({"enableTranslate": "false"})
+            self.loadTranslateAfterPopup()
+
+    def loadTranslateAfterPopup(self):
+        loadModelButton = self.toolbar.findChild(QPushButton, "loadTranslateModel")
+
+        def loadModelConfirm(message: str):
+            modelName = self.state.translateModelName
+            if message == "success":
+                BasePopup(
+                    f"{modelName} model loaded",
+                    f"You are now using the {modelName} model for Japanese text translation.",
+                ).exec()
+            else:
+                BasePopup("Load Model Error", message).exec()
+
+        worker = BaseWorker(self.state.loadTranslateModel)
         worker.signals.result.connect(loadModelConfirm)
         worker.signals.finished.connect(lambda: loadModelButton.setEnabled(True))
 

@@ -23,3 +23,4 @@ from .model import ModelOptions
 from .preview import PreviewOptions
 from .shortcut import ShortcutOptions
 from .tesseract import TesseractOptions
+from .translate import TranslateOptions

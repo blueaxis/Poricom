@@ -25,4 +25,5 @@ from .popups import (
     PreviewOptions,
     ShortcutOptions,
     TesseractOptions,
+    TranslateOptions,
 )
