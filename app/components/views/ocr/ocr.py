@@ -33,7 +33,7 @@ class OCRView(BaseImageView, BaseOCRView):
     def __init__(self, parent: QMainWindow, state: State = None):
         super().__init__(parent, state)
         self.loadSettings()
-        self.translationDialog = TranslationDialog()
+        self.translationDialog = TranslationDialog(state=state)
 
     @pyqtSlot()
     def rubberBandStopped(self):
