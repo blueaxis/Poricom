@@ -39,7 +39,6 @@ from components.settings import (
     OptionsContainer,
     PreviewOptions,
     ShortcutOptions,
-    TesseractOptions,
     TranslateOptions,
 )
 from components.toolbar import BaseToolbar
@@ -237,12 +236,6 @@ class MainWindow(QMainWindow, BaseSettings):
 
         self.threadpool.start(worker)
         loadModelButton.setEnabled(False)
-
-    def modifyTesseract(self):
-        confirmation = OptionsContainer(TesseractOptions(self))
-        confirmed = confirmation.exec()
-        if confirmed:
-            self.canvas.loadSettings()
 
     def toggleLogging(self):
         self.logToFile = not self.logToFile

@@ -80,7 +80,9 @@ class BaseOptions(BaseSettings):
             self.addProperty(prop, propDefault, propType)
 
             # Label
-            self.labelList[i].setText(f"{titlecase(prop)}: ")
+            label = self.labelList[i]
+            label.setText(f"{titlecase(prop)}: ")
+            self.setProperty(f"{prop}Label", label)
 
             # Combo Box
             comboBox = self.comboBoxList[i]
