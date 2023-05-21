@@ -20,6 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from os.path import isfile, exists
 from typing import Literal
 
+from argostranslate.package import (
+    get_available_packages,
+    install_from_path,
+    update_package_index,
+)
+from argostranslate.translate import get_installed_languages
 from manga_ocr import MangaOcr
 from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QPixmap
@@ -53,6 +59,7 @@ class Pixmap(QPixmap):
 
 
 OCRModelNames = Literal["Tesseract", "MangaOCR"]
+TranslateModelNames = Literal["ArgosTranslate", "ChatGPT", "DeepL"]
 
 
 class State:
@@ -60,11 +67,14 @@ class State:
         self._baseImage = Pixmap("")
 
         settings = QSettings(SETTINGS_FILE_DEFAULT, QSettings.IniFormat)
+
         ocrModelName = settings.value("ocrModel", "MangaOCR")
         self._ocrModel = None
         self._ocrModelName: OCRModelNames = ocrModelName
 
-        self._translationModel = None
+        translateModelName = settings.value("translateModel", "ArgosTranslate")
+        self._translateModel = None
+        self._translateModelName: TranslateModelNames = translateModelName
 
     # ------------------------------------ Image ------------------------------------ #
 
@@ -129,10 +139,67 @@ class State:
                 self.setOCRModelName("Tesseract")
                 return str(e)
 
-    @property
-    def translationModel(self):
-        return self._translationModel
+    # ---------------------------------- Translate ---------------------------------- #
 
-    @translationModel.setter
-    def translationModel(self, translationModel):
-        self._translationModel = translationModel
+    @property
+    def translateModel(self):
+        return self._translateModel
+
+    @translateModel.setter
+    def translateModel(self, translateModel):
+        self._translateModel = translateModel
+
+    @property
+    def translateModelName(self):
+        return self._translateModelName
+
+    def setTranslateModelName(self, translateModelName: TranslateModelNames = None):
+        self._translateModelName = translateModelName
+        return self._translateModelName
+
+    def downloadArgosTranslateModel(self, fromCode="ja", toCode="en"):
+        update_package_index()
+        availablePackages = get_available_packages()
+        availablePackage = list(
+            filter(
+                lambda x: x.from_code == fromCode and x.to_code == toCode,
+                availablePackages,
+            )
+        )[0]
+        downloadPath = availablePackage.download()
+        install_from_path(downloadPath)
+
+    def getArgosTranslateModel(self, fromCode="ja", toCode="en"):
+        installedLanguages = get_installed_languages()
+        fromLang = list(filter(lambda x: x.code == fromCode, installedLanguages))
+        toLang = list(filter(lambda x: x.code == toCode, installedLanguages))
+
+        if not fromLang or not toLang:
+            return None
+        return fromLang[0], toLang[0]
+
+    def loadTranslateModel(self):
+        if self._translateModelName == "ArgosTranslate":
+            languages = self.getArgosTranslateModel()
+            if languages:
+                fromLang, toLang = languages
+                self.translateModel = fromLang.get_translation(toLang)
+            else:
+                self.downloadArgosTranslateModel()
+                languages = self.getArgosTranslateModel()
+                if not languages:
+                    return "Error while loading offline model."
+                fromLang, toLang = languages
+                self.translateModel = fromLang.get_translation(toLang)
+            return "success"
+        else:
+            self.translateModel = None
+            return "success"
+
+    def predictTranslate(self, text):
+        if self.translateModelName == "ArgosTranslate":
+            return self.translateModel.translate(text)
+        elif self.translateModelName == "ChatGPT":
+            pass
+        elif self.translateModelName == "DeepL":
+            pass
