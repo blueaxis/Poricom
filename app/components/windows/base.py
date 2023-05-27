@@ -69,7 +69,7 @@ class MainWindow(QMainWindow, BaseSettings):
         mainWidget.setLayout(self.vLayout)
         self.setCentralWidget(mainWidget)
 
-        self.setDefaults(MAIN_WINDOW_DEFAULTS)
+        self.setDefaults({**MAIN_WINDOW_DEFAULTS, "enableTranslate": "false"})
         self.setTypes(MAIN_WINDOW_TYPES)
         self.loadSettings()
 
@@ -92,20 +92,6 @@ class MainWindow(QMainWindow, BaseSettings):
         self.mainView.saveSettings(False)
         self.canvas.close()
         return super().closeEvent(event)
-
-    def changeEvent(self, event):
-        if (
-            not self.isActiveWindow()
-            and not self.canvas.translationDialog.isActiveWindow()
-        ):
-            self.canvas.translationDialog.setWindowFlags(
-                self.windowFlags() & ~Qt.WindowStaysOnTopHint
-            )
-        else:
-            self.canvas.translationDialog.setWindowFlags(
-                self.windowFlags() | Qt.WindowStaysOnTopHint
-            )
-        return super().changeEvent(event)
 
     def noop(self):
         BasePopup("Not Implemented", "This function is not yet implemented.").exec()
@@ -178,6 +164,9 @@ class MainWindow(QMainWindow, BaseSettings):
         loadModelButton = self.toolbar.findChild(QPushButton, "loadModel")
         isMangaOCR = self.state.ocrModelName == "MangaOCR"
 
+        if not isMangaOCR:
+            return
+
         if isMangaOCR and self.hasLoadModelPopup:
             ret = CheckboxPopup(
                 "hasLoadModelPopup",
@@ -215,10 +204,13 @@ class MainWindow(QMainWindow, BaseSettings):
         confirmed = confirmation.exec()
         if confirmed:
             self.loadSettings({"enableTranslate": "false"})
+            self.canvas.loadSettings({"enableTranslate": "false"})
             self.loadTranslateAfterPopup()
 
     def loadTranslateAfterPopup(self):
         loadModelButton = self.toolbar.findChild(QPushButton, "loadTranslateModel")
+        if not self.enableTranslate:
+            return
 
         def loadModelConfirm(message: str):
             modelName = self.state.translateModelName
