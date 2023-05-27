@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from os.path import isfile, exists
+from requests import post
 from typing import Literal
 
 from argostranslate.package import (
@@ -30,7 +31,7 @@ from manga_ocr import MangaOcr
 from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QPixmap
 
-from utils.constants import SETTINGS_FILE_DEFAULT
+from utils.constants import SETTINGS_FILE_DEFAULT, TRANSLATE_MODEL
 from utils.scripts import combineTwoImages
 
 
@@ -72,9 +73,12 @@ class State:
         self._ocrModel = None
         self._ocrModelName: OCRModelNames = ocrModelName
 
-        translateModelName = settings.value("translateModel", "ArgosTranslate")
+        translateModelIndex = settings.value("translateModelIndex", 0)
+        translateModelName = TRANSLATE_MODEL[int(translateModelIndex)].strip()
+        translateApiKey = settings.value("translateApiKey", 0)
         self._translateModel = None
         self._translateModelName: TranslateModelNames = translateModelName
+        self._translateApiKey = translateApiKey
 
     # ------------------------------------ Image ------------------------------------ #
 
@@ -157,6 +161,14 @@ class State:
         self._translateModelName = translateModelName
         return self._translateModelName
 
+    @property
+    def translateApiKey(self):
+        return self._translateApiKey
+
+    def setTranslateApiKey(self, translateApiKey):
+        self._translateApiKey = translateApiKey
+        return self._translateApiKey
+
     def downloadArgosTranslateModel(self, fromCode="ja", toCode="en"):
         update_package_index()
         availablePackages = get_available_packages()
@@ -200,6 +212,36 @@ class State:
         if self.translateModelName == "ArgosTranslate":
             return self.translateModel.translate(text)
         elif self.translateModelName == "ChatGPT":
-            pass
+            headers = {
+                "content-type": "application/json",
+                "authorization": f"Bearer {self.translateApiKey}",
+            }
+            body = {
+                "model": "text-davinci-003",
+                "prompt": f"Translate this to English:\n{text}",
+                "temperature": 0.3,
+                "max_tokens": 128,
+            }
+            response = post(
+                "https://api.openai.com/v1/completions", json=body, headers=headers
+            ).json()
+            try:
+                return response["choices"][0]["text"].strip()
+            except Exception as e:
+                return text
         elif self.translateModelName == "DeepL":
-            pass
+            headers = {
+                "content-type": "application/json",
+                "authorization": f"DeepL-Auth-Key {self.translateApiKey}",
+            }
+            body = {
+                "text": text,
+                "target_lang": "EN",
+            }
+            response = post(
+                "https://api-free.deepl.com/v2/translate", json=body, headers=headers
+            ).json()
+            try:
+                return response["translations"]["text"].strip()
+            except Exception as e:
+                return text
