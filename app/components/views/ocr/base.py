@@ -22,7 +22,7 @@ from os.path import join
 from PyQt5.QtCore import pyqtSlot, Qt, QThreadPool, QTimer
 from PyQt5.QtWidgets import QGraphicsView, QLabel, QMainWindow
 
-from components.popups import BasePopup
+from components.popups import BasePopup, TranslationDialog
 from components.settings import BaseSettings
 from services import BaseWorker, State
 from utils.constants import (
@@ -56,9 +56,12 @@ class BaseOCRView(QGraphicsView, BaseSettings):
 
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
+        self.translationDialog = TranslationDialog()
+
         self.addDefaults({**TESSERACT_DEFAULTS, **TEXT_LOGGING_DEFAULTS})
         self.addTypes(TEXT_LOGGING_TYPES)
         self.addProperty("persistText", "true", bool)
+        self.addProperty("enableTranslate", "false", bool)
 
     def handleTextResult(self, result):
         if result == None and self.state.ocrModelName == "Tesseract":
@@ -114,6 +117,13 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         text = self.canvasText.text()
         if self.logToFile:
             logText(text, path=logPath)
+
+        if self.enableTranslate:
+            self.translationDialog.setSourceText(text)
+            worker = BaseWorker(self.state.predictTranslate, text)
+            worker.signals.result.connect(self.translationDialog.setTranslateText)
+            worker.signals.finished.connect(self.translationDialog.show)
+            QThreadPool.globalInstance().start(worker)
 
         try:
             if not self.persistText:

@@ -17,46 +17,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from os.path import join
-
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMainWindow
 
 from ..image import BaseImageView
 from .base import BaseOCRView
 from services import State
-from components.popups import TranslationDialog
-from utils.scripts import logText
 
 
 class OCRView(BaseImageView, BaseOCRView):
     def __init__(self, parent: QMainWindow, state: State = None):
         super().__init__(parent, state)
         self.loadSettings()
-        self.translationDialog = TranslationDialog(state=state)
 
     @pyqtSlot()
     def rubberBandStopped(self):
         super().rubberBandStopped()
-
-    def handleTextResult(self, result):
-        try:
-            self.canvasText.hide()
-            self.translationDialog.setText(result)
-            self.translationDialog.show()
-        except RuntimeError:
-            pass
-
-    def mouseReleaseEvent(self, event):
-        logPath = join(self.explorerPath, "text-log.txt")
-        text = self.translationDialog.text
-        logText(text, isLogFile=self.logToFile, path=logPath)
-        try:
-            if not self.persistText:
-                self.canvasText.hide()
-        except AttributeError:
-            pass
-        super(BaseOCRView, self).mouseReleaseEvent(event)
-
-    def closeEvent(self, event):
-        self.translationDialog.close()

@@ -37,13 +37,13 @@ class TranslateOptions(BaseOptions):
 
         i = len(self.comboBoxList)
         self.apiLabel = QLabel("API Key")
-        self.apiLineEdit = QLineEdit("", self)
+        self.apiLineEdit = QLineEdit(self.mainWindow.state.translateModelName, self)
         self.layout().addWidget(self.apiLabel, i, 0)
         self.layout().addWidget(self.apiLineEdit, i, 1)
         self.updateDisplay()
 
     def updateDisplay(self):
-        translateModelName = self.translateModelComboBox.currentText()
+        translateModelName = self.translateModelComboBox.currentText().strip()
         if translateModelName == "ArgosTranslate":
             self.apiLabel.hide()
             self.apiLineEdit.hide()
@@ -68,7 +68,9 @@ class TranslateOptions(BaseOptions):
 
     def saveSettings(self, hasMessage=True):
         translateModelName = self.translateModelComboBox.currentText().strip()
+        translateApiKey = self.apiLineEdit.text().strip()
         self.mainWindow.state.setTranslateModelName(translateModelName)
+        self.mainWindow.state.setTranslateApiKey(translateApiKey)
         self.mainWindow.setProperty(
             "enableTranslate", "true" if self.enableTranslate else "enableTranslate"
         )
