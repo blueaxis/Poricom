@@ -49,6 +49,7 @@ if __name__ == "__main__":
 
     widget.showMaximized()
     widget.loadModelAfterPopup()
+    widget.loadTranslateAfterPopup()
     app.exec_()
 
     # keybinder.unregister_hotkey(widget.winId(), shortcut)
