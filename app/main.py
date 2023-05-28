@@ -48,8 +48,8 @@ if __name__ == "__main__":
     eventDispatcher.installNativeEventFilter(winEventFilter)
 
     widget.showMaximized()
-    widget.loadModelAfterPopup()
     widget.loadTranslateAfterPopup()
+    widget.loadModelAfterPopup()
     app.exec_()
 
     # keybinder.unregister_hotkey(widget.winId(), shortcut)
