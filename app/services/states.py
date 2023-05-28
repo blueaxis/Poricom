@@ -75,7 +75,7 @@ class State:
 
         translateModelIndex = settings.value("translateModelIndex", 0)
         translateModelName = TRANSLATE_MODEL[int(translateModelIndex)].strip()
-        translateApiKey = settings.value("translateApiKey", 0)
+        translateApiKey = settings.value("translateApiKey", "")
         self._translateModel = None
         self._translateModelName: TranslateModelNames = translateModelName
         self._translateApiKey = translateApiKey

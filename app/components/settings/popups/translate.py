@@ -37,7 +37,7 @@ class TranslateOptions(BaseOptions):
 
         i = len(self.comboBoxList)
         self.apiLabel = QLabel("API Key")
-        self.apiLineEdit = QLineEdit(self.mainWindow.state.translateModelName, self)
+        self.apiLineEdit = QLineEdit(self.mainWindow.state.translateApiKey, self)
         self.layout().addWidget(self.apiLabel, i, 0)
         self.layout().addWidget(self.apiLineEdit, i, 1)
         self.updateDisplay()
