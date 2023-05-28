@@ -212,20 +212,10 @@ class MainWindow(QMainWindow, BaseSettings):
     def loadTranslateAfterPopup(self):
         loadModelButton = self.toolbar.findChild(QPushButton, "loadTranslateModel")
         if not self.enableTranslate:
+            self.mainView.translateView.hide()
             return
 
-        def loadModelConfirm(message: str):
-            modelName = self.state.translateModelName
-            if message == "success":
-                BasePopup(
-                    f"{modelName} model loaded",
-                    f"You are now using the {modelName} model for Japanese text translation.",
-                ).exec()
-            else:
-                BasePopup("Load Model Error", message).exec()
-
         worker = BaseWorker(self.state.loadTranslateModel)
-        worker.signals.result.connect(loadModelConfirm)
         worker.signals.finished.connect(lambda: loadModelButton.setEnabled(True))
 
         self.threadpool.start(worker)
