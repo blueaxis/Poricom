@@ -24,5 +24,5 @@ from .popups import (
     OptionsContainer,
     PreviewOptions,
     ShortcutOptions,
-    TesseractOptions,
+    TranslateOptions,
 )

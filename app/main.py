@@ -48,6 +48,7 @@ if __name__ == "__main__":
     eventDispatcher.installNativeEventFilter(winEventFilter)
 
     widget.showMaximized()
+    widget.loadTranslateAfterPopup()
     widget.loadModelAfterPopup()
     app.exec_()
 

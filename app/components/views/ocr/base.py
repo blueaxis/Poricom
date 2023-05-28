@@ -29,6 +29,8 @@ from utils.constants import (
     TESSERACT_DEFAULTS,
     TEXT_LOGGING_DEFAULTS,
     TEXT_LOGGING_TYPES,
+    TRANSLATE_DEFAULTS,
+    TRANSLATE_TYPES,
 )
 from utils.scripts import copyToClipboard, logText, pixmapToText
 
@@ -56,8 +58,14 @@ class BaseOCRView(QGraphicsView, BaseSettings):
 
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
-        self.addDefaults({**TESSERACT_DEFAULTS, **TEXT_LOGGING_DEFAULTS})
-        self.addTypes(TEXT_LOGGING_TYPES)
+        self.addDefaults(
+            {
+                **TESSERACT_DEFAULTS,
+                **TEXT_LOGGING_DEFAULTS,
+                **TRANSLATE_DEFAULTS,
+            }
+        )
+        self.addTypes({**TEXT_LOGGING_TYPES, **TRANSLATE_TYPES})
         self.addProperty("persistText", "true", bool)
 
     def handleTextResult(self, result):
@@ -114,6 +122,13 @@ class BaseOCRView(QGraphicsView, BaseSettings):
         text = self.canvasText.text()
         if self.logToFile:
             logText(text, path=logPath)
+
+        if self.enableTranslate:
+            self.translateWidget.setSourceText(text)
+            worker = BaseWorker(self.state.predictTranslate, text)
+            worker.signals.result.connect(self.translateWidget.setTranslateText)
+            worker.signals.finished.connect(self.translateWidget.show)
+            QThreadPool.globalInstance().start(worker)
 
         try:
             if not self.persistText:

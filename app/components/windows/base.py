@@ -21,7 +21,7 @@ import re
 from shutil import rmtree
 from time import sleep
 
-from PyQt5.QtCore import QThreadPool
+from PyQt5.QtCore import Qt, QThreadPool
 from PyQt5.QtWidgets import (
     QApplication,
     QFileDialog,
@@ -39,7 +39,7 @@ from components.settings import (
     OptionsContainer,
     PreviewOptions,
     ShortcutOptions,
-    TesseractOptions,
+    TranslateOptions,
 )
 from components.toolbar import BaseToolbar
 from components.views import WorkspaceView
@@ -51,6 +51,8 @@ from utils.constants import (
     PORICOM_CACHE,
     STYLESHEET_DARK,
     STYLESHEET_LIGHT,
+    TRANSLATE_DEFAULTS,
+    TRANSLATE_TYPES,
 )
 
 
@@ -70,8 +72,8 @@ class MainWindow(QMainWindow, BaseSettings):
         mainWidget.setLayout(self.vLayout)
         self.setCentralWidget(mainWidget)
 
-        self.setDefaults(MAIN_WINDOW_DEFAULTS)
-        self.setTypes(MAIN_WINDOW_TYPES)
+        self.setDefaults({**MAIN_WINDOW_DEFAULTS, **TRANSLATE_DEFAULTS})
+        self.setTypes({**MAIN_WINDOW_TYPES, **TRANSLATE_TYPES})
         self.loadSettings()
 
         self.threadpool = QThreadPool()
@@ -91,6 +93,7 @@ class MainWindow(QMainWindow, BaseSettings):
             pass
         self.saveSettings(False)
         self.mainView.saveSettings(False)
+        self.canvas.close()
         return super().closeEvent(event)
 
     def noop(self):
@@ -143,9 +146,9 @@ class MainWindow(QMainWindow, BaseSettings):
 
     def loadModel(self):
         confirmation = OptionsContainer(ModelOptions(self))
-        confirmation.exec()
+        confirmed = confirmation.exec()
 
-        if confirmation:
+        if confirmed:
             self.loadSettings({"useOcrOffline": "false"})
         if self.useOcrOffline and not self.mangaOCRPath:
             startPath = self.mainView.explorerPath or "."
@@ -157,12 +160,15 @@ class MainWindow(QMainWindow, BaseSettings):
         elif not self.useOcrOffline:
             self.mangaOCRPath = ""
 
-        if confirmation:
+        if confirmed:
             self.loadModelAfterPopup()
 
     def loadModelAfterPopup(self):
         loadModelButton = self.toolbar.findChild(QPushButton, "loadModel")
         isMangaOCR = self.state.ocrModelName == "MangaOCR"
+
+        if not isMangaOCR:
+            return
 
         if isMangaOCR and self.hasLoadModelPopup:
             ret = CheckboxPopup(
@@ -196,11 +202,25 @@ class MainWindow(QMainWindow, BaseSettings):
         self.threadpool.start(worker)
         loadModelButton.setEnabled(False)
 
-    def modifyTesseract(self):
-        confirmation = OptionsContainer(TesseractOptions(self))
-        confirmation.exec()
-        if confirmation:
-            self.canvas.loadSettings()
+    def loadTranslateModel(self):
+        confirmation = OptionsContainer(TranslateOptions(self))
+        confirmed = confirmation.exec()
+        if confirmed:
+            self.loadSettings(TRANSLATE_DEFAULTS)
+            self.canvas.loadSettings(TRANSLATE_DEFAULTS)
+            self.loadTranslateAfterPopup()
+
+    def loadTranslateAfterPopup(self):
+        loadModelButton = self.toolbar.findChild(QPushButton, "loadTranslateModel")
+        if not self.enableTranslate:
+            self.mainView.translateView.hide()
+            return
+
+        worker = BaseWorker(self.state.loadTranslateModel)
+        worker.signals.finished.connect(lambda: loadModelButton.setEnabled(True))
+
+        self.threadpool.start(worker)
+        loadModelButton.setEnabled(False)
 
     def toggleLogging(self):
         self.logToFile = not self.logToFile

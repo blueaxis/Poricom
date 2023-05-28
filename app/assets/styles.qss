@@ -184,6 +184,12 @@ QAbstractSpinBox:hover {
   border: 0.1em solid #3b3b42;
 }
 
+QTextEdit {
+  background-color: #9394a5;
+  color: #eff0f1;
+  font-size: 16pt;
+}
+
 QAbstractSpinBox:up-button{
   width: 0em;
   height: 0em;

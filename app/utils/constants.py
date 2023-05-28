@@ -41,7 +41,8 @@ IMAGE_EXTENSIONS = [
 # Settings Popup Choices
 TOGGLE_CHOICES = [" Disabled", " Enabled"]
 
-OCR_MODEL = ["MangaOCR", "Tesseract"]
+OCR_MODEL = [" MangaOCR", " Tesseract"]
+TRANSLATE_MODEL = [" ArgosTranslate", " ChatGPT", " DeepL"]
 LANGUAGE = [" Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"]
 ORIENTATION = [" Vertical", " Horizontal"]
 
@@ -119,11 +120,14 @@ TESSERACT_DEFAULTS = {"language": "jpn", "orientation": "_vert"}
 TEXT_LOGGING_DEFAULTS = {"explorerPath": EXPLORER_ROOT_DEFAULT, "logToFile": "false"}
 TEXT_LOGGING_TYPES = {"logToFile": bool}
 
+# Translate
+TRANSLATE_DEFAULTS = {"enableTranslate": "false"}
+TRANSLATE_TYPES = {"enableTranslate": bool}
 
 # --------------------------------------- UI ---------------------------------------- #
 
 # Main view
-MAIN_VIEW_RATIO = [1, 9]
+MAIN_VIEW_RATIO = [3, 19, 4]
 
 # Toolbar
 TOOLBAR_ICON_SIZE = 0.05  # Fraction of primary screen height
@@ -274,18 +278,18 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
     },
     "misc": {
         "loadModel": {
-            "title": "Switch detection model",
-            "message": "Switch between MangaOCR and Tesseract models.",
+            "title": "Load detection model",
+            "message": "Manage OCR model settings.",
             "path": "loadModel.png",
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,
             "iconWidth": 1.0,
         },
-        "modifyTesseract": {
-            "title": "Tesseract settings",
-            "message": "Set the language and orientation for the Tesseract model.",
-            "path": "modifyTesseract.png",
+        "loadTranslateModel": {
+            "title": "Load translation model",
+            "message": "Manage translation model settings and API keys.",
+            "path": "loadTranslateModel.png",
             "toggle": False,
             "align": "AlignLeft",
             "iconHeight": 1.0,

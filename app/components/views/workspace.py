@@ -21,6 +21,7 @@ from PyQt5.QtCore import Qt, QThreadPool
 from PyQt5.QtWidgets import QInputDialog, QMainWindow, QSplitter
 
 from .ocr import OCRView
+from .translate import TranslateView
 from components.explorers import ImageExplorer
 from components.popups import BasePopup
 from components.settings import BaseSettings, ImageScalingOptions, OptionsContainer
@@ -42,17 +43,20 @@ class WorkspaceView(QSplitter, BaseSettings):
         self.setDefaults(MAIN_VIEW_DEFAULTS)
         self.loadSettings()
 
+        self.translateView = TranslateView(self)
         self.canvas = OCRView(self, self.state)
         self.explorer = ImageExplorer(self, self.explorerPath)
         self.addWidget(self.explorer)
         self.addWidget(self.canvas)
+        self.addWidget(self.translateView)
         self.setChildrenCollapsible(False)
         for i, s in enumerate(MAIN_VIEW_RATIO):
             self.setStretchFactor(i, s)
 
     def resizeEvent(self, event):
-        self.explorer.setMinimumWidth(0.1 * self.width())
-        self.canvas.setMinimumWidth(0.7 * self.width())
+        self.explorer.setMinimumWidth(0.15 * self.width())
+        self.canvas.setMinimumWidth(0.6 * self.width())
+        self.translateView.setMinimumWidth(0.2 * self.width())
         return super().resizeEvent(event)
 
     # ---------------------------------- Explorer ----------------------------------- #
