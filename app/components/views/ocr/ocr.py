@@ -28,6 +28,9 @@ from services import State
 class OCRView(BaseImageView, BaseOCRView):
     def __init__(self, parent: QMainWindow, state: State = None):
         super().__init__(parent, state)
+
+        self.translateWidget = parent.translateView
+
         self.loadSettings()
 
     @pyqtSlot()

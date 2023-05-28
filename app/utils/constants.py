@@ -115,11 +115,14 @@ TESSERACT_DEFAULTS = {"language": "jpn", "orientation": "_vert"}
 TEXT_LOGGING_DEFAULTS = {"explorerPath": EXPLORER_ROOT_DEFAULT, "logToFile": "false"}
 TEXT_LOGGING_TYPES = {"logToFile": bool}
 
+# Translate
+TRANSLATE_DEFAULTS = {"enableTranslate": "false"}
+TRANSLATE_TYPES = {"enableTranslate": bool}
 
 # --------------------------------------- UI ---------------------------------------- #
 
 # Main view
-MAIN_VIEW_RATIO = [1, 9]
+MAIN_VIEW_RATIO = [3, 19, 4]
 
 # Toolbar
 TOOLBAR_ICON_SIZE = 0.05  # Fraction of primary screen height
@@ -271,7 +274,7 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
     "misc": {
         "loadModel": {
             "title": "Load detection model",
-            "message": "Manage translation model settings.",
+            "message": "Manage OCR model settings.",
             "path": "loadModel.png",
             "toggle": False,
             "align": "AlignLeft",

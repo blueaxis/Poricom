@@ -50,6 +50,8 @@ from utils.constants import (
     MAIN_WINDOW_TYPES,
     STYLESHEET_DARK,
     STYLESHEET_LIGHT,
+    TRANSLATE_DEFAULTS,
+    TRANSLATE_TYPES,
 )
 
 
@@ -69,8 +71,8 @@ class MainWindow(QMainWindow, BaseSettings):
         mainWidget.setLayout(self.vLayout)
         self.setCentralWidget(mainWidget)
 
-        self.setDefaults({**MAIN_WINDOW_DEFAULTS, "enableTranslate": "false"})
-        self.setTypes(MAIN_WINDOW_TYPES)
+        self.setDefaults({**MAIN_WINDOW_DEFAULTS, **TRANSLATE_DEFAULTS})
+        self.setTypes({**MAIN_WINDOW_TYPES, **TRANSLATE_TYPES})
         self.loadSettings()
 
         self.threadpool = QThreadPool()
@@ -203,8 +205,8 @@ class MainWindow(QMainWindow, BaseSettings):
         confirmation = OptionsContainer(TranslateOptions(self))
         confirmed = confirmation.exec()
         if confirmed:
-            self.loadSettings({"enableTranslate": "false"})
-            self.canvas.loadSettings({"enableTranslate": "false"})
+            self.loadSettings(TRANSLATE_DEFAULTS)
+            self.canvas.loadSettings(TRANSLATE_DEFAULTS)
             self.loadTranslateAfterPopup()
 
     def loadTranslateAfterPopup(self):

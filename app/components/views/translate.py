@@ -1,24 +1,22 @@
 import cutlet
-from PyQt5.QtWidgets import QLabel, QTextEdit, QVBoxLayout, QDialog
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QLabel, QTextEdit, QVBoxLayout, QWidget
 
 
-class TranslationDialog(QDialog):
+class TranslateView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setAttribute(Qt.WA_DeleteOnClose | Qt.WA_X11NetWmWindowTypeUtility)
 
-        self.setLayout(QVBoxLayout())
         self.ocrLineEdit = QTextEdit("")
         self.romajiLineEdit = QTextEdit("")
         self.translateLineEdit = QTextEdit("")
+
+        self.setLayout(QVBoxLayout())
         self.layout().addWidget(QLabel("Detected Text"))
         self.layout().addWidget(self.ocrLineEdit)
         self.layout().addWidget(QLabel("Romaji"))
         self.layout().addWidget(self.romajiLineEdit)
         self.layout().addWidget(QLabel("Translation"))
         self.layout().addWidget(self.translateLineEdit)
-        self.resize(500, 200)
 
         self.katakanaToRomaji = cutlet.Cutlet()
 
