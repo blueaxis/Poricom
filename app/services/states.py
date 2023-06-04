@@ -222,12 +222,13 @@ class State:
                 "temperature": 0.3,
                 "max_tokens": 128,
             }
-            response = post(
-                "https://api.openai.com/v1/completions", json=body, headers=headers
-            ).json()
             try:
+                response = post(
+                    "https://api.openai.com/v1/completions", json=body, headers=headers
+                ).json()
                 return response["choices"][0]["text"].strip()
             except Exception as e:
+                print(e)
                 return text
         elif self.translateModelName == "DeepL":
             headers = {
@@ -238,10 +239,11 @@ class State:
                 "text": text,
                 "target_lang": "EN",
             }
-            response = post(
-                "https://api-free.deepl.com/v2/translate", json=body, headers=headers
-            ).json()
             try:
+                response = post(
+                    "https://api-free.deepl.com/v2/translate", json=body, headers=headers
+                ).json()
                 return response["translations"]["text"].strip()
             except Exception as e:
+                print(e)
                 return text
