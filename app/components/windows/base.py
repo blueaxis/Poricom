@@ -216,6 +216,13 @@ class MainWindow(QMainWindow, BaseSettings):
             self.mainView.translateView.hide()
             return
 
+        if self.state.translateWindowPosition == " Right":
+            self.mainView.translateWindowRight()
+        elif self.state.translateWindowPosition == " Top":
+            self.mainView.translateWindowTop()
+        elif self.state.translateWindowPosition == " Bottom":
+            self.mainView.translateWindowBottom()
+
         worker = BaseWorker(self.state.loadTranslateModel)
         worker.signals.finished.connect(lambda: loadModelButton.setEnabled(True))
 

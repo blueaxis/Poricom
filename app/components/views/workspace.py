@@ -26,8 +26,14 @@ from components.explorers import ImageExplorer
 from components.popups import BasePopup
 from components.settings import BaseSettings, ImageScalingOptions, OptionsContainer
 from services import BaseWorker, State
-from utils.constants import EXPLORER_ROOT_DEFAULT, MAIN_VIEW_DEFAULTS, MAIN_VIEW_RATIO
+from utils.constants import (
+    EXPLORER_ROOT_DEFAULT,
+    MAIN_VIEW_DEFAULTS,
+    MAIN_VIEW_RATIO,
+    TRANSLATE_ITEM_ORIENTATION,
+)
 from utils.scripts import mangaFileToImageDir
+from PyQt5 import QtCore
 
 
 class WorkspaceView(QSplitter, BaseSettings):
@@ -43,20 +49,54 @@ class WorkspaceView(QSplitter, BaseSettings):
         self.setDefaults(MAIN_VIEW_DEFAULTS)
         self.loadSettings()
 
+        self.splitter = QSplitter()
         self.translateView = TranslateView(self)
         self.canvas = OCRView(self, self.state)
         self.explorer = ImageExplorer(self, self.explorerPath)
         self.addWidget(self.explorer)
-        self.addWidget(self.canvas)
-        self.addWidget(self.translateView)
+        self.splitter.addWidget(self.translateView)
+        self.splitter.addWidget(self.canvas)
+        self.splitter.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.loadPrevImage = self.loadPrevImage
+        self.splitter.loadNextImage = self.loadNextImage
+        self.addWidget(self.splitter)
+
         self.setChildrenCollapsible(False)
         for i, s in enumerate(MAIN_VIEW_RATIO):
             self.setStretchFactor(i, s)
+
+    def translateWindowRight(self):
+        self.canvas.setParent(None)
+        self.translateView.setParent(None)
+        self.translateView.changeLayout(TRANSLATE_ITEM_ORIENTATION.HORIZONTAL)
+        self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.addWidget(self.translateView)
+        self.splitter.addWidget(self.canvas)
+
+    def translateWindowTop(self):
+        self.canvas.setParent(None)
+        self.translateView.setParent(None)
+        self.translateView.changeLayout(TRANSLATE_ITEM_ORIENTATION.VERTICAL)
+        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.addWidget(self.translateView)
+        self.splitter.addWidget(self.canvas)
+        self.canvas.setMinimumHeight(0.8 * self.height())
+
+    def translateWindowBottom(self):
+        self.canvas.setParent(None)
+        self.translateView.setParent(None)
+        self.translateView.changeLayout(TRANSLATE_ITEM_ORIENTATION.VERTICAL)
+        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.addWidget(self.canvas)
+        self.splitter.addWidget(self.translateView)
+        self.canvas.setMinimumHeight(0.8 * self.height())
 
     def resizeEvent(self, event):
         self.explorer.setMinimumWidth(0.15 * self.width())
         self.canvas.setMinimumWidth(0.6 * self.width())
         self.translateView.setMinimumWidth(0.2 * self.width())
+        self.canvas.setMinimumHeight(0.8 * self.height())
         return super().resizeEvent(event)
 
     # ---------------------------------- Explorer ----------------------------------- #
