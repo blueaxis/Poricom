@@ -19,19 +19,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt5.QtWidgets import QLabel, QLineEdit, QWidget
 
-from utils.constants import TRANSLATE_MODEL, TOGGLE_CHOICES
+from utils.constants import TRANSLATE_MODEL, TOGGLE_CHOICES, TRANSLATE_WINDOW_POSITION
 
 from .base import BaseOptions
 
 
 class TranslateOptions(BaseOptions):
     def __init__(self, parent: QWidget):
-        super().__init__(parent, [TOGGLE_CHOICES, TRANSLATE_MODEL])
+        super().__init__(
+            parent, [TOGGLE_CHOICES, TRANSLATE_MODEL, TRANSLATE_WINDOW_POSITION]
+        )
         # TODO: Use constants here
         self.initializeProperties(
             [
                 ("enableTranslate", "false", bool),
                 ("translateModel", "ArgosTranslate", str),
+                ("translateWindowPosition", "Right", str),
             ]
         )
 
@@ -66,11 +69,15 @@ class TranslateOptions(BaseOptions):
         except AttributeError as e:
             print(e)
 
+    def changeTranslateWindowPosition(self, i):
+        self.translateWindowPosition = TRANSLATE_WINDOW_POSITION[i]
+
     def saveSettings(self, hasMessage=True):
         translateModelName = self.translateModelComboBox.currentText().strip()
         translateApiKey = self.apiLineEdit.text().strip()
         self.mainWindow.state.setTranslateModelName(translateModelName)
         self.mainWindow.state.setTranslateApiKey(translateApiKey)
+        self.mainWindow.state.setTranslateWindowPosition(self.translateWindowPosition)
         self.mainWindow.setProperty(
             "enableTranslate", "true" if self.enableTranslate else "enableTranslate"
         )

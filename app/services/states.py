@@ -75,10 +75,12 @@ class State:
 
         translateModelIndex = settings.value("translateModelIndex", 0)
         translateModelName = TRANSLATE_MODEL[int(translateModelIndex)].strip()
+        translateWindowPosition = settings.value("translateWindowPosition", "")
         translateApiKey = settings.value("translateApiKey", "")
         self._translateModel = None
         self._translateModelName: TranslateModelNames = translateModelName
         self._translateApiKey = translateApiKey
+        self._translateWindowPosition = translateWindowPosition
 
     # ------------------------------------ Image ------------------------------------ #
 
@@ -152,6 +154,18 @@ class State:
     @translateModel.setter
     def translateModel(self, translateModel):
         self._translateModel = translateModel
+
+    @property
+    def translateWindowPosition(self):
+        return self._translateWindowPosition
+
+    @translateWindowPosition.setter
+    def translateWindowPosition(self, translateWindowPosition):
+        self._translateWindowPosition = translateWindowPosition
+
+    def setTranslateWindowPosition(self, translateWindowPosition):
+        self._translateWindowPosition = translateWindowPosition
+        return self._translateWindowPosition
 
     @property
     def translateModelName(self):
@@ -241,7 +255,9 @@ class State:
             }
             try:
                 response = post(
-                    "https://api-free.deepl.com/v2/translate", json=body, headers=headers
+                    "https://api-free.deepl.com/v2/translate",
+                    json=body,
+                    headers=headers,
                 ).json()
                 return response["translations"]["text"].strip()
             except Exception as e:

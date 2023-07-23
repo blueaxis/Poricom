@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .types import ButtonConfigDict
 from sys import platform
+from enum import Enum
 
 # ------------------------------------- General ------------------------------------- #
 
@@ -43,6 +44,10 @@ TOGGLE_CHOICES = [" Disabled", " Enabled"]
 
 OCR_MODEL = [" MangaOCR", " Tesseract"]
 TRANSLATE_MODEL = [" ArgosTranslate", " ChatGPT", " DeepL"]
+TRANSLATE_WINDOW_POSITION = [" Right", " Top", " Bottom"]
+TRANSLATE_ITEM_ORIENTATION = Enum(
+    "TRANSLATE_ITEM_ORIENTATION", ["HORIZONTAL", "VERTICAL"]
+)
 LANGUAGE = [" Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"]
 ORIENTATION = [" Vertical", " Horizontal"]
 
