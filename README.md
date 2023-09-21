@@ -15,7 +15,7 @@
 - [Acknowledgments](#acknowledgements)
 </br>
 
-## About <a name = "about"></a>
+## About<a name = "about"></a>
 Poricom is a desktop program for optical character recognition in manga images. Although it is a manga OCR application, it can recognize text on other type of images as well. The project is a GUI implementation of the [Manga OCR library](https://pypi.org/project/manga-ocr/0.1.5/) (supports Japanese only) and the Tesseract-API python wrapper [tesserocr](https://github.com/sirfz/tesserocr) (supports other languages). See demo below to see how it works.
 
 Detect text on locally stored manga images:
@@ -26,12 +26,12 @@ Perform OCR on the current screen by pressing `Alt+Q`:
 
 https://user-images.githubusercontent.com/45705751/161961152-29070fde-03f6-42a7-8569-0ff22ae9b014.mp4
 
-## Alternatives  <a name="alternatives"></a>
+## Alternatives<a name="alternatives"></a>
  - [Cloe](https://github.com/bluaxees/Cloe) - The app is based on Poricom's global snipping functionality. If you downloaded Poricom to use _only_ the global shortcut, it might be better if you use Cloe instead.
  - [mokuro](https://github.com/kha-white/mokuro) - Converts manga images to web pages with selectable text. This saves you time and manual effort since textboxes are automatically detected with an almost 100% accuracy.
 
 
-## User Guide  <a name="user_guide"></a>
+## User Guide<a name="user_guide"></a>
 Follow the installation instructions [here](#installation). Load a directory with manga images and select text boxes with Japanese text. If you are not getting good results using the default settings, [use the MangaOcr model](#load_model) to improve text detection.
 
 ### Features
@@ -76,16 +76,23 @@ Listed below are some of the features of Poricom. Smaller features that are not 
 </details>
 
 
-## Installation <a name = "installation"></a>
+## Installation<a name = "installation"></a>
 Download the latest zip file [here](https://github.com/bluaxees/Poricom/releases/latest/). Decompress the file in the desired directory. Make sure that the `app` folder is in the same folder as the shortcut `Poricom`.
 
-### System Requirements
+### Hardware Requirements
 
 Recommended:
 - Hard drive: at least 800 MB HD space
 - RAM: at least 2 GB
 
 Approximately 250 MB of free space and 200 MB of memory is needed to run the application using the Tesseract API. If using the Manga OCR model, an additional 450 MB of free space and 800 MB of memory is required.
+
+### System Dependencies
+
+#### Linux (Debian / Ubuntu)
+
+ - Install [`tesserocr`'s dependencies](https://github.com/sirfz/tesserocr#requirements).
+ - Install `pyqt5-dev-tools`, one of the dependencies of [`spyder`](https://www.spyder-ide.org/). Running `sudo apt install pyqt5-dev-tools` should do it.
 
 ### Development Setup
  - Clone this repo and install [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
@@ -94,7 +101,7 @@ Approximately 250 MB of free space and 200 MB of memory is needed to run the app
  - If you want to build the app locally, install build dependencies by running `conda env update -f environment/build.yaml`. Then run `pyinstaller main.spec` in the `build` directory.
 
 
-## Acknowledgements <a name = "acknowledgements"></a>
+## Acknowledgements<a name = "acknowledgements"></a>
 This project will not be possible without the MangaOcr model by [Maciej Budyś](https://github.com/kha-white) and the Tesseract python wrapper by [sirfz](https://github.com/sirfz) and [the tesserocr contributors](https://github.com/sirfz/tesserocr/graphs/contributors). 
 
 The software is licensed under GPLv3 (see [LICENSE](LICENSE.md)) and uses third party libraries that are distributed under their own terms (see [LICENSE-3RD-PARTY](LICENSE-3RD-PARTY.md)).
