@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtGui import QGuiApplication, QClipboard
 
 
 def copyToClipboard(text: str):
@@ -25,4 +25,6 @@ def copyToClipboard(text: str):
     Copy input text to clipboard
     """
     clipboard = QGuiApplication.clipboard()
+    if clipboard.supportsSelection():
+        clipboard.setText(text, QClipboard.Selection)
     clipboard.setText(text)
