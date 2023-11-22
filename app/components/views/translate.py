@@ -15,7 +15,7 @@ class TranslateView(QWidget):
         self.layout().addWidget(self.ocrLineEdit)
         self.layout().addWidget(QLabel("Texto completo"))
         self.layout().addWidget(self.romajiLineEdit)
-        self.layout().addWidget(QLabel("traducción"))
+        self.layout().addWidget(QLabel("traducción completa"))
         self.layout().addWidget(self.translateLineEdit)
 
         self.katakanaToRomaji = cutlet.Cutlet()
