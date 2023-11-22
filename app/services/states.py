@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os.path import isfile, exists
 from requests import post
+import requests 
 from typing import Literal
 
 from argostranslate.package import (
@@ -229,21 +230,23 @@ class State:
                 return response["choices"][0]["text"].strip()
             except Exception as e:
                 print(e)
-                return text
+                return text       
         elif self.translateModelName == "DeepL":
+            url = "https://api-free.deepl.com/v2/translate"
             headers = {
-                "content-type": "application/json",
-                "authorization": f"DeepL-Auth-Key {self.translateApiKey}",
+                "Authorization": f"DeepL-Auth-Key {self.translateApiKey}"
             }
-            body = {
+            data = {
                 "text": text,
-                "target_lang": "EN",
+                "target_lang": "ES"
             }
             try:
-                response = post(
-                    "https://api-free.deepl.com/v2/translate", json=body, headers=headers
-                ).json()
-                return response["translations"]["text"].strip()
+                response = requests.post(url, headers=headers, data=data)
+                response_json = response.json()
+                print(response_json)
+                translated_text = response_json["translations"][0]["text"]
+                return translated_text
             except Exception as e:
+                print("Error while translating with DeepL")
                 print(e)
                 return text
