@@ -40,13 +40,13 @@ class PreviewOptions(BaseOptions):
     def changeFontStyle(self, i):
         self.fontStyleIndex = i
         selectedFontStyle = self.fontStyleComboBox.currentText().strip()
-        replacementText = f"  estilo-fuente: '{selectedFontStyle}';\n"
+        replacementText = f"  font-style: '{selectedFontStyle}';\n"
         self.fontStyle = replacementText
 
     def changeFontSize(self, i):
         self.fontSizeIndex = i
         selectedFontSize = int(self.fontSizeComboBox.currentText().strip())
-        replacementText = f"  tamaño-fuente: {selectedFontSize}pt;\n"
+        replacementText = f"  font-size: {selectedFontSize}pt;\n"
         self.fontSize = replacementText
 
     def changePersistText(self, i):
