@@ -201,7 +201,7 @@ class State:
                 self.downloadArgosTranslateModel()
                 languages = self.getArgosTranslateModel()
                 if not languages:
-                    return "Error while loading offline model."
+                    return "Algo falló cuando cargaba el modelo Argos."
                 fromLang, toLang = languages
                 self.translateModel = fromLang.get_translation(toLang)
             return "success"
@@ -247,6 +247,6 @@ class State:
                 translated_text = response_json["translations"][0]["text"]
                 return translated_text
             except Exception as e:
-                print("Error while translating with DeepL")
+                print("Algo falló cuando cargaba el modelo DeepL.")
                 print(e)
                 return text

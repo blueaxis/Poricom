@@ -1,11 +1,10 @@
- 
 from .types import ButtonConfigDict
 from sys import platform
 
 # ------------------------------------- General ------------------------------------- #
 
-APP_NAME = "P-de-Plot"
-APP_LOGO = "./assets/images/icons/logo.ico"
+APP_NAME = "P-Plot"
+APP_LOGO = "./assets/images/icons/logoplot.ico"
 
 IMAGE_EXTENSIONS = [
     "*.bmp",
@@ -26,7 +25,7 @@ TOGGLE_CHOICES = [" Desactivado", " Activado"]
 
 OCR_MODEL = [" MangaOCR", " Tesseract"]
 TRANSLATE_MODEL = [" ArgosTranslate", " ChatGPT", " DeepL"]
-LANGUAGE = [" Japonés", " Coreano", " Chino SIMP", " Chino TRAD  ", " Inglés"]
+LANGUAGE = [" Japonés", " Coreano", " Chino SIMP", " Chino TRAD  ", " Inglés", " Español"]
 ORIENTATION = [" Vertical", " Horizontal"]
 
 IMAGE_SCALING = ["Ajustar al ancho", "Ajustar al alto", "Ajustar a la pantalla"]

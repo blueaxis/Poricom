@@ -55,7 +55,7 @@ QLabel {
 
 QWidget { 
   /*color: #eff0f1;*/
-  background-color: #454C4E;
+  background-color: #414647;
   font-family: 'Helvetica';
 }
 
