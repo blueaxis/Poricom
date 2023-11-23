@@ -71,16 +71,18 @@ class ModelOptions(BaseOptions):
     def changeLanguage(self, i):
         self.languageIndex = i
         selectedLanguage = self.languageComboBox.currentText().strip()
-        if selectedLanguage == "Japanese":
+        if selectedLanguage == "Japonés":
             self.language = "jpn"
-        if selectedLanguage == "Korean":
+        if selectedLanguage == "Coreano":
             self.language = "kor"
-        if selectedLanguage == "Chinese SIM":
+        if selectedLanguage == "Chino SIMP":
             self.language = "chi_sim"
-        if selectedLanguage == "Chinese TRA":
+        if selectedLanguage == "Chino TRAD":
             self.language = "chi_tra"
-        if selectedLanguage == "English":
+        if selectedLanguage == "Inglés":
             self.language = "eng"
+        if selectedLanguage == "Español":
+            self.language = "esp"
 
     def changeOrientation(self, i):
         self.orientationIndex = i

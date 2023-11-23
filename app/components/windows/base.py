@@ -132,15 +132,15 @@ class MainWindow(QMainWindow, BaseSettings):
         confirmed = confirmation.exec()
 
         if confirmed:
-            self.loadSettings({"usarOCRoffline": "false"})
-        if self.usarOCRoffline and not self.mangaOCRPath:
+            self.loadSettings({"useOcrOffline": "false"})
+        if self.useOcrOffline and not self.mangaOCRPath:
             startPath = self.mainView.explorerPath or "."
             ocrPath = QFileDialog.getExistingDirectory(
                 self, "Definir Directorio de MangaOCR", startPath
             )
             if ocrPath:
                 self.mangaOCRPath = ocrPath
-        elif not self.usarOCRoffline:
+        elif not self.useOcrOffline:
             self.mangaOCRPath = ""
 
         if confirmed:
@@ -158,9 +158,9 @@ class MainWindow(QMainWindow, BaseSettings):
                 "hasLoadModelPopup",
                 "¿Cargar los archivos del OCR?",
                 LOAD_MODEL_MESSAGE,
-                CheckboxPopup.Ok | CheckboxPopup.Cancelar,
+                CheckboxPopup.Ok | CheckboxPopup.Cancel,
             ).exec()
-            if ret == CheckboxPopup.Cancelar:
+            if ret == CheckboxPopup.Cancel:
                 return
             self.loadSettings({"hasLoadModelPopup": "true"})
 

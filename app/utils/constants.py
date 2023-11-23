@@ -4,7 +4,7 @@ from sys import platform
 
 # ------------------------------------- General ------------------------------------- #
 
-APP_NAME = "P-plot"
+APP_NAME = "P-de-Plot"
 APP_LOGO = "./assets/images/icons/logo.ico"
 
 IMAGE_EXTENSIONS = [
@@ -74,14 +74,14 @@ SETTINGS_FILE_DEFAULT = "./bin/poricom-config.ini"
 
 # Window
 MAIN_WINDOW_DEFAULTS = {
-    "usarOCRoffline": "false",
+    "useOcrOffline": "false",
     "hasLoadModelPopup": "true",
-    "logToFile": "true",
+    "logToFile": "false",
     "mangaOCRPath": "",
     "stylesheetPath": "./assets/styles.qss",
 }
 MAIN_WINDOW_TYPES = {
-    "usarOCRoffline": bool,
+    "useOcrOffline": bool,
     "hasLoadModelPopup": bool,
     "logToFile": bool,
 }
