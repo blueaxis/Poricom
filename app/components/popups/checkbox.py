@@ -39,7 +39,7 @@ class CheckboxPopup(BasePopup):
         title: str,
         message: str,
         buttons: BasePopup.StandardButtons = BasePopup.Ok,
-        checkboxMessage="Don't show this dialog again",
+        checkboxMessage="No mostrar esto de nuevo",
     ):
         super().__init__(title, message, buttons)
 

@@ -40,7 +40,7 @@ class OptionsContainer(QDialog):
         self.options = options
         self.setLayout(QVBoxLayout())
         self.layout().addWidget(options)
-        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancelar)
         self.layout().addWidget(self.buttonBox)
 
         self.buttonBox.rejected.connect(self.cancelClickedEvent)

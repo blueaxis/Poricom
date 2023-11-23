@@ -1,21 +1,4 @@
-"""
-Poricom Windows
-
-Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
+ 
 
 import re
 from shutil import rmtree
@@ -120,7 +103,7 @@ class MainWindow(QMainWindow, BaseSettings):
 
         app = QApplication.instance()
         if app is None:
-            raise RuntimeError("No Qt Application found.")
+            raise RuntimeError("Ninguna aplicación qt fue encontrada.")
 
         with open(self.stylesheetPath, "r") as fh:
             app.setStyleSheet(fh.read())
@@ -132,7 +115,7 @@ class MainWindow(QMainWindow, BaseSettings):
         if ret:
             app = QApplication.instance()
             if app is None:
-                raise RuntimeError("No Qt Application found.")
+                raise RuntimeError("Ninguna aplicación qt fue encontrada.")
 
             with open(self.stylesheetPath, "r") as fh:
                 app.setStyleSheet(fh.read())
@@ -149,15 +132,15 @@ class MainWindow(QMainWindow, BaseSettings):
         confirmed = confirmation.exec()
 
         if confirmed:
-            self.loadSettings({"useOcrOffline": "false"})
-        if self.useOcrOffline and not self.mangaOCRPath:
+            self.loadSettings({"usarOCRoffline": "false"})
+        if self.usarOCRoffline and not self.mangaOCRPath:
             startPath = self.mainView.explorerPath or "."
             ocrPath = QFileDialog.getExistingDirectory(
-                self, "Set MangaOCR Directory", startPath
+                self, "Definir Directorio de MangaOCR", startPath
             )
             if ocrPath:
                 self.mangaOCRPath = ocrPath
-        elif not self.useOcrOffline:
+        elif not self.usarOCRoffline:
             self.mangaOCRPath = ""
 
         if confirmed:
@@ -173,11 +156,11 @@ class MainWindow(QMainWindow, BaseSettings):
         if isMangaOCR and self.hasLoadModelPopup:
             ret = CheckboxPopup(
                 "hasLoadModelPopup",
-                "Load the MangaOCR model?",
+                "¿Cargar los archivos del OCR?",
                 LOAD_MODEL_MESSAGE,
-                CheckboxPopup.Ok | CheckboxPopup.Cancel,
+                CheckboxPopup.Ok | CheckboxPopup.Cancelar,
             ).exec()
-            if ret == CheckboxPopup.Cancel:
+            if ret == CheckboxPopup.Cancelar:
                 return
             self.loadSettings({"hasLoadModelPopup": "true"})
 
@@ -185,8 +168,8 @@ class MainWindow(QMainWindow, BaseSettings):
             modelName = self.state.ocrModelName
             if message == "success":
                 BasePopup(
-                    f"{modelName} model loaded",
-                    f"You are now using the {modelName} model for Japanese text detection.",
+                    f"{modelName} ha sido cargado.",
+                    f"Ahora estás usando el modelo {modelName} de detección de texto.",
                 ).exec()
             else:
                 BasePopup("Load Model Error", message).exec()

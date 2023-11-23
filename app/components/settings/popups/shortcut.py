@@ -36,15 +36,15 @@ class ShortcutOptions(BaseOptions):
 
         self.keyLineEdit = QLineEdit(self.captureExternalKey)
         self.layout().addWidget(self.keyLineEdit, 1, 1)
-        self.layout().addWidget(QLabel("Key: "), 1, 0)
+        self.layout().addWidget(QLabel("Tecla: "), 1, 0)
 
     def raiseKeyInvalidError(self, message: str):
-        BasePopup("Invalid Key", message).exec()
+        BasePopup("Tecla Inválida", message).exec()
 
     def changeModifier(self, i):
         self.modifierIndex = i
         self.modifier = self.modifierComboBox.currentText().strip() + "+"
-        if self.modifier == "No Modifier+":
+        if self.modifier == "Sin Modificador+":
             self.modifier = ""
 
     def changeShortcut(self):

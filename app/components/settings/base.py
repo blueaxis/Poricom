@@ -124,7 +124,7 @@ class BaseSettings(QWidget):
         confirm = BasePopup(
             "Reset Settings",
             "Are you sure? This will delete the current configuration.",
-            BasePopup.Ok | BasePopup.Cancel,
+            BasePopup.Ok | BasePopup.Cancelar,
         )
         response = confirm.exec()
         if response == BasePopup.Ok:

@@ -1,27 +1,10 @@
-"""
-Poricom Constants
-Copyright (C) `2021-2022` `<Alarcon Ace Belen>`
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-
+ 
 from .types import ButtonConfigDict
 from sys import platform
 
 # ------------------------------------- General ------------------------------------- #
 
-APP_NAME = "Poricom"
+APP_NAME = "P-plot"
 APP_LOGO = "./assets/images/icons/logo.ico"
 
 IMAGE_EXTENSIONS = [
@@ -39,14 +22,14 @@ IMAGE_EXTENSIONS = [
 ]
 
 # Settings Popup Choices
-TOGGLE_CHOICES = [" Disabled", " Enabled"]
+TOGGLE_CHOICES = [" Desactivado", " Activado"]
 
 OCR_MODEL = [" MangaOCR", " Tesseract"]
 TRANSLATE_MODEL = [" ArgosTranslate", " ChatGPT", " DeepL"]
-LANGUAGE = [" Japanese", " Korean", " Chinese SIM", " Chinese TRA  ", " English"]
+LANGUAGE = [" Japonés", " Coreano", " Chino SIMP", " Chino TRAD  ", " Inglés"]
 ORIENTATION = [" Vertical", " Horizontal"]
 
-IMAGE_SCALING = [" Fit to Width", " Fit to Height", " Fit to Screen"]
+IMAGE_SCALING = ["Ajustar al ancho", "Ajustar al alto", "Ajustar a la pantalla"]
 
 FONT_SIZE = [" 12", " 14", " 16", " 20", " 24", " 32", " 40", " 56", " 72"]
 FONT_STYLE = [" Helvetica", " Poppins", " Arial", " Verdana", " Times New Roman"]
@@ -59,7 +42,7 @@ MODIFIER = [
     " Shift+Alt",
     " Shift+Ctrl",
     " Shift+Alt+Ctrl",
-    " No Modifier",
+    " Sin Modificador",
 ]
 
 PLATFORM = platform
@@ -79,10 +62,10 @@ PORICOM_CACHE = "/tmp/poricom_cache" if PLATFORM == "linux" else "./poricom_cach
 
 # Messages
 LOAD_MODEL_MESSAGE = (
-    "If you are running this for the first time, this will download the MangaOcr model "
-    "which is about 400 MB in size. This will improve the accuracy of Japanese text "
-    "detection in Poricom. If it is already in your cache, it will take a few seconds "
-    "to load the model."
+    "Si estás ejecutando esto por primera vez, se descargará el modelo MangaOCR, que"
+    "tiene un tamaño aproximado de 400 MB, esto ayudará a mejorar la precisión de la"
+    "detección de texto en japonés en Poricom. Si ya está en tu caché, tardará unos"
+    "segundos en cargar el modelo."
 )
 
 # ------------------------------------ Settings ------------------------------------- #
@@ -91,14 +74,14 @@ SETTINGS_FILE_DEFAULT = "./bin/poricom-config.ini"
 
 # Window
 MAIN_WINDOW_DEFAULTS = {
-    "useOcrOffline": "false",
+    "usarOCRoffline": "false",
     "hasLoadModelPopup": "true",
-    "logToFile": "false",
+    "logToFile": "true",
     "mangaOCRPath": "",
     "stylesheetPath": "./assets/styles.qss",
 }
 MAIN_WINDOW_TYPES = {
-    "useOcrOffline": bool,
+    "usarOCRoffline": bool,
     "hasLoadModelPopup": bool,
     "logToFile": bool,
 }
@@ -180,10 +163,10 @@ NAVIGATION_FUNCTIONS: ButtonConfigDict = {
     },
 }
 TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
-    "file": {
+    "archivo": {
         "openDir": {
-            "title": "Open manga directory",
-            "message": "Open a directory containing images.",
+            "title": "Abrir directorio de manga",
+            "message": "Abre una carpeta que contenga el raw del manga.",
             "path": "openDir.png",
             "toggle": False,
             "align": "AlignLeft",
@@ -191,8 +174,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
         "openManga": {
-            "title": "Open manga file",
-            "message": "Supports the following formats: cbr, cbz, pdf.",
+            "title": "Abrir un archivo de manga",
+            "message": "Que esté en estos formatos: cbr, cbz, pdf.",
             "path": "openManga.png",
             "toggle": False,
             "align": "AlignLeft",
@@ -200,8 +183,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
         "captureExternalHelper": {
-            "title": "External capture",
-            "message": "This will minimize the app and perform OCR on the current screen. Alternatively, you may use the shortcut Alt+Q (default).",
+            "title": "Capturar con screenshot",
+            "message": "Esto minimizará la aplicación y ejecutará el OCR en la pantalla actual. También podrás usar el atajo ALT+Q (por default).",
             "path": "captureExternalHelper.png",
             "toggle": False,
             "align": "AlignLeft",
@@ -209,10 +192,10 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
     },
-    "view": {
+    "vista": {
         "toggleStylesheet": {
-            "title": "Change theme",
-            "message": "Switch between light and dark mode.",
+            "title": "Cambiar fondo",
+            "message": "Cambia entre fondo oscuro y fondo claro.",
             "path": "toggleStylesheet.png",
             "toggle": False,
             "align": "AlignLeft",
@@ -220,8 +203,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
         "hideExplorer": {
-            "title": "Hide explorer",
-            "message": "Hide the file explorer from view",
+            "title": "Esconder navegador",
+            "message": "Minimiza el navegador de páginas y directorios.",
             "path": "hideExplorer.png",
             "toggle": True,
             "align": "AlignLeft",
@@ -229,8 +212,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
         "modifyFontSettings": {
-            "title": "Modify preview text",
-            "message": "Change font style and font size of preview text.",
+            "title": "Modificar fuente",
+            "message": "Cambiar el estilo de fuente y el tamaño de fuente del texto de vista previa.",
             "path": "modifyFontSettings.png",
             "toggle": False,
             "align": "AlignLeft",
@@ -238,8 +221,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
         "toggleSplitView": {
-            "title": "Turn on split view",
-            "message": "View two images at once.",
+            "title": "Activar vista dividida",
+            "message": "Ver dos imágenes a la vez.",
             "path": "toggleSplitView.png",
             "toggle": True,
             "align": "AlignLeft",
@@ -247,8 +230,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
         "modifyImageScaling": {
-            "title": "Adjust image scaling",
-            "message": "Fit an image according to the available options: fit to width, fit to height, fit to screen",
+            "title": "Ajustar la escala",
+            "message": "Ajusta la imagen según las opciones disponibles: ajustar al ancho, ajustar al alto, ajustar a la pantalla.",
             "path": "modifyImageScaling.png",
             "toggle": False,
             "align": "AlignLeft",
@@ -256,10 +239,10 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
     },
-    "controls": {
+    "controles": {
         "toggleMouseMode": {
-            "title": "Change mouse behavior",
-            "message": "This will disable text detection. Turn this on only if do not want to hold CTRL key to zoom and pan on an image.",
+            "title": "Cambiar uso del ratón",
+            "message": "Esto deshabilitará la detección de texto. Activa esto si no quieres mantener presionado CTRL para hacer zoom y desplazarte en la imagen.",
             "path": "toggleMouseMode.png",
             "toggle": True,
             "align": "AlignLeft",
@@ -267,8 +250,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
         "modifyHotkeys": {
-            "title": "Remap hotkeys",
-            "message": "Change shortcut for external captures.",
+            "title": "Cambiar atajo de teclado",
+            "message": "Cambia la combinación de teclas para captura de OCR.",
             "path": "modifyHotkeys.png",
             "toggle": False,
             "align": "AlignLeft",
@@ -276,10 +259,10 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
     },
-    "misc": {
+    "detección": {
         "loadModel": {
-            "title": "Load detection model",
-            "message": "Manage OCR model settings.",
+            "title": "Cargar modelo de OCR",
+            "message": "Administrar la configuración del modelo de detección.",
             "path": "loadModel.png",
             "toggle": False,
             "align": "AlignLeft",
@@ -287,8 +270,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
         "loadTranslateModel": {
-            "title": "Load translation model",
-            "message": "Manage translation model settings and API keys.",
+            "title": "Cargar modelo de traducción",
+            "message": "Administrar la configuración del modelo de traducción y las claves API.",
             "path": "loadTranslateModel.png",
             "toggle": False,
             "align": "AlignLeft",
@@ -296,8 +279,8 @@ TOOLBAR_FUNCTIONS: dict[str, ButtonConfigDict] = {
             "iconWidth": 1.0,
         },
         "toggleLogging": {
-            "title": "Enable text logging",
-            "message": "Save detected text to a text file located in the current project directory.",
+            "title": "Activar guardado de texto",
+            "message": "Guardar el texto detectado en un archivo de texto ubicado en el directorio del proyecto actual.",
             "path": "toggleLogging.png",
             "toggle": True,
             "align": "AlignLeft",
