@@ -135,7 +135,8 @@ class State:
         elif self._ocrModelName == "MangaOCR":
             try:
                 if path:
-                    self.ocrModel = MangaOcr(pretrained_model_name_or_path=path)
+                    self.ocrModel = MangaOcr(
+                        pretrained_model_name_or_path=path)
                 else:
                     self.ocrModel = MangaOcr()
                 return "success"
@@ -183,7 +184,8 @@ class State:
 
     def getArgosTranslateModel(self, fromCode="ja", toCode="en"):
         installedLanguages = get_installed_languages()
-        fromLang = list(filter(lambda x: x.code == fromCode, installedLanguages))
+        fromLang = list(filter(lambda x: x.code ==
+                        fromCode, installedLanguages))
         toLang = list(filter(lambda x: x.code == toCode, installedLanguages))
 
         if not fromLang or not toLang:
@@ -212,38 +214,51 @@ class State:
         if self.translateModelName == "ArgosTranslate":
             return self.translateModel.translate(text)
         elif self.translateModelName == "ChatGPT":
+            if not self.translateApiKey:
+                return f"Error: No ApiKey"
             headers = {
                 "content-type": "application/json",
                 "authorization": f"Bearer {self.translateApiKey}",
             }
             body = {
-                "model": "text-davinci-003",
-                "prompt": f"Translate this to English:\n{text}",
+                "model": "gpt-3.5-turbo",
+                "messages": [
+                    {"role": "system", "content": "Translate Japanese to English. "
+                     "Output only the translation."},
+                    {"role": "user",
+                     "content": f"{text}"}
+                ],
                 "temperature": 0.3,
                 "max_tokens": 128,
             }
             try:
                 response = post(
                     "https://api.openai.com/v1/completions", json=body, headers=headers
-                ).json()
-                return response["choices"][0]["text"].strip()
+                )
+                if response.status_code == 200:
+                    return response.json()["choices"][0]["message"]["content"].strip()
+                else:
+                    return f"Error: {response.json().get('error', {}).get('message', 'Unknown error')}"
             except Exception as e:
-                print(e)
-                return text
+                return f"Exception: {str(e)}"
         elif self.translateModelName == "DeepL":
+            if not self.translateApiKey:
+                return f"Error: No ApiKey"
             headers = {
                 "content-type": "application/json",
                 "authorization": f"DeepL-Auth-Key {self.translateApiKey}",
             }
             body = {
-                "text": text,
+                "text": [text],
                 "target_lang": "EN",
             }
             try:
                 response = post(
                     "https://api-free.deepl.com/v2/translate", json=body, headers=headers
-                ).json()
-                return response["translations"]["text"].strip()
+                )
+                if response.status_code == 200:
+                    return response.json()["translations"][0]["text"].strip()
+                else:
+                    return f"Error: {str(response)}"
             except Exception as e:
-                print(e)
-                return text
+                return f"Exception: {str(e)}"
